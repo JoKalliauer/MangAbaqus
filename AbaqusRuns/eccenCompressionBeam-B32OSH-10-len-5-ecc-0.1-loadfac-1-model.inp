@@ -1,0 +1,79 @@
+*Part, name=Part-1
+*Node
+1, -2.500000, 0.100000, 0.000000
+2, -2.500000, -0.000000, -0.000000
+3, -2.000000, -0.000000, -0.000000
+4, -1.500000, -0.000000, -0.000000
+5, -1.000000, -0.000000, -0.000000
+6, -0.500000, -0.000000, -0.000000
+7, 0.000000, 0.000000, 0.000000
+8, 0.500000, 0.000000, 0.000000
+9, 1.000000, 0.000000, 0.000000
+10, 1.500000, 0.000000, 0.000000
+11, 2.000000, 0.000000, 0.000000
+12, 2.500000, 0.000000, 0.000000
+13, 2.500000, 0.100000, 0.000000
+14, -2.500000, 0.050000, 0.000000
+15, -2.250000, -0.000000, -0.000000
+16, -1.750000, -0.000000, -0.000000
+17, -1.250000, -0.000000, -0.000000
+18, -0.750000, -0.000000, -0.000000
+19, -0.250000, 0.000000, 0.000000
+20, 0.250000, 0.000000, 0.000000
+21, 0.750000, 0.000000, 0.000000
+22, 1.250000, 0.000000, 0.000000
+23, 1.750000, 0.000000, 0.000000
+24, 2.250000, 0.000000, 0.000000
+25, 2.500000, 0.050000, 0.000000
+*Element, type=B32OSH
+2, 2, 15, 3
+3, 3, 16, 4
+4, 4, 17, 5
+5, 5, 18, 6
+6, 6, 19, 7
+7, 7, 20, 8
+8, 8, 21, 9
+9, 9, 22, 10
+10, 10, 23, 11
+11, 11, 24, 12
+*Element, type=B32OSH
+1, 1, 14, 2
+12, 12, 25, 13
+*Elset, elset=AllElements
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
+*Elset, elset=Vert
+1, 12
+** Section: Section-1  Profile: Profile-1
+*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I
+0.200000, 0.400000, 0.180000, 0.180000, 0.013500, 0.013500, 0.008600 
+0.,-1.,0.
+** Section: Section-2  Profile: Profile-2
+*Beam Section, elset=Vert, material=Material-1, temperature=VALUES, section=I
+1.0, 2.0, 1.0, 1.0, 0.1, 0.1, 0.1 
+1.,0.,0.
+*End Part
+*Assembly, name=Assembly
+*Instance, name=Part-1-1, part=Part-1
+*End Instance
+*Nset, nset=allnodes, instance=Part-1-1, generate
+1,25,1
+*Nset, nset=leftend, instance=Part-1-1
+2
+*Nset, nset=rightend, instance=Part-1-1
+12
+*Nset, nset=leftendforce, instance=Part-1-1
+1
+*Nset, nset=rightendforce, instance=Part-1-1
+13
+*End Assembly
+*Material, name=Material-1
+*Elastic
+2.1e+11, 0.3
+*Boundary
+leftend,  1, 1
+leftend,  2, 2
+leftend,  3, 3
+leftend,  4, 4
+rightend,  2, 2
+rightend,  3, 3
+rightend,  4, 4

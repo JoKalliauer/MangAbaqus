@@ -1,0 +1,5271 @@
+*Include, input=eccenCompressionBeam-B32OSH-10-len-5-ecc-0.1-loadfac-1-model.inp
+** ----------------------------------------------------------------
+*STEP, name=Lambda-1
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-2
+** 
+*Step, name=Step-2, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=NEW
+leftendforce, 1, 2500.000000
+rightendforce, 1, -2500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-3
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-4
+** 
+*Step, name=Step-4, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 5000.000000
+rightendforce, 1, -5000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-5
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-6
+** 
+*Step, name=Step-6, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 7500.000000
+rightendforce, 1, -7500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-7
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-8
+** 
+*Step, name=Step-8, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 10000.000000
+rightendforce, 1, -10000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-9
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-10
+** 
+*Step, name=Step-10, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 12500.000000
+rightendforce, 1, -12500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-11
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-12
+** 
+*Step, name=Step-12, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 15000.000000
+rightendforce, 1, -15000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-13
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-14
+** 
+*Step, name=Step-14, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 17500.000000
+rightendforce, 1, -17500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-15
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-16
+** 
+*Step, name=Step-16, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 20000.000000
+rightendforce, 1, -20000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-17
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-18
+** 
+*Step, name=Step-18, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 22500.000000
+rightendforce, 1, -22500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-19
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-20
+** 
+*Step, name=Step-20, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 27500.000000
+rightendforce, 1, -27500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-21
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-22
+** 
+*Step, name=Step-22, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 30000.000000
+rightendforce, 1, -30000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-23
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-24
+** 
+*Step, name=Step-24, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 32500.000000
+rightendforce, 1, -32500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-25
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-26
+** 
+*Step, name=Step-26, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 35000.000000
+rightendforce, 1, -35000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-27
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-28
+** 
+*Step, name=Step-28, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 37500.000000
+rightendforce, 1, -37500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-29
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-30
+** 
+*Step, name=Step-30, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 40000.000000
+rightendforce, 1, -40000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-31
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-32
+** 
+*Step, name=Step-32, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 42500.000000
+rightendforce, 1, -42500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-33
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-34
+** 
+*Step, name=Step-34, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 45000.000000
+rightendforce, 1, -45000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-35
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-36
+** 
+*Step, name=Step-36, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 47500.000000
+rightendforce, 1, -47500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-37
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-38
+** 
+*Step, name=Step-38, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 52500.000000
+rightendforce, 1, -52500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-39
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-40
+** 
+*Step, name=Step-40, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 55000.000000
+rightendforce, 1, -55000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-41
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-42
+** 
+*Step, name=Step-42, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 57500.000000
+rightendforce, 1, -57500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-43
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-44
+** 
+*Step, name=Step-44, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 60000.000000
+rightendforce, 1, -60000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-45
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-46
+** 
+*Step, name=Step-46, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 62500.000000
+rightendforce, 1, -62500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-47
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-48
+** 
+*Step, name=Step-48, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 65000.000000
+rightendforce, 1, -65000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-49
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-50
+** 
+*Step, name=Step-50, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 67500.000000
+rightendforce, 1, -67500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-51
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-52
+** 
+*Step, name=Step-52, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 70000.000000
+rightendforce, 1, -70000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-53
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-54
+** 
+*Step, name=Step-54, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 72500.000000
+rightendforce, 1, -72500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-55
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-56
+** 
+*Step, name=Step-56, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 77500.000000
+rightendforce, 1, -77500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-57
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-58
+** 
+*Step, name=Step-58, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 80000.000000
+rightendforce, 1, -80000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-59
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-60
+** 
+*Step, name=Step-60, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 82500.000000
+rightendforce, 1, -82500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-61
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-62
+** 
+*Step, name=Step-62, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 85000.000000
+rightendforce, 1, -85000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-63
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-64
+** 
+*Step, name=Step-64, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 87500.000000
+rightendforce, 1, -87500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-65
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-66
+** 
+*Step, name=Step-66, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 90000.000000
+rightendforce, 1, -90000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-67
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-68
+** 
+*Step, name=Step-68, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 92500.000000
+rightendforce, 1, -92500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-69
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-70
+** 
+*Step, name=Step-70, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 95000.000000
+rightendforce, 1, -95000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-71
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-72
+** 
+*Step, name=Step-72, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 97500.000000
+rightendforce, 1, -97500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-73
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-74
+** 
+*Step, name=Step-74, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 102500.000000
+rightendforce, 1, -102500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-75
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-76
+** 
+*Step, name=Step-76, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 105000.000000
+rightendforce, 1, -105000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-77
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-78
+** 
+*Step, name=Step-78, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 107500.000000
+rightendforce, 1, -107500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-79
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-80
+** 
+*Step, name=Step-80, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 110000.000000
+rightendforce, 1, -110000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-81
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-82
+** 
+*Step, name=Step-82, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 112500.000000
+rightendforce, 1, -112500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-83
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-84
+** 
+*Step, name=Step-84, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 115000.000000
+rightendforce, 1, -115000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-85
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-86
+** 
+*Step, name=Step-86, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 117500.000000
+rightendforce, 1, -117500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-87
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-88
+** 
+*Step, name=Step-88, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 120000.000000
+rightendforce, 1, -120000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-89
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-90
+** 
+*Step, name=Step-90, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 122500.000000
+rightendforce, 1, -122500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-91
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-92
+** 
+*Step, name=Step-92, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 127500.000000
+rightendforce, 1, -127500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-93
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-94
+** 
+*Step, name=Step-94, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 130000.000000
+rightendforce, 1, -130000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-95
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-96
+** 
+*Step, name=Step-96, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 132500.000000
+rightendforce, 1, -132500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-97
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-98
+** 
+*Step, name=Step-98, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 135000.000000
+rightendforce, 1, -135000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-99
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-100
+** 
+*Step, name=Step-100, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 137500.000000
+rightendforce, 1, -137500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-101
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-102
+** 
+*Step, name=Step-102, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 140000.000000
+rightendforce, 1, -140000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-103
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-104
+** 
+*Step, name=Step-104, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 142500.000000
+rightendforce, 1, -142500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-105
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-106
+** 
+*Step, name=Step-106, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 145000.000000
+rightendforce, 1, -145000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-107
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-108
+** 
+*Step, name=Step-108, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 147500.000000
+rightendforce, 1, -147500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-109
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-110
+** 
+*Step, name=Step-110, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 152500.000000
+rightendforce, 1, -152500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-111
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-112
+** 
+*Step, name=Step-112, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 155000.000000
+rightendforce, 1, -155000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-113
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-114
+** 
+*Step, name=Step-114, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 157500.000000
+rightendforce, 1, -157500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-115
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-116
+** 
+*Step, name=Step-116, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 160000.000000
+rightendforce, 1, -160000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-117
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-118
+** 
+*Step, name=Step-118, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 162500.000000
+rightendforce, 1, -162500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-119
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-120
+** 
+*Step, name=Step-120, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 165000.000000
+rightendforce, 1, -165000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-121
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-122
+** 
+*Step, name=Step-122, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 167500.000000
+rightendforce, 1, -167500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-123
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-124
+** 
+*Step, name=Step-124, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 170000.000000
+rightendforce, 1, -170000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-125
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-126
+** 
+*Step, name=Step-126, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 172500.000000
+rightendforce, 1, -172500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-127
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-128
+** 
+*Step, name=Step-128, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 177500.000000
+rightendforce, 1, -177500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-129
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-130
+** 
+*Step, name=Step-130, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 180000.000000
+rightendforce, 1, -180000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-131
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-132
+** 
+*Step, name=Step-132, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 182500.000000
+rightendforce, 1, -182500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-133
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-134
+** 
+*Step, name=Step-134, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 185000.000000
+rightendforce, 1, -185000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-135
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-136
+** 
+*Step, name=Step-136, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 187500.000000
+rightendforce, 1, -187500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-137
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-138
+** 
+*Step, name=Step-138, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 190000.000000
+rightendforce, 1, -190000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-139
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-140
+** 
+*Step, name=Step-140, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 192500.000000
+rightendforce, 1, -192500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-141
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-142
+** 
+*Step, name=Step-142, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 195000.000000
+rightendforce, 1, -195000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-143
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-144
+** 
+*Step, name=Step-144, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 197500.000000
+rightendforce, 1, -197500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-145
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-146
+** 
+*Step, name=Step-146, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 202500.000000
+rightendforce, 1, -202500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-147
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-148
+** 
+*Step, name=Step-148, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 205000.000000
+rightendforce, 1, -205000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-149
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-150
+** 
+*Step, name=Step-150, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 207500.000000
+rightendforce, 1, -207500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-151
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-152
+** 
+*Step, name=Step-152, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 210000.000000
+rightendforce, 1, -210000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-153
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-154
+** 
+*Step, name=Step-154, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 212500.000000
+rightendforce, 1, -212500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-155
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-156
+** 
+*Step, name=Step-156, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 215000.000000
+rightendforce, 1, -215000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-157
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-158
+** 
+*Step, name=Step-158, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 217500.000000
+rightendforce, 1, -217500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-159
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-160
+** 
+*Step, name=Step-160, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 220000.000000
+rightendforce, 1, -220000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-161
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-162
+** 
+*Step, name=Step-162, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 222500.000000
+rightendforce, 1, -222500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-163
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-164
+** 
+*Step, name=Step-164, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 227500.000000
+rightendforce, 1, -227500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-165
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-166
+** 
+*Step, name=Step-166, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 230000.000000
+rightendforce, 1, -230000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-167
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-168
+** 
+*Step, name=Step-168, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 232500.000000
+rightendforce, 1, -232500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-169
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-170
+** 
+*Step, name=Step-170, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 235000.000000
+rightendforce, 1, -235000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-171
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-172
+** 
+*Step, name=Step-172, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 237500.000000
+rightendforce, 1, -237500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-173
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-174
+** 
+*Step, name=Step-174, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 240000.000000
+rightendforce, 1, -240000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-175
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-176
+** 
+*Step, name=Step-176, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 242500.000000
+rightendforce, 1, -242500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-177
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-178
+** 
+*Step, name=Step-178, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 245000.000000
+rightendforce, 1, -245000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-179
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-180
+** 
+*Step, name=Step-180, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 247500.000000
+rightendforce, 1, -247500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-181
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-182
+** 
+*Step, name=Step-182, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 252500.000000
+rightendforce, 1, -252500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-183
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-184
+** 
+*Step, name=Step-184, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 255000.000000
+rightendforce, 1, -255000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-185
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-186
+** 
+*Step, name=Step-186, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 257500.000000
+rightendforce, 1, -257500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-187
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-188
+** 
+*Step, name=Step-188, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 260000.000000
+rightendforce, 1, -260000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-189
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-190
+** 
+*Step, name=Step-190, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 262500.000000
+rightendforce, 1, -262500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-191
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-192
+** 
+*Step, name=Step-192, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 265000.000000
+rightendforce, 1, -265000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-193
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-194
+** 
+*Step, name=Step-194, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 267500.000000
+rightendforce, 1, -267500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-195
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-196
+** 
+*Step, name=Step-196, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 270000.000000
+rightendforce, 1, -270000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-197
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-198
+** 
+*Step, name=Step-198, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 272500.000000
+rightendforce, 1, -272500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-199
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-200
+** 
+*Step, name=Step-200, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 277500.000000
+rightendforce, 1, -277500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-201
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-202
+** 
+*Step, name=Step-202, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 280000.000000
+rightendforce, 1, -280000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-203
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-204
+** 
+*Step, name=Step-204, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 282500.000000
+rightendforce, 1, -282500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-205
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-206
+** 
+*Step, name=Step-206, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 285000.000000
+rightendforce, 1, -285000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-207
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-208
+** 
+*Step, name=Step-208, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 287500.000000
+rightendforce, 1, -287500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-209
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-210
+** 
+*Step, name=Step-210, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 290000.000000
+rightendforce, 1, -290000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-211
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-212
+** 
+*Step, name=Step-212, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 292500.000000
+rightendforce, 1, -292500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-213
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-214
+** 
+*Step, name=Step-214, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 295000.000000
+rightendforce, 1, -295000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-215
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-216
+** 
+*Step, name=Step-216, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 297500.000000
+rightendforce, 1, -297500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-217
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-218
+** 
+*Step, name=Step-218, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 302500.000000
+rightendforce, 1, -302500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-219
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-220
+** 
+*Step, name=Step-220, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 305000.000000
+rightendforce, 1, -305000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-221
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-222
+** 
+*Step, name=Step-222, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 307500.000000
+rightendforce, 1, -307500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-223
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-224
+** 
+*Step, name=Step-224, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 310000.000000
+rightendforce, 1, -310000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-225
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-226
+** 
+*Step, name=Step-226, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 312500.000000
+rightendforce, 1, -312500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-227
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-228
+** 
+*Step, name=Step-228, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 315000.000000
+rightendforce, 1, -315000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-229
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-230
+** 
+*Step, name=Step-230, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 317500.000000
+rightendforce, 1, -317500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-231
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-232
+** 
+*Step, name=Step-232, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 320000.000000
+rightendforce, 1, -320000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-233
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-234
+** 
+*Step, name=Step-234, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 322500.000000
+rightendforce, 1, -322500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-235
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-236
+** 
+*Step, name=Step-236, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 327500.000000
+rightendforce, 1, -327500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-237
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-238
+** 
+*Step, name=Step-238, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 330000.000000
+rightendforce, 1, -330000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-239
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-240
+** 
+*Step, name=Step-240, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 332500.000000
+rightendforce, 1, -332500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-241
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-242
+** 
+*Step, name=Step-242, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 335000.000000
+rightendforce, 1, -335000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-243
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-244
+** 
+*Step, name=Step-244, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 337500.000000
+rightendforce, 1, -337500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-245
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-246
+** 
+*Step, name=Step-246, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 340000.000000
+rightendforce, 1, -340000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-247
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-248
+** 
+*Step, name=Step-248, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 342500.000000
+rightendforce, 1, -342500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-249
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-250
+** 
+*Step, name=Step-250, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 345000.000000
+rightendforce, 1, -345000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-251
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-252
+** 
+*Step, name=Step-252, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 347500.000000
+rightendforce, 1, -347500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-253
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-254
+** 
+*Step, name=Step-254, nlgeom=YES
+*Static
+0.01, 0.01, 1e-06, 0.01
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 352500.000000
+rightendforce, 1, -352500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-255
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-256
+** 
+*Step, name=Step-256, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 355000.000000
+rightendforce, 1, -355000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-257
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-258
+** 
+*Step, name=Step-258, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 357500.000000
+rightendforce, 1, -357500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-259
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-260
+** 
+*Step, name=Step-260, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 360000.000000
+rightendforce, 1, -360000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-261
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-262
+** 
+*Step, name=Step-262, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 362500.000000
+rightendforce, 1, -362500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-263
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-264
+** 
+*Step, name=Step-264, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 365000.000000
+rightendforce, 1, -365000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-265
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-266
+** 
+*Step, name=Step-266, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 367500.000000
+rightendforce, 1, -367500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-267
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-268
+** 
+*Step, name=Step-268, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 370000.000000
+rightendforce, 1, -370000.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-269
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
+** ----------------------------------------------------------------
+** 
+** STEP: Step-270
+** 
+*Step, name=Step-270, nlgeom=YES
+*Static
+0.005, 0.005, 5e-07, 0.005
+** 
+** LOADS
+** 
+*Cload, OP=MOD
+leftendforce, 1, 372500.000000
+rightendforce, 1, -372500.000000
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history, variable=PRESELECT
+*NODE PRINT, nset=allnodes
+U
+*EL PRINT
+
+SE
+*EL PRINT
+
+SF
+*End Step
+** ----------------------------------------------------------------
+*STEP, name=Lambda-271
+*MATRIX GENERATE, STIFFNESS
+*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT
+*END STEP
