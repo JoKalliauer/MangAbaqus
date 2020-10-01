@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D_Hinge(dummy,numofelm,lambda,loadFactor,eltype)
+function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D_Hinge(~,numofelm,lambda,loadFactor,eltype)
 razem = [];
 if nargin<1
     lambda = 0.05:0.05:0.35;
@@ -8,6 +8,7 @@ end
 if lambda(1) == 0
     lambda(1) = [];
 end
+elmtype=eltype;
 
 % pure SI units: Newtons, meters, Pascals, etc.
 filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor)];
@@ -24,7 +25,7 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
  p = -83.3*10^3*10^2*loadFactor;
   
 %% Imperfection size
- impsize = 0.001;
+ %impsize = 0.001;
  impsize = 0;
 
 %% Finite Elements Size
@@ -58,8 +59,8 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
  ycoords = 4*H/L^2*xcoords.*(L - xcoords);
 %   plot(xcoords,ycoords,'mo-'); hold off
     
- Nodes = [[1:length(xcoords)]', xcoords, ycoords];
- Elements = [[1:size(Nodes,1)-1]',Nodes(1:end-1,1),Nodes(2:end,1)];
+ Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords];
+ Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
  rpLeft = Nodes(1,1);
  leftnodes = Nodes(1,1);
@@ -71,7 +72,7 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
   ycoords2 = 4*H/L^2*xcoords2.*(L - xcoords2);
      
   Nodes2 = [xcoords2, ycoords2];
-  Nodes2 = [Nodes(end,1) + [1:size(Nodes2,1)]',Nodes2];
+  Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
   Nodes = [Nodes; Nodes2];
   Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
  end
@@ -92,7 +93,8 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
          coords = [Nodes(node1,2:3); Nodes(node2,2:3); Nodes(node3,2:3)];
             % extract position on XY plane
            x1 = coords(1,1); x2 = coords(2,1); x3 = coords(3,1); 
-           y1 = coords(1,2); y2 = coords(2,2); y3 = coords(3,2);
+           y1 = coords(1,2); %y2 = coords(2,2);
+           y3 = coords(3,2);
 
            Lload1 = abs(x2 - x1);
            Lload2 = abs(x3 - x2);
@@ -118,7 +120,7 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
      end
  end
  
- P = [Nodes(:,1),P];
+ %P = [Nodes(:,1),P];
  Pd = [Elements(:,1),Pd];
  
 %  plotMesh(Nodes,Elements);
@@ -384,15 +386,15 @@ fclose(u3);
 
 end
 
-
-function plotMesh(Nodes,Elements)
-   hold on
-   for i = 1:size(Elements,1)
-       nnums = Elements(i,2:end);
-       nnums = [nnums,nnums(1)];
-       xcoords = Nodes(nnums,2);
-       ycoords = Nodes(nnums,3);
-       zcoords = Nodes(nnums,4);
-       plot3(xcoords,ycoords,zcoords,'bx-')
-   end
-end
+% 
+% function plotMesh(Nodes,Elements)
+%    hold on
+%    for i = 1:size(Elements,1)
+%        nnums = Elements(i,2:end);
+%        nnums = [nnums,nnums(1)];
+%        xcoords = Nodes(nnums,2);
+%        ycoords = Nodes(nnums,3);
+%        zcoords = Nodes(nnums,4);
+%        plot3(xcoords,ycoords,zcoords,'bx-')
+%    end
+% end

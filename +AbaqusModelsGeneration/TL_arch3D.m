@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D(dummy,numofelm,lambda,loadFactor,eltype)
+function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder)
 razem = [];
 if nargin<1
     lambda = 0.01:0.01:1;
@@ -10,6 +10,7 @@ end
 if nargin<2
     numofelm = 50;
 end
+elmtype=eltype;
 
 % pure SI units: Newtons, meters, Pascals, etc.
 filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor)];
@@ -26,7 +27,7 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
  p = -83.3*10^3*10^2*loadFactor;
   
 %% Imperfection size
- impsize = 0.001;
+ %impsize = 0.001;
  impsize = 0;
 
 %% Finite Elements Size
@@ -61,8 +62,8 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
 
 %   plot(xcoords,ycoords,'mo-'); hold off
     
- Nodes = [[1:length(xcoords)]', xcoords, ycoords];
- Elements = [[1:size(Nodes,1)-1]',Nodes(1:end-1,1),Nodes(2:end,1)];
+ Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords];
+ Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
  rpLeft = Nodes(1,1);
  leftnodes = Nodes(1,1);
@@ -70,7 +71,7 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
  rightnodes = Nodes(end,1);
  
   Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
-  Nodes2 = [Nodes(end,1) + [1:size(Nodes2,1)]',Nodes2];
+  Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
   Nodes = [Nodes; Nodes2];
   Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
   Nodes = [Nodes, zeros(size(Nodes,1),1)];
@@ -84,7 +85,8 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
          coords = [Nodes(node1,2:3); Nodes(node2,2:3); Nodes(node3,2:3)];
             % extract position on XY plane
            x1 = coords(1,1); x2 = coords(2,1); x3 = coords(3,1); 
-           y1 = coords(1,2); y2 = coords(2,2); y3 = coords(3,2);
+           y1 = coords(1,2); %y2 = coords(2,2); 
+           y3 = coords(3,2);
 
            Lload1 = abs(x2 - x1);
            Lload2 = abs(x3 - x2);
@@ -110,13 +112,23 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
      end
  end
  
- P = [Nodes(:,1),P];
+ %P = [Nodes(:,1),P];
  Pd = [Elements(:,1),Pd];
  
 %  plotMesh(Nodes,Elements);
 %  hold off
 
-u1 = fopen(['AbaqusRuns/',filename,'-model.inp'],'w');
+if ~exist(AbaqusRunsFolder, 'dir')
+ if isunix
+     mkdir(AbaqusRunsFolder);
+ end
+ if ispc
+  warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
+  return
+ end
+end
+     
+u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
 
 fprintf(u1,'*Part, name=Part-1\n');
 fprintf(u1,'*Node\n');
@@ -180,8 +192,8 @@ fprintf(u1,'allnodes,  4, 4\n');
 fprintf(u1,'allnodes,  5, 5\n');
 
 
-u2 = fopen(['AbaqusRuns/',filename,'-imperfections.inp'],'w');
-fprintf(u2,['*Include, input=',filename,'-model.inp\n']);
+u2 = fopen([AbaqusRunsFolder,filename,'-imperfections.inp'],'w');
+fprintf(u2,['*Include, input=',filename,'.inpData\n']);
 fprintf(u2,'** ----------------------------------------------------------------\n');
 fprintf(u2,'** \n');
 fprintf(u2,'** STEP: imperfections\n');
@@ -212,14 +224,14 @@ fprintf(u2,'*End Step\n');
 
 fclose(u2);
 
-u3 = fopen(['AbaqusRuns/',filename,'.inp'],'w');
+u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
 
 if impsize~=0
     fprintf(u3,['*Imperfection, File=',filename,'-imperfections, STEP=1\n']);
     fprintf(u3,['1, ',num2str(impsize),'\n']);
 end
 
-fprintf(u3,['*Include, input=',filename,'-model.inp\n']);
+fprintf(u3,['*Include, input=',filename,'.inpData\n']);
 fprintf(u3,'** ----------------------------------------------------------------\n');
 fprintf(u3,'*STEP, name=Lambda-1\n');
 fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
@@ -340,7 +352,7 @@ fclose(u3);
 % 
 % u4 = fopen(['AbaqusRuns/',filename,'_initKg.inp'],'w');
 % 
-% fprintf(u4,['*Include, input=',filename,'-model.inp\n']);
+% fprintf(u4,['*Include, input=',filename,'.inpData\n']);
 % fprintf(u4,'** ----------------------------------------------------------------\n');
 % fprintf(u4,'*STEP, name=Lambda-1\n');
 % fprintf(u4,'*MATRIX GENERATE, STIFFNESS\n');
@@ -398,14 +410,14 @@ fclose(u3);
 end
 
 
-function plotMesh(Nodes,Elements)
-   hold on
-   for i = 1:size(Elements,1)
-       nnums = Elements(i,2:end);
-       nnums = [nnums,nnums(1)];
-       xcoords = Nodes(nnums,2);
-       ycoords = Nodes(nnums,3);
-       zcoords = Nodes(nnums,4);
-       plot3(xcoords,ycoords,zcoords,'bx-')
-   end
-end
+% function plotMesh(Nodes,Elements)
+%    hold on
+%    for i = 1:size(Elements,1)
+%        nnums = Elements(i,2:end);
+%        nnums = [nnums,nnums(1)];
+%        xcoords = Nodes(nnums,2);
+%        ycoords = Nodes(nnums,3);
+%        zcoords = Nodes(nnums,4);
+%        plot3(xcoords,ycoords,zcoords,'bx-')
+%    end
+% end

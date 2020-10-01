@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = cantilever(L,numofelm,lambda,loadFactor,elType)
+function [filename,lambda,BC,Nodes,Elements]  = cantilever(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
 if nargin<1
     L = 5.0;
 end
@@ -14,20 +14,33 @@ end
 if nargin<5
     elType = 'B32OSH';
 end
+if ~exist('modelprops','var')
+ modelprops.profil.name = 'IPE400';
+ tw = 8.6e-3;
+else
+ tw=modelprops.profil.tw;
+ %modelprops.typeofanalysis='M?';
+end
 if lambda(1) == 0
     lambda(1) = [];
 end
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['cantileverBeam-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor)];
+if ~contains(elType,'OS')
+ filename = ['c-',elType,'-',num2str(numofelm(end)),'-l',num2str(L),'-LF',num2str(loadFactor),'-Rect'];
+elseif contains(elType,'OS')
+ filename = ['c-',elType,'-',num2str(numofelm(end)),'-l',num2str(L),'-LF',num2str(loadFactor),'-Steg',num2str(tw)];
+else
+ warning('MyProgram:unknown','elType not recogniced')
+end
 
 %% IPE400
  h = (400)*10^(-3);
  b = 180e-3;
- tw = 8.6e-3;
+ %tw = 8.6e-3;
  tf = 13.5e-3;
  
- Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
+ %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
 
 %% Load
@@ -40,20 +53,38 @@ filename = ['cantileverBeam-',elType,'-',num2str(numofelm(end)),'-len-',num2str(
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
     
- Nodes = [[1:length(xcoords)]', xcoords, ycoords, zcoords];
- Elements = [[1:size(Nodes,1)-1]',Nodes(1:end-1,1),Nodes(2:end,1)];
+ Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
+ Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
  rpLeft = Nodes(1,1);
  rpRight = Nodes(end,1);
  
  if strcmpi('B32',elType(1:3))  
       Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
-      Nodes2 = [Nodes(end,1) + [1:size(Nodes2,1)]',Nodes2];
+      Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
       Nodes = [Nodes; Nodes2];
       Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
  end
- 
-u1 = fopen(['AbaqusRuns/',filename,'-model.inp'],'w');
+%% Boundary conditions
+ BC = [7*(rpLeft - 1) + 1, 0
+       7*(rpLeft - 1) + 2, 0;
+       7*(rpLeft - 1) + 3, 0;
+       7*(rpLeft - 1) + 4, 0;
+       7*(rpLeft - 1) + 5, 0;
+       7*(rpLeft - 1) + 6, 0;
+       7*(rpLeft - 1) + 7, 0];
+%%
+if ~exist(AbaqusRunsFolder, 'dir')
+ if isunix
+     mkdir(AbaqusRunsFolder);
+ end
+ if ispc
+  warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
+  return
+ end
+end
+     
+u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
 
 fprintf(u1,'*Part, name=Part-1\n');
 fprintf(u1,'*Node\n');
@@ -71,9 +102,17 @@ if length(Elements(:,1))/16~=floor(length(Elements(:,1))/16)
 end
 
 fprintf(u1,'** Section: Section-1  Profile: Profile-1\n');
-fprintf(u1,'*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I\n');
-profile = [h/2, h, b, b, tf, tf, tw];
-fprintf(u1,'%f, %f, %f, %f, %f, %f, %f \n',profile);
+if ~contains(elType,'OS')
+ fprintf(u1,'*Beam Section, elset=ALLELEMENTS, material=MATERIAL-1, temperature=VALUES, section=RECT\n');
+ profile = [0.1, 0.1];
+ fprintf(u1,'%f, %f  \n',profile);
+elseif contains(elType,'OS')
+ fprintf(u1,'*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I\n');
+ profile = [h/2, h, b, b, tf, tf, tw];
+ fprintf(u1,'%f, %f, %f, %f, %f, %f, %f \n',profile);
+else
+ warning('MyProgram:unknown','elType not recogniced')
+end
 fprintf(u1,'0.,-1.,0.\n');
 fprintf(u1,'*End Part\n');
 
@@ -95,14 +134,6 @@ fprintf(u1,'*Material, name=Material-1\n');
 fprintf(u1,'*Elastic\n');
 fprintf(u1,'2.1e+11, 0.3\n');
 
-%% Boundary conditions
- BC = [7*(rpLeft - 1) + 1, 0
-       7*(rpLeft - 1) + 2, 0;
-       7*(rpLeft - 1) + 3, 0;
-       7*(rpLeft - 1) + 4, 0;
-       7*(rpLeft - 1) + 5, 0;
-       7*(rpLeft - 1) + 6, 0;
-       7*(rpLeft - 1) + 7, 0];
 %%
 
 fprintf(u1,'*Boundary\n');
@@ -114,9 +145,9 @@ fprintf(u1,'leftend,  5, 5\n');
 fprintf(u1,'leftend,  6, 6\n');
 fprintf(u1,'leftend,  7, 7\n');
 
-u3 = fopen(['AbaqusRuns/',filename,'.inp'],'w');
+u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
 
-fprintf(u3,['*Include, input=',filename,'-model.inp\n']);
+fprintf(u3,['*Include, input=',filename,'.inpData\n']);
 
 fprintf(u3,'** ----------------------------------------------------------------\n');
 fprintf(u3,'*STEP, name=Lambda-1\n');
