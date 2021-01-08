@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -19,7 +19,7 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-ecc-',num2str(ecc),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+ filename = ['twoBeams-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-ecc-',num2str(ecc),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
  
  %% IPE400
  h = (400)*10^(-3); %[m]
@@ -37,34 +37,27 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  
  %% Load
  P = loadFactor*500e3; %[N?]
+ M = P*ecc; % [N m?]
  
  %% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm+1)';
+ xcoords = linspace(-L,L,2*numofelm+1)';
  ycoords = 0*xcoords;
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
- 
- %if ecc~=0
- % add eccentric rods:
- xcoords = [xcoords(1); xcoords; xcoords(end)];
- ycoords = [ecc; ycoords; ecc];
- zcoords = [0; zcoords; 0];
- %end
+
  
  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
  Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
- rpLeft1 = Nodes(2,1);
- rpRight1 = Nodes(end-1,1);
+ %auflager
+ rpLeft1 = Nodes(1,1); %leftend
+ rpMiddle = Nodes((end+1)/2,1);
+ rpRight1 = Nodes(end,1);
  
- if ecc~=0
-  rpLeft2 = Nodes(1,1); %LEFTENDFORCE
-  rpRight2 = Nodes(end,1);
- else
-  rpLeft2 = rpLeft1; %LEFTENDFORCE=leftend
+ %kraft
+  rpLeft2 = rpLeft1; %LEFTENDFORCE
   rpRight2 = rpRight1;
- end
  
  if strcmpi('B32',elType(1:3))
   Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
@@ -131,6 +124,8 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  
  fprintf(u1,'*Nset, nset=leftend, instance=Part-1-1\n');
  fprintf(u1,[num2str(rpLeft1),'\n']);
+ fprintf(u1,'*Nset, nset=Mitte, instance=Part-1-1\n');
+ fprintf(u1,[num2str(rpMiddle),'\n']);
  fprintf(u1,'*Nset, nset=rightend, instance=Part-1-1\n');
  fprintf(u1,[num2str(rpRight1),'\n']);
  
@@ -146,19 +141,13 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  fprintf(u1,'2.1e+11, 0.3\n');
  
  %% Boundary conditions
- dofpNode=7;
- if strcmp(elType,'B32OS')
-  %dofpNode=6;
- else
-  dofpNode=7;
- end
- BC = [dofpNode*(rpLeft1 - 1) + 1, 0
-       dofpNode*(rpLeft1 - 1) + 2, 0;
-       dofpNode*(rpLeft1 - 1) + 3, 0;
-       dofpNode*(rpLeft1 - 1) + 4, 0;
-       dofpNode*(rpRight1 - 1) + 2, 0;
-       dofpNode*(rpRight1 - 1) + 3, 0;
-       dofpNode*(rpRight1 - 1) + 4, 0];
+ BC = [7*(rpLeft1 - 1) + 1, 0
+  7*(rpLeft1 - 1) + 2, 0;
+  7*(rpLeft1 - 1) + 3, 0;
+  7*(rpLeft1 - 1) + 4, 0;
+  7*(rpRight1 - 1) + 2, 0;
+  7*(rpRight1 - 1) + 3, 0;
+  7*(rpRight1 - 1) + 4, 0];
  %%
  
  fprintf(u1,'*Boundary\n');

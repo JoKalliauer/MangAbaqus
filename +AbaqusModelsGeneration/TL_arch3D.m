@@ -1,4 +1,5 @@
-function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
+= TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
 razem = [];
 if nargin<1
     lambda = 0.01:0.01:1;
@@ -10,10 +11,16 @@ end
 if nargin<2
     numofelm = 50;
 end
+if length(eltype)>=5
+ if strcmp(eltype(1:5),'B32OS')
+  warning('MyProgram:Input','TL_arch3D only with rect tested')
+ end
+end
+
 elmtype=eltype;
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor)];
+filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
 
 %% RECT
  h = 20e-2;
@@ -31,7 +38,7 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
  impsize = 0;
 
 %% Finite Elements Size
- resolution = L/2/(numofelm(end));
+ resolution = L/2/double(numofelm(end));
  
 %% Finite Element Model
  elmPerLength = round(L/resolution);
@@ -173,13 +180,18 @@ fprintf(u1,'*Elastic\n');
 fprintf(u1,'2e+11, 0.3\n');
 
 %% Boundary conditions
- BC = [6*(rpLeft - 1) + 1, 0
-       6*(rpLeft - 1) + 2, 0;
-       6*(rpRight - 1) + 1, 0;
-       6*(rpRight - 1) + 2, 0;
-       6*(Nodes(:,1)-1)+3, zeros(size(Nodes,1),1)
-       6*(Nodes(:,1)-1)+4, zeros(size(Nodes,1),1)
-       6*(Nodes(:,1)-1)+5, zeros(size(Nodes,1),1)];
+  if strcmp(eltype,'B32OSH')
+   dofpNode=7;
+  else
+   dofpNode=6;
+  end
+ BC = [dofpNode*(rpLeft - 1) + 1, 0
+       dofpNode*(rpLeft - 1) + 2, 0;
+       dofpNode*(rpRight - 1) + 1, 0;
+       dofpNode*(rpRight - 1) + 2, 0;
+       dofpNode*(Nodes(:,1)-1)+3, zeros(size(Nodes,1),1)
+       dofpNode*(Nodes(:,1)-1)+4, zeros(size(Nodes,1),1)
+       dofpNode*(Nodes(:,1)-1)+5, zeros(size(Nodes,1),1)];
 %%
 
 fprintf(u1,'*Boundary\n');

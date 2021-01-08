@@ -1,4 +1,4 @@
-function plotres(res,model,plotfig,colJK)
+function plotres(res,model,plotfig,colJK,markJK)
  % 2...rho
  % 1...chi
  % 3..._velocity
@@ -12,6 +12,7 @@ function plotres(res,model,plotfig,colJK)
  % % 11.1 ylim detail
  % 12_real(Eigenwert) kein ylim
  % 13_abs(eigenwert)
+ % 14_rho2
  
  if ~exist('model','class')
   modelfilename=model.filename;
@@ -124,13 +125,13 @@ function plotres(res,model,plotfig,colJK)
   plot(lambda(2:end), lambda(2:end)+real(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
   xlabel('Lambda');
   %        ylabel('Lambda + chi | or | chi');
-  ylabel('chi');
+  ylabel('chi=real(EW)+lambda');
   grid on
   %        legend('chi','eigenvalue','lambda','zero')
   title(modelfilename)
   xticks(0:10)
-  yticks(-40:20)
-  ylim([-40 15])
+  yticks(-40:50)
+  %ylim([0 min(20,lambda(end)+real(LAM(end)))])
   daspect([1 1 1])
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_chi.svg'))
@@ -150,7 +151,7 @@ function plotres(res,model,plotfig,colJK)
   grid on
   nopeaks = (S(S<10*mean(S(:))));
   bbb = gca();
-  bbb.YLim = [0.0,max(nopeaks)];
+  bbb.YLim = [0.0,max([nopeaks;eps(1)])];
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/',modelfilename,'_velocity.svg'))
   print('-dpng',strcat('Output/Figures/',modelfilename,'_velocity.png'))
@@ -168,7 +169,7 @@ function plotres(res,model,plotfig,colJK)
   grid on
   nopeaks = (At(abs(At)<10*mean(abs(At(:)))));
   bbb = gca();
-  bbb.YLim = [min(nopeaks),max(nopeaks)];
+  bbb.YLim = [min([nopeaks;-eps(1)]),max([nopeaks;eps(1)])];
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/',modelfilename,'_tanacceleration.svg'))
   print('-dpng',strcat('Output/Figures/',modelfilename,'_tanacceleration.png'))
@@ -185,7 +186,7 @@ function plotres(res,model,plotfig,colJK)
   grid on
   nopeaks = (An(An<10*mean(An(:))));
   bbb = gca();
-  bbb.YLim = [0.0,max(nopeaks)];
+  bbb.YLim = [0.0,max([nopeaks;eps(1)])];
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/',modelfilename,'_noracceleration.svg'))
   print('-dpng',strcat('Output/Figures/',modelfilename,'_noracceleration.png'))
@@ -202,7 +203,7 @@ function plotres(res,model,plotfig,colJK)
   grid on
   nopeaks = (A0(A0<10*mean(A0(:))));
   bbb = gca();
-  bbb.YLim = [0.0,max(nopeaks)];
+  bbb.YLim = [0.0,max([nopeaks;eps(1)])];
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/',modelfilename,'_totacceleration.svg'))
   print('-dpng',strcat('Output/Figures/',modelfilename,'_totacceleration.png'))
@@ -220,7 +221,7 @@ function plotres(res,model,plotfig,colJK)
   grid on
   nopeaks = (TAU(TAU<10*mean(TAU(:))));
   bbb = gca();
-  bbb.YLim = [0.0,max(nopeaks)];
+  bbb.YLim = [0.0,max([nopeaks;eps(1)])];
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/',modelfilename,'_torque.svg'))
   print('-dpng',strcat('Output/Figures/',modelfilename,'_torque.png'))
@@ -385,7 +386,7 @@ function plotres(res,model,plotfig,colJK)
   %        plot(lambda(2:end), LAM(2:end),'LineStyle','--','Marker','none');%,'Color',colo);
   aaa = gca();
   %plot(lambda(2:end), lambda(2:end)+LAM(2:end),'LineStyle','-','Marker','none','LineWidth',1.5);%,'Color',col,'Color',colo);
-  plot(lambda(2:end), LAM(2:end),'LineStyle','-','Marker','o','LineWidth',1.5);%,'Color',colo);
+  plot(lambda(2:end), LAM(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   if size(aaa.Children,1)<2
    %plot(lambda(1:end),lambda(1:end),'Color',[0 0 0],'LineStyle','--');
    %plot(lambda(1:end),0*lambda(1:end),'Color',[0 0 0]);
@@ -396,7 +397,7 @@ function plotres(res,model,plotfig,colJK)
   grid on
   %        legend('chi','eigenvalue','lambda','zero')
   title(modelfilename)
-  ylim([min(0,LAM(end)),1])
+  ylim([min(0,real(LAM(end))),max(min(real(LAM(end)),2),1)])
   if model.savefigures==true
   print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM.svg'))
   print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_LAM.png'))
@@ -426,17 +427,18 @@ function plotres(res,model,plotfig,colJK)
    %plot(lambda(1:end),0*lambda(1:end),'Color',[0 0 0]);
   end
   %plot(lambda(2:end), lambda(2:end)+LAM(2:end),'LineStyle','-','Marker','none','LineWidth',1.5);%,'Color',col,'Color',colo);
-  plot(lambda(2:end),real(LAM(2:end)),'LineStyle','-','Marker','o','LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  plot(lambda(2:end),real(LAM(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   %        ylabel('Lambda + chi | or | chi');
   ylabel('real(EW)=real(chi-lambda)');
   grid on
-  yticks(-50:2:10)
+  %yticks(-50:2:10)
   %        legend('chi','eigenvalue','lambda','zero')
+  %ylim([-Inf max(min(20,real(LAM(end))),1)])
   if model.savefigures==true
-  print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM12.svg'))
-  print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_LAM12.png'))
-  print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_LAM12.pdf'),'-fillpage')
+   print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM12.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_LAM12.png'))
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_LAM12.pdf'),'-fillpage')
   end
  end
  
@@ -451,12 +453,43 @@ function plotres(res,model,plotfig,colJK)
    %plot(lambda(1:end),0*lambda(1:end),'Color',[0 0 0]);
   end
   %plot(lambda(2:end), lambda(2:end)+LAM(2:end),'LineStyle','-','Marker','none','LineWidth',1.5);%,'Color',col,'Color',colo);
-  plot(lambda(2:end),abs(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5);%,'Color',colo);
+  plot(lambda(2:end),abs(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   %        ylabel('Lambda + chi | or | chi');
   ylabel('abs(EW)=abs(chi-lambda)');
   grid on
   %        legend('chi','eigenvalue','lambda','zero')
+  if model.savefigures==true
+   print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM13.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_LAM13.png'))
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_LAM13.pdf'),'-fillpage')
+  end
+ end
+ if ismember(14,plotfig)
+  figure(14);
+  hold on
+  grid on
+  grid minor
+  xlabel('lambda');
+  ylabel('rho2');
+  bbb = gca();
+  bbb.YLim = [0.0,1];
+  bbb.XLim = [0 inf];
+  title(modelfilename)
+  bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  plot(lambda(2:end),res.RHO2(2:end),'LineStyle','-','Marker','o','LineWidth',1.5,'Color',colJK);
+  %yticks(0:.05:1)
+  grid(bbb,'minor','on')
+  if model.savefigures==true
+   print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_rho.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_rho.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',modelfilename,'_rho.pdf'),'-dpdf')
+  end
+  grid minor
+ end
+ if ismember(-14,plotfig)
+  disp([lambda(2:end),res.RHO2(2:end)])
  end
  
 end

@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D_Hinge(~,numofelm,lambda,loadFactor,eltype)
+function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] = TL_arch3D_Hinge(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
 razem = [];
 if nargin<1
     lambda = 0.05:0.05:0.35;
@@ -11,7 +11,7 @@ end
 elmtype=eltype;
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor)];
+filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
 
 %% RECT
  h = 20e-2;
@@ -29,7 +29,7 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
  impsize = 0;
 
 %% Finite Elements Size
- resolution = L/2/(numofelm(end));
+ resolution = L/2/double(numofelm(end));
  
 %% Finite Element Model
  elmPerLength = round(L/resolution);
@@ -126,7 +126,7 @@ filename = ['TL_arch3D_Hinge-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num
 %  plotMesh(Nodes,Elements);
 %  hold off
 
-u1 = fopen(['AbaqusRuns/',filename,'-model.inp'],'w');
+u1 = fopen([AbaqusRunsFolder,filename,'-model.inp'],'w');
 
 fprintf(u1,'*Part, name=Part-1\n');
 fprintf(u1,'*Node\n');
@@ -178,13 +178,18 @@ fprintf(u1,'*Elastic\n');
 fprintf(u1,'2e+11, 0.3\n');
 
 %% Boundary conditions
- BC = [6*(rpLeft - 1) + 1, 0
-       6*(rpLeft - 1) + 2, 0;
-       6*(rpRight - 1) + 1, 0;
-       6*(rpRight - 1) + 2, 0;
-       6*(Nodes(:,1)-1)+3, zeros(size(Nodes,1),1)
-       6*(Nodes(:,1)-1)+4, zeros(size(Nodes,1),1)
-       6*(Nodes(:,1)-1)+5, zeros(size(Nodes,1),1)];
+ if strcmp(eltype,'B32H')
+  dofpNode=7;
+ else
+  dofpNode=6;
+ end
+ BC = [dofpNode*(rpLeft - 1) + 1, 0
+       dofpNode*(rpLeft - 1) + 2, 0;
+       dofpNode*(rpRight - 1) + 1, 0;
+       dofpNode*(rpRight - 1) + 2, 0;
+       dofpNode*(Nodes(:,1)-1)+3, zeros(size(Nodes,1),1)
+       dofpNode*(Nodes(:,1)-1)+4, zeros(size(Nodes,1),1)
+       dofpNode*(Nodes(:,1)-1)+5, zeros(size(Nodes,1),1)];
 %%
 
 fprintf(u1,'*Boundary\n');
@@ -196,7 +201,7 @@ fprintf(u1,'allnodes,  3, 3\n');
 fprintf(u1,'allnodes,  4, 4\n');
 fprintf(u1,'allnodes,  5, 5\n');
 
-u2 = fopen(['AbaqusRuns/',filename,'-imperfections.inp'],'w');
+u2 = fopen([AbaqusRunsFolder,filename,'-imperfections.inp'],'w');
 fprintf(u2,['*Include, input=',filename,'-model.inp\n']);
 fprintf(u2,'** ----------------------------------------------------------------\n');
 fprintf(u2,'** \n');
@@ -228,7 +233,7 @@ fprintf(u2,'*End Step\n');
 
 fclose(u2);
 
-u3 = fopen(['AbaqusRuns/',filename,'.inp'],'w');
+u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
 
 if impsize~=0
     fprintf(u3,['*Imperfection, File=',filename,'-imperfections, STEP=1\n']);
@@ -328,7 +333,7 @@ end
 
 fclose(u3);
 
-% u4 = fopen(['AbaqusRuns/',filename,'_initKg.inp'],'w');
+% u4 = fopen([AbaqusRunsFolder,filename,'_initKg.inp'],'w');
 % 
 % fprintf(u4,['*Include, input=',filename,'-model.inp\n']);
 % fprintf(u4,'** ----------------------------------------------------------------\n');

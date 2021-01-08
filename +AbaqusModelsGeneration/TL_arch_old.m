@@ -1,7 +1,7 @@
-function [filename,lambda,BC,Nodes,Elements]  = TL_arch(~,numofelm,lambda,loadFactor,elType,AbaqusRunsFolder,modelprops)
-% if nargin<1
-%     dummy = [];
-% end
+function [filename,lambda,BC,Nodes,Elements]  = TL_arch(dummy,numofelm,lambda,loadFactor,elType)
+if nargin<1
+    dummy = [];
+end
 if nargin<2
     numofelm = 20;
 end
@@ -28,7 +28,7 @@ end
 
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor)];
 
 %% Load
  p = -83.3*10^3*10^2*loadFactor;
@@ -65,17 +65,17 @@ filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-loadfac-',num2str(loa
 
 %   plot(xcoords,ycoords,'mo-'); hold off
     
- Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords];
- Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
+ Nodes = [[1:length(xcoords)]', xcoords, ycoords];
+ Elements = [[1:size(Nodes,1)-1]',Nodes(1:end-1,1),Nodes(2:end,1)];
  
  rpLeft = Nodes(1,1);
-%  leftnodes = Nodes(1,1);
+ leftnodes = Nodes(1,1);
  rpRight = Nodes(end,1);
-%  rightnodes = Nodes(end,1);
+ rightnodes = Nodes(end,1);
  
  if strcmpi('B22',elType(1:3))  
     Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
-    Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
+    Nodes2 = [Nodes(end,1) + [1:size(Nodes2,1)]',Nodes2];
     Nodes = [Nodes; Nodes2];
     Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
  end
@@ -89,9 +89,7 @@ filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-loadfac-',num2str(loa
          coords = [Nodes(node1,2:3); Nodes(node2,2:3); Nodes(node3,2:3)];
             % extract position on XY plane
            x1 = coords(1,1); x2 = coords(2,1); x3 = coords(3,1); 
-           y1 = coords(1,2);
-           %y2 = coords(2,2);
-           y3 = coords(3,2);
+           y1 = coords(1,2); y2 = coords(2,2); y3 = coords(3,2);
 
            Lload1 = abs(x2 - x1);
            Lload2 = abs(x3 - x2);
@@ -117,20 +115,10 @@ filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-loadfac-',num2str(loa
      end
  end
  
- %P = [Nodes(:,1),P];
+ P = [Nodes(:,1),P];
  Pd = [Elements(:,1),Pd];
  
-if ~exist(AbaqusRunsFolder, 'dir')
- if isunix
-     mkdir(AbaqusRunsFolder);
- end
- if ispc
-  warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
-  return
- end
-end
-     
-u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
+u1 = fopen(['AbaqusRuns/',filename,'-model.inp'],'w');
 
 fprintf(u1,'*Part, name=Part-1\n');
 fprintf(u1,'*Node\n');
@@ -188,9 +176,9 @@ fprintf(u1,'leftend,  2, 2\n');
 fprintf(u1,'rightend,  1, 1\n');
 fprintf(u1,'rightend,  2, 2\n');
 
-u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
+u3 = fopen(['AbaqusRuns/',filename,'.inp'],'w');
 
-fprintf(u3,['*Include, input=',filename,'.inpData\n']);
+fprintf(u3,['*Include, input=',filename,'-model.inp\n']);
 fprintf(u3,'** ----------------------------------------------------------------\n');
 fprintf(u3,'*STEP, name=Lambda-1\n');
 fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');

@@ -1,15 +1,15 @@
 function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinpsi, ortCond2,ortCond3,ortCond4, t, N, B, r0,...
  ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds] ...
- = getQuantities(RS,~,DT,r0atl0,~,tatl0) %DT=epsilon
-%rm4 = RS(:,1); %dksi04 = dksi(1);
-%rm3 = RS(:,2); %dksi03 = dksi(2); ds04 = sqrt((r03-r04)'*(r03-r04));
+ = getQuantities(RS,~,DT,~,~) %DT=epsilon
+rm4 = RS(:,1); %dksi04 = dksi(1);
+rm3 = RS(:,2); %dksi03 = dksi(2); ds04 = sqrt((r03-r04)'*(r03-r04));
 rm2 = RS(:,3); %dksi02 = dksi(3); ds03 = sqrt((r02-r03)'*(r02-r03));
 rm1 = RS(:,4); %dksi01 = dksi(4); ds02 = sqrt((r01-r02)'*(r01-r02));
 r0  = RS(:,5);
 rp1 = RS(:,6); %dksi11 = dksi(5); %ds01 = sqrt((r0-r01)'*(r0-r01));
 rp2 = RS(:,7); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
-%rp3 = RS(:,8); %dksi13 = dksi(7); %ds12 = sqrt((r12-r11)'*(r12-r11));
-%rp4 = RS(:,9);
+rp3 = RS(:,8); %dksi13 = dksi(7); %ds12 = sqrt((r12-r11)'*(r12-r11));
+rp4 = RS(:,9);
 %dksi14 = dksi(8);
 %ds13 = sqrt((r13-r12)'*(r13-r12));
 %ds14 = sqrt((r14-r13)'*(r14-r13));
@@ -19,29 +19,74 @@ rp2 = RS(:,7); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
 %    if nargin<3
 %        DT = 0.25*(dksi11 + dksi12 + dksi13 + dksi14);
 %    end
-ortCond8=min([dot(rm2,r0),dot(rm1,r0),dot(rp1,r0),dot(rp2,r0)]);
-%assert(ortCond8>.99,'the r vectors are to different')
-if ortCond8<.9999 || any(any(isnan(RS(:,2:8))))
- warning('MyProgram:changingR','there might be a change of order of eigenvektors')
- if dot(rm2,r0)<.9999
-  rm2=NaN*r0;
-  rm1=NaN*r0;
- end
- if dot(rm1,r0)<.9999
-  rm1=NaN*r0;
- end
- if dot(rp1,r0)<.9999
-  rp1=NaN*r0;
- end
- if dot(rp2,r0)<.9999
-  rp2=NaN*r0;
-  rp1=NaN*r0;
- end
- r0=NaN*r0;
-end
-
-if ~any(isnan(r0)) && ~any(isnan(rm1))
- % Central difference
+if sum(abs(rm1))==0 || all(isnan(rm1))% Forward difference
+ %     % FIRST ORDER
+ %      v = 1/dksi11*(-r0 + r11);
+ %      a = 1/(0.5*(dksi11 + dksi12))^2*(r0 -2*r11 + r12);
+ %      da = 1/(1/3*(dksi11 + dksi12 + dksi13))^3*(-1*r0 + 3*r11 - 3*r12 +1*r13);
+ %
+ %      t0 = v/norm(v);
+ %      t11 = r11 - r0; t11 = t11/norm(t11);
+ %      t12 = r12 - r11; t12 = t12/norm(t12);
+ %
+ %      n0 = (t11 - t0);
+ %      n0 = n0/norm(n0);
+ %      n11 = (t12 - t11);  n11 = n11/norm(n11);
+ %
+ %      t = t0;
+ %      n = n0;
+ %
+ %      dn = (n11 - n0)/(ds11);
+ %
+ %      rho2 = -n'*r0;
+ %      rho11 = -n11'*r11;
+ %      drho2 = 1/(dksi11)*(rho11 - rho2);
+ % %      drho2 = 1/(ds11)*(rho11 - rho2);
+ 
+ % SECOND ORDER:
+ v = 1/(2*DT)*(-rp2 + 4*rp1 - 3*r0);
+ a = 1/(DT)^2*(2*r0 - 5*rp1 + 4*rp2 - 1*rp3);
+ da = 1/DT^3*(-5/2*r0 + 9*rp1 - 12*rp2 + 7*rp3 - 3/2*rp4);
+ %      v = 1/2*(-r12 + 4*r11 - 3*r0);
+ %      a = (2*r0 - 5*r11 + 4*r12 - 1*r13);
+ %      da = (-5/2*r0 + 9*r11 - 12*r12 + 7*r13 - 3/2*r14);
+ 
+ %t0 = v/norm(v);
+ %t11 = r12 - r0; %t11 = t11/norm(t11);
+ %t12 = r13 - r11; %t12 = t12/norm(t12);
+ %t13 = r14 - r12; %t13 = t13/norm(t13);
+ 
+ %n0 = (-t12 + 4*t11 - 3*t0);
+ %n0 = n0/norm(n0);
+ %n11 = (t12 - t0);  %n11 = n11/norm(n11);
+ %n12 = (t13 - t11);  %n12 = n12/norm(n12);
+ 
+ %t = t0;
+ %n = n0;
+ 
+elseif sum(abs(rp1))==0  || all(isnan(rp1))% Backward difference
+ % SECOND ORDER:
+ v = 1/(2*DT)*(rm2 - 4*rm1 + 3*r0);
+ a = 1/(DT)^2*(2*r0 - 5*rm1 + 4*rm2 - 1*rm3);
+ da = 1/(DT)^3*(5/2*r0 - 9*rm1 + 12*rm2 - 7*rm3 + 3/2*rm4);
+ %      v = 1/2*(r02 - 4*r01 + 3*r0);
+ %      a = (2*r0 - 5*r01 + 4*r02 - 1*r03);
+ %      da = (5/2*r0 - 9*r01 + 12*r02 - 7*r03 + 3/2*r04);
+ 
+ %t0 = v/norm(v);
+ %t01 = -r02 + r0; %t01 = t01/norm(t01);
+ %t02 = -r03 + r01; %t02 = t02/norm(t02);
+ %t03 = -r04 - r02; %t03 = t03/norm(t03);
+ 
+ %n0 = (t02 - 4*t01 + 3*t0);
+ %n0 = n0/norm(n0);
+ %n01 = (-t02 + t0);  %n01 = n01/norm(n01);
+ %n02 = (-t03 + t01);  %n02 = n02/norm(n02);
+ 
+ %t = t0;
+ %n = n0;
+ 
+else % Central difference
  v = (rp1 - rm1)/(2*DT); %(10)
  a = (rm1 - 2*r0 + rp1)/(DT)^2; %(11)
  da = 1/(DT)^3*(-1/2*rm2 + 1*rm1 - 1*rp1 + 1/2*rp2);%(12)
@@ -63,7 +108,8 @@ if ~any(isnan(r0)) && ~any(isnan(rm1))
  
  %t = t0;
  %n = n0;
-
+ 
+end
 
 accel = norm(a);
 
@@ -162,37 +208,16 @@ normd3rds3=norm(d3rds3);
 
 %dN = (kappa*d3rds3 - dkappa*d2rds2)/kappa^2;
 
- rho2 = -N'*r0;
- if rho2<0
-  if rho2<-.1
-   rho2=NaN;
-  else
-   warning('MyProgram:Output','rho2 is slighly negativ')
-  end
- end
- differences=abs(rho-rho2);
- if differences>7.7939e-04%2.2088e-06
-  warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
-  if differences>.1
-   rho=NaN;
-   rho2=NaN;
-  end
- elseif isnan(differences)
-  warning('MyProgramm:lowPrecission','rho or rho2 are NaN')
-  rho=NaN;
-  rho2=NaN;
- end
-
 %tau2 = B'*dN;
 RxB=dot(r0,B);
 %rhodot=-dsdksi*tau*RxB;%-\dot{s}\,\tau\,(\mathrm{r}\cdot\mathrm{b})
 drhopds=-tau*RxB;
  x1=1-rho^2/(1-rho^2)*drhopds^2;
- x2=-dsdksi*tau*RxB;
- x3=r0atl0'*r0;
- x4=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
+ x2=rho^2/(1-rho^2)*drhopds^2;
+ x3=RxB;%3*dot(a,v)+dot(r0,da);
+ x4=tau;
 
-Hypo=rho2^2*sqrt(1+tau^2);
+Hypo=rho*sqrt(1-rho^2)/abs(RxB);%sqrt(1-RxB^2);
 if imag(Hypo)~=0
  Hypo=NaN;
 end
@@ -205,7 +230,7 @@ if ~isnan(ortCond2)
 end
 ortCond3 = t'*B;
 ortCond4 = N'*B;
-
+if ~any(isnan(r0))
  %    ortCond2 = drds'*d2rds2/norm(d2rds2);
  %    ortCond3 = drds'*d3rds3/norm(d3rds3);
  %    ortCond4 = d2rds2'*d3rds3/norm(d2rds2)/norm(d3rds3);
@@ -216,7 +241,26 @@ ortCond4 = N'*B;
  %      tau2 = -drhodksi/(speed*(1 - rho^2)^(0.5));
  %      tau2 = -drho2/(speed*(B'*r0));
  %       tau2 = -drhodksi/(speed*(B'*r0));
-
+ rho2 = -N'*r0;
+ if rho2<0
+  if rho2<-.1
+   rho2=NaN;
+  else
+   warning('MyProgram:Output','rho2 is slighly negativ')
+  end
+ end
+ differences=abs(rho-rho2);
+ if differences>2%2.14195e-04%2.2088e-06
+  warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
+  if differences>.1
+   rho=NaN;
+   rho2=NaN;
+  end
+ elseif isnan(differences)
+  warning('MyProgramm:lowPrecission','rho or rho2 are NaN')
+  rho=NaN;
+  rho2=NaN;
+ end
  
  
  
@@ -246,35 +290,9 @@ ortCond4 = N'*B;
  % rd2l=(r01-2*r0+r11)/(DT)^2;
  % ortCond6a=transpose(r)*rd2l+transpose(rdl)*rdl;
  ortCond7=2*transpose(r0)*(rm1+rp1)-transpose(rm1)*rp1-3;
-
  
  %tripJK=dot(r0,cross(T,N));
- %rr0=r0atl0'*r0;
 else
- v=NaN*r0;
- a=NaN*r0;
- dsdksi=NaN;
- accel=NaN;
- d2sdksi2=NaN;
- an=NaN;
- rho=NaN;
- tau=NaN;
- ortCond2=NaN;
- ortCond3=NaN;
- ortCond4=NaN;
- t=NaN;
- N=NaN;
- B=NaN*r0;
- Hypo=NaN;
- cosGamma=NaN;
- normd3rds3=NaN;
- singamma=NaN;
- x1=NaN;
- x2=NaN;
- x3=NaN;
- x4=NaN;
- RxB=NaN;
- 
  rho2=NaN;
  ortCond1=NaN;
  drddr=NaN;

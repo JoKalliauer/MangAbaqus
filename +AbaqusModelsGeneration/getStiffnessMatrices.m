@@ -17,12 +17,12 @@ if ~exist(model.AbaqusRunsFolder, 'dir')
   return
  end
 end
- if ~exist([model.AbaqusRunsFolder,filename,'_STIF19.mtx'],'file')
+ if ~exist([model.AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
   %warning('MyProgramm:Missing','_STIF*.mtx missing')
-  error('MyProgramm:Missing','_STIF*.mtx missing')
+  error('MyProgramm:Missing','_STIF*.mtx missing, try rerunning forceAbaqus=true')
   %return
  end
-cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/ownCloud/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
+cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
  lenFN = length(filename);
  StifFilesMatlabVersion = ls([filename,'_STIF*.mtx']);
  StifFilesMatlabVersionTranspose=StifFilesMatlabVersion.';

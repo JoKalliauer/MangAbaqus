@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -146,19 +146,13 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  fprintf(u1,'2.1e+11, 0.3\n');
  
  %% Boundary conditions
- dofpNode=7;
- if strcmp(elType,'B32OS')
-  %dofpNode=6;
- else
-  dofpNode=7;
- end
- BC = [dofpNode*(rpLeft1 - 1) + 1, 0
-       dofpNode*(rpLeft1 - 1) + 2, 0;
-       dofpNode*(rpLeft1 - 1) + 3, 0;
-       dofpNode*(rpLeft1 - 1) + 4, 0;
-       dofpNode*(rpRight1 - 1) + 2, 0;
-       dofpNode*(rpRight1 - 1) + 3, 0;
-       dofpNode*(rpRight1 - 1) + 4, 0];
+ BC = [7*(rpLeft1 - 1) + 1, 0
+  7*(rpLeft1 - 1) + 2, 0;
+  7*(rpLeft1 - 1) + 3, 0;
+  7*(rpLeft1 - 1) + 4, 0;
+  7*(rpRight1 - 1) + 2, 0;
+  7*(rpRight1 - 1) + 3, 0;
+  7*(rpRight1 - 1) + 4, 0];
  %%
  
  fprintf(u1,'*Boundary\n');

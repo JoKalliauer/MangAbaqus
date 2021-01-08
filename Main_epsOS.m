@@ -8,14 +8,10 @@
   %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
   %testcase = 'TL_arch_Hinge';
   %testcase = 'TL_arch3D_Hinge';
-  modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
-  %modelprops.testcase = 'cantilever';
-  %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.164669;
+  %modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
+  modelprops.testcase = 'cantilever';
+  %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.05;
   %testcase = 'eccenCompressionBeam2D';
-  modelprops.testcase = 'twoBeams';
-  [~,modelprops.ecc]=eccfromU(0.5);
-  BpM=(modelprops.ecc)^2*0.0080678/1.319847665625e-05
-  BpGes=BpM/(1+BpM)
   
   %modelprops.length = [];
   modelprops.length = 5;
@@ -34,8 +30,8 @@
   %eltype = 'B31OSH'; %Timoshenko 
   %eltype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
-  eltype = 'B32OS'; %Timoshenko 
-  %eltype = 'B32OSH'; %Timoshenko 
+  eltype = 'B32OS';  modelprops.sigma=-0.3; %Timoshenko 
+  %eltype = 'B32OSH';   modelprops.sigma=-30;%Timoshenko 
  
   
   
@@ -43,45 +39,43 @@
   %modelprops.typeofanalysis = 'I';modelprops.sigma=eps(1e-292); %identity matrix
   %modelprops.typeofanalysis = 'CLE';modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
-  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+  %modelprops.typeofanalysis = 'KNL2'; %modelprops.sigma=0; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
-  %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
+  modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-0.1;%-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  modelprops.numofelm = 10;
+  modelprops.numofelm = 100;
   
-  epsil = 0.05;  % finite difference step %epsil = 0.005;
+  epsil = 0.01;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig= [2,14]; %#ok<*NBRAK>
+  plotfig= [14,15,16,17,18]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
   modelprops.elementtype = eltype;
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:0.01:10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
   modelprops.loadfactor = 1.0;
   %
   
   modelprops.profil.tw= 8.6e-3;
-  %modelprops.forceAbaqus=true;
-  modelprops.forceAbaqus=false; %default: false
-  %modelprops.forcerun=true; %default=true
-  modelprops.forcerun=false;
+  modelprops.forceAbaqus=true;
+  %modelprops.forceAbaqus=false; %default: false
+  modelprops.forcerun=true; %default=true
+  %modelprops.forcerun=false;
   modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   main.closall=true;
   %main.closall=false;
   main.savefigures=true;
   %main.savefigures=false;
-  %main.check=true;
-  main.check=false;
+  main.check=true;
+  %main.check=false;
   main.colorshift=0;
-  modelprops.ask_delete=true;
   
-  %modelprops.sigma=-5;
+
   
-  % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
 [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 modelprops=rmfield(modelprops,'forceAbaqus');

@@ -25,23 +25,29 @@ else
 end
 
    switch testcase
-       case 'TL_arch'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch([],numofelm,lambda,loadFactor,eltype);
-       case 'TL_arch3D'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch3D([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder);
-       case 'TL_arch_Hinge'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch_Hinge([],numofelm,lambda,loadFactor,eltype);
-       case 'TL_arch3D_Hinge'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch3D_Hinge([],numofelm,lambda,loadFactor,eltype);
-       case 'pureBendingBeam'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.pureBendingBeam(len,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
-       case 'cantilever'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.cantilever(len,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
-       case 'eccenCompressionBeam'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.eccenCompressionBeam(len,numofelm,lambda,loadFactor,eltype,ecc);
-       case 'eccenCompressionBeam2D'
-           [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.eccenCompressionBeam2D(len,numofelm,lambda,loadFactor,eltype,ecc);
-
+    case 'TL_arch'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
+    case 'TL_arch_old'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch_old([],numofelm,lambda,loadFactor,eltype);
+     AbaqusRunsFolder='AbaqusRuns/';
+    case 'TL_arch3D'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch3D([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
+    case 'TL_arch_Hinge'
+     assert(~strcmp(eltype(1:2),'B3'),'TL_arch_Hinge is 2D')
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch_Hinge([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
+    case 'TL_arch3D_Hinge'
+     assert(~(strcmp(eltype,'B32OS') || strcmp(eltype,'B32OSH')),'TL_arch3D_Hinge uses rect-section not open section')
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch3D_Hinge([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
+    case 'pureBendingBeam'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.pureBendingBeam(len,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+    case 'cantilever'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.cantilever(len,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+    case 'eccenCompressionBeam'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.eccenCompressionBeam(len,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
+    case 'eccenCompressionBeam2D'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.eccenCompressionBeam2D(len,numofelm,lambda,loadFactor,eltype,ecc);
+    case 'twoBeams'
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.twoBeams(len,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
    end
    
    model.filename = filename;

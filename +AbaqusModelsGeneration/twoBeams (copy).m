@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -19,7 +19,7 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename = ['pureBendingBeam-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+ filename = ['twoBeams-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
  
  %% IPE400
  h = (400)*10^(-3); %[m]
@@ -30,11 +30,12 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
  %% Load
- M = loadFactor*0.5e6;
+ P = loadFactor*500e3; %[N?]
+ M = P*ecc; %[N m?]
  
  %% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm+1)';
+ xcoords = linspace(-L,L,2*numofelm+1)';
  ycoords = 0*xcoords;
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
@@ -52,7 +53,7 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
   Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
  end
  
- u1 = fopen([AbaqusRunsFolder,filename,'-model.inp'],'w');
+ u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
  if u1==-1
   warning('MyProgram:FileNotOpen','kann die Datei nicht oeffnen')
  else
@@ -97,18 +98,13 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
   fprintf(u1,'2.1e+11, 0.3\n');
   
   %% Boundary conditions
-  if strcmp(elType,'B32OS')
-   dofpNode=6;
-  else
-   dofpNode=7;
-  end
-  BC = [dofpNode*(rpLeft - 1) + 1, 0
-        dofpNode*(rpLeft - 1) + 2, 0;
-        dofpNode*(rpLeft - 1) + 3, 0;
-        dofpNode*(rpLeft - 1) + 4, 0;
-        dofpNode*(rpRight - 1) + 2, 0;
-        dofpNode*(rpRight - 1) + 3, 0;
-        dofpNode*(rpRight - 1) + 4, 0];
+  BC = [7*(rpLeft - 1) + 1, 0
+   7*(rpLeft - 1) + 2, 0;
+   7*(rpLeft - 1) + 3, 0;
+   7*(rpLeft - 1) + 4, 0;
+   7*(rpRight - 1) + 2, 0;
+   7*(rpRight - 1) + 3, 0;
+   7*(rpRight - 1) + 4, 0];
   %%
   
   fprintf(u1,'*Boundary\n');
@@ -122,7 +118,7 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
   
   u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
   
-  fprintf(u3,['*Include, input=',filename,'-model.inp\n']);
+  fprintf(u3,['*Include, input=',filename,'.inpData\n']);
   
   fprintf(u3,'** ----------------------------------------------------------------\n');
   fprintf(u3,'*STEP, name=Lambda-1\n');

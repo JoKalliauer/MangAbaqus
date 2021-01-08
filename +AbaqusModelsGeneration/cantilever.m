@@ -33,6 +33,7 @@ elseif contains(elType,'OS')
 else
  warning('MyProgram:unknown','elType not recogniced')
 end
+filename=[filename,'-eps',num2str(modelprops.epsilon)];
 
 %% IPE400
  h = (400)*10^(-3);
@@ -66,13 +67,18 @@ end
       Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
  end
 %% Boundary conditions
- BC = [7*(rpLeft - 1) + 1, 0
-       7*(rpLeft - 1) + 2, 0;
-       7*(rpLeft - 1) + 3, 0;
-       7*(rpLeft - 1) + 4, 0;
-       7*(rpLeft - 1) + 5, 0;
-       7*(rpLeft - 1) + 6, 0;
-       7*(rpLeft - 1) + 7, 0];
+ if strcmp(elType,'B32OS')
+  dofpNode=6;
+ else
+  dofpNode=7;
+ end
+ BC = [dofpNode*(rpLeft - 1) + 1, 0
+       dofpNode*(rpLeft - 1) + 2, 0;
+       dofpNode*(rpLeft - 1) + 3, 0;
+       dofpNode*(rpLeft - 1) + 4, 0;
+       dofpNode*(rpLeft - 1) + 5, 0;
+       dofpNode*(rpLeft - 1) + 6, 0;
+       dofpNode*(rpLeft - 1) + 7, 0];
 %%
 if ~exist(AbaqusRunsFolder, 'dir')
  if isunix
