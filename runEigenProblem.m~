@@ -20,7 +20,7 @@ function model = runEigenProblem(modelprops)
  end
  
  
- if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start','Name','runEigenProblem_waitbar'); end
+ if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start'); end
  lambda =   modelprops.lambda;
  if sum(strcmp(fieldnames(modelprops), 'forcerun')) == 0
   modelprops.forcerun=true;
@@ -223,7 +223,7 @@ function model = runEigenProblem(modelprops)
  end
  
  %% solve EigvalueProblem
- %Kt0_0 = Kts{matches(1),2};
+ Kt0_0 = Kts{matches(1),2};
  %ru = diag(Kt0_0==1e36);% remove boundary conditions
  %Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
  %newsizeKt0=size(Kt0_0,1);

@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -19,7 +19,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename = ['pureBendingBeamJK-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+ filename = ['twoBeams-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-ecc-',num2str(ecc),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
  
  %% IPE400
  h = (400)*10^(-3); %[m]
@@ -27,15 +27,21 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
  tw = 8.6e-3; %[m]
  tf = 13.5e-3; %[m]
  
+ if nargin<6
+  ecc = 0.05; % eccectricity
+ else
+  assert(numel(ecc)==1,'dimension of ecc must be one');
+ end
+ 
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
  %% Load
- M = loadFactor*0.5e6; %[N*m ?]
- Last=lambda*M;
+ P = loadFactor*500e3; %[N?]
+ M = P*ecc; % [N m?]
  
- %% Finite Element Model
+%% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm+1)';
+ xcoords = linspace(-L,L,2*numofelm+1)';
  ycoords = 0*xcoords;
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
@@ -44,16 +50,45 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
  Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
  rpLeft = Nodes(1,1);
+ rpMiddle= Nodes((end+1)/2,1);
  rpRight = Nodes(end,1);
  
  if strcmpi('B32',elType(1:3))
   Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
   Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
   Nodes = [Nodes; Nodes2];
-  Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
+  Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];%Nr,Anfang,mitte,Ende
  end
+
+  midnode1 = Nodes(Nodes(:,2)==0,1);
+  Nodes = [Nodes; Nodes(midnode1,:)];
+  midnode2 = size(Nodes,1);
+  Nodes(end,1) = midnode2;
+  Elements(Elements(:,2)==midnode1,2) = midnode2;
  
- u1 = fopen([AbaqusRunsFolder,filename,'-model.inp'],'w');
+ %% Boundary conditions
+ if strcmp(elType,'B32OS') || strcmp(elType,'B31') || strcmp(elType,'B33') || strcmp(elType,'B31OS') || strcmp(elType,'B32')
+  dofpNode=6;
+ elseif strcmp(elType,'B32OSH') || strcmp(elType,'B31H') || strcmp(elType,'B33H') || strcmp(elType,'B31OSH') || strcmp(elType,'B32H')
+  dofpNode=7;
+ else
+  error('MyProgram:Element','unknown Element')
+ end
+ BC = [dofpNode*(rpLeft  - 1) + 2, 0;
+  dofpNode*(rpLeft  - 1) + 3, 0;
+  dofpNode*(rpLeft  - 1) + 4, 0;
+  dofpNode*(rpMiddle- 1) + 1, 0;
+  dofpNode*(rpMiddle- 1) + 2, 0;
+  dofpNode*(rpMiddle- 1) + 3, 0;
+  dofpNode*(rpMiddle- 1) + 4, 0;
+  dofpNode*(midnode2- 1) + 1, 0;
+  dofpNode*(midnode2- 1) + 2, 0;
+  dofpNode*(midnode2- 1) + 3, 0;
+  dofpNode*(midnode2- 1) + 4, 0;
+  dofpNode*(rpRight - 1) + 2, 0;
+  dofpNode*(rpRight - 1) + 3, 0;
+  dofpNode*(rpRight - 1) + 4, 0];
+ u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
  if u1==-1
   warning('MyProgram:FileNotOpen','kann die Datei nicht oeffnen')
  else
@@ -88,8 +123,19 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
   
   fprintf(u1,'*Nset, nset=leftend, instance=Part-1-1\n');
   fprintf(u1,[num2str(rpLeft),'\n']);
+  fprintf(u1,'*Nset, nset=Mitte, instance=Part-1-1\n');
+  fprintf(u1,[num2str(rpMiddle),', ',num2str(midnode2),'\n']);
+  fprintf(u1,'*Nset, nset=MomemntMitte, instance=Part-1-1\n');
+  fprintf(u1,[num2str(midnode2),'\n']);
+  fprintf(u1,'*Nset, nset=ForceMitte, instance=Part-1-1\n');
+  fprintf(u1,[num2str(midnode2),'\n']);
   fprintf(u1,'*Nset, nset=rightend, instance=Part-1-1\n');
   fprintf(u1,[num2str(rpRight),'\n']);
+  
+%   fprintf(u1,'*Element,Type=CONN3D2, Elset=connector\n');
+%   fprintf(u1,'%d, Part-1-1.%d, Part-1-1.%d\n',[size(Elements,1)+1,midnode1,midnode2]);
+%   fprintf(u1,'*Connector Section, Elset=connector\n');
+%   fprintf(u1,'JOIN\n');
   
   fprintf(u1,'*End Assembly\n');
   
@@ -98,34 +144,23 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
   fprintf(u1,'2.1e+11, 0.3\n');
   
   %% Boundary conditions
-  if strcmp(elType,'B32') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
-   dofpNode=6;
-  elseif strcmp(elType,'B32OS') || strcmp(elType,'B32OSH')
-   dofpNode=7;
-  else
-   dofpNode=7;
-  end
-  BC = [dofpNode*(rpLeft - 1) + 1, 0
-        dofpNode*(rpLeft - 1) + 2, 0;
-        dofpNode*(rpLeft - 1) + 3, 0;
-        dofpNode*(rpLeft - 1) + 4, 0;
-        dofpNode*(rpRight - 1) + 2, 0;
-        dofpNode*(rpRight - 1) + 3, 0;
-        dofpNode*(rpRight - 1) + 4, 0];
   %%
   
   fprintf(u1,'*Boundary\n');
-  fprintf(u1,'leftend,  1, 1\n');
   fprintf(u1,'leftend,  2, 2\n');
   fprintf(u1,'leftend,  3, 3\n');
   fprintf(u1,'leftend,  4, 4\n');
+  fprintf(u1,'Mitte,  1, 1\n');
+  fprintf(u1,'Mitte,  2, 2\n');
+  fprintf(u1,'Mitte,  3, 3\n');
+  fprintf(u1,'Mitte,  4, 4\n');
   fprintf(u1,'rightend,  2, 2\n');
   fprintf(u1,'rightend,  3, 3\n');
   fprintf(u1,'rightend,  4, 4\n');
   
   u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
   
-  fprintf(u3,['*Include, input=',filename,'-model.inp\n']);
+  fprintf(u3,['*Include, input=',filename,'.inpData\n']);
   
   fprintf(u3,'** ----------------------------------------------------------------\n');
   fprintf(u3,'*STEP, name=Lambda-1\n');
@@ -156,7 +191,9 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
    else
     fprintf(u3,'*Cload, OP=MOD\n');
    end
-   fprintf(u3,'leftend, 5, %f\n',lambda(k)*M);
+   fprintf(u3,'leftend, 1, %f\n',lambda(k)*P);
+   fprintf(u3,'ForceMitte, 1, %f\n',-lambda(k)*P);
+   fprintf(u3,'MomemntMitte, 5, %f\n',lambda(k)*M);
    fprintf(u3,'rightend, 5, %f\n',-lambda(k)*M);
    
    fprintf(u3,'** \n');

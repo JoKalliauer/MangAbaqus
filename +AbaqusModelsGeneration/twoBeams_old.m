@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -37,7 +37,6 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  %% Load
  P = loadFactor*500e3; %[N?]
- load=lambda*P;
  
  %% Finite Element Model
  
@@ -46,26 +45,23 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
  
- if ecc~=0
+ %if ecc~=0
  % add eccentric rods:
  xcoords = [xcoords(1); xcoords; xcoords(end)];
  ycoords = [ecc; ycoords; ecc];
  zcoords = [0; zcoords; 0];
- end
+ %end
  
  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
  Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
-
+ rpLeft1 = Nodes(2,1);
+ rpRight1 = Nodes(end-1,1);
  
  if ecc~=0
-  rpLeft1 = Nodes(2,1);
-  rpRight1 = Nodes(end-1,1);
   rpLeft2 = Nodes(1,1); %LEFTENDFORCE
   rpRight2 = Nodes(end,1);
  else
-  rpLeft1 = Nodes(1,1);
-  rpRight1 = Nodes(end,1);
   rpLeft2 = rpLeft1; %LEFTENDFORCE=leftend
   rpRight2 = rpRight1;
  end
@@ -93,39 +89,27 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  fprintf(u1,'*Node\n');
  fprintf(u1,'%d, %f, %f, %f\n',Nodes');
  fprintf(u1,['*Element, type=',elType,'\n']);
+ if strcmpi(elType(1:3),'B32')
+  fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
+ else
+  fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
+ end
  if ecc~=0
-  if strcmpi(elType(1:3),'B32')
-   fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
-  else
-   fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
-  end
   fprintf(u1,['*Element, type=',elType,'\n']);
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',[Elements(1,:); Elements(end,:)]');
   else
    fprintf(u1,'%d, %d, %d\n',[Elements(1,:); Elements(end,:)]');
   end
- else
-  if strcmpi(elType(1:3),'B32')
-   fprintf(u1,'%d, %d, %d, %d\n',Elements(1:end,:)');
-  else
-   fprintf(u1,'%d, %d, %d\n',Elements(1:end,:)');
-  end
  end
  
  fprintf(u1,'*Elset, elset=AllElements\n');
- if ecc~=0
-  fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(2:end-1,1));
- else
-  fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(1:end,1));
- end
+ fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(2:end-1,1));
  if length(Elements(:,1))/16~=floor(length(Elements(:,1))/16)
   fprintf(u1,'\n');
  end
- if ecc~=0
-  fprintf(u1,'*Elset, elset=Vert\n');
-  fprintf(u1,'%d, %d\n',[Elements(1,1),Elements(end,1)]);
- end
+ fprintf(u1,'*Elset, elset=Vert\n');
+ fprintf(u1,'%d, %d\n',[Elements(1,1),Elements(end,1)]);
  
  fprintf(u1,'** Section: Section-1  Profile: Profile-1\n');
  fprintf(u1,'*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I\n');
@@ -159,22 +143,16 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  fprintf(u1,'*Material, name=Material-1\n');
  fprintf(u1,'*Elastic\n');
- fprintf(u1,'2.1e+11, 0.3\n'); %[N/m² , -]?
+ fprintf(u1,'2.1e+11, 0.3\n');
  
  %% Boundary conditions
- %dofpNode=7;
- if strcmp(elType,'B32') || strcmp(elType,'B32H') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
-  dofpNode=6;
- else
-  dofpNode=7;
- end
- BC = [dofpNode*(rpLeft1 - 1) + 1, 0
-       dofpNode*(rpLeft1 - 1) + 2, 0;
-       dofpNode*(rpLeft1 - 1) + 3, 0;
-       dofpNode*(rpLeft1 - 1) + 4, 0;
-       dofpNode*(rpRight1 - 1) + 2, 0;
-       dofpNode*(rpRight1 - 1) + 3, 0;
-       dofpNode*(rpRight1 - 1) + 4, 0];
+ BC = [7*(rpLeft1 - 1) + 1, 0
+  7*(rpLeft1 - 1) + 2, 0;
+  7*(rpLeft1 - 1) + 3, 0;
+  7*(rpLeft1 - 1) + 4, 0;
+  7*(rpRight1 - 1) + 2, 0;
+  7*(rpRight1 - 1) + 3, 0;
+  7*(rpRight1 - 1) + 4, 0];
  %%
  
  fprintf(u1,'*Boundary\n');

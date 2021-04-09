@@ -1,10 +1,12 @@
-function [StifMatrices,num0,activeDofs,BC] = getStiffnessMatrices(model,lambdareq)
+function [StifMatrices,num0,activeDofs,BC] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
 
+
+if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices');end
 %Loads = [];
 
 filename = model.filename;
 lambda = model.lambda;
-BC = model.BC;
+BCMatlab = model.BCMatlab;
 %Nodes = model.Nodes;
 
 if ~exist(model.AbaqusRunsFolder, 'dir')
@@ -17,12 +19,19 @@ if ~exist(model.AbaqusRunsFolder, 'dir')
   return
  end
 end
- if ~exist([model.AbaqusRunsFolder,filename,'_STIF19.mtx'],'file')
+ if ~exist([model.AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
   %warning('MyProgramm:Missing','_STIF*.mtx missing')
-  error('MyProgramm:Missing','_STIF*.mtx missing')
-  %return
+  if usejava('jvm'); waitbar(1,wb,'getStiffnessMatrices error');end
+  if ~exist([model.AbaqusRunsFolder,filename,'_STIF7.mtx'],'file') && ~strcmp(typeofanalysis,'Kg')
+   if usejava('jvm'); close(wb);end
+   model.AbaqusRunsFolder
+   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true',model.AbaqusRunsFolder)
+   %return
+  else
+   warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')
+  end
  end
-cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/ownCloud/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
+cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
  lenFN = length(filename);
  StifFilesMatlabVersion = ls([filename,'_STIF*.mtx']);
  StifFilesMatlabVersionTranspose=StifFilesMatlabVersion.';
@@ -38,7 +47,7 @@ cd ~/ownCloud/Post/MangAbaqus/ %cd ..
 num = sort(num);
 
 %     lambda = lambda(1:(length(num)-1));
-if nargin<2
+if ~exist('lambdareq','var')
  StifMatrices = cell(length(num),2);
 elseif isempty(lambdareq)
  StifMatrices = cell(length(num),2);
@@ -53,11 +62,21 @@ if steps~=length(num)
 else
  num0 = num;
 end
+stepsAbaqus=length(num);
+%num0Abaqus=num;
+maxsteps=max(steps,stepsAbaqus);
+BCAbaqus=[];
 for i = 1:steps
+ if usejava('jvm'); waitbar(i/maxsteps,wb,'getStiffnessMatrices ...');end
  fname = [model.AbaqusRunsFolder,filename,'_STIF',num2str(num(i)),'.mtx'];
- disp(fname);
+ %disp(fname);
+ if usejava('jvm')
+  wb.Children.Title.Interpreter = 'none'; %https://de.mathworks.com/matlabcentral/answers/78895-how-do-i-make-interpreter-none-work-inside-the-waitbar-text#answer_298200
+  waitbar(i/maxsteps,wb,fname,'interpreter','none');
+ end
  mtxSparse = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname);
  dofs = max(mtxSparse(:,1:4));
+ dofsinv = min(mtxSparse(:,1:4)); %#ok<NASGU>
  %avoid internat degrees of freedom
  internalNodes = unique(mtxSparse(mtxSparse(:,1)<0,1));
  internalNodesNew = ctranspose(1:length(internalNodes)) + dofs(1);
@@ -71,7 +90,7 @@ for i = 1:steps
  if i==1 % initial stiffness matrix
   StifMatrices{i,1} = 0;
   dofslist = zeros(dofs(1)*dofs(2),1);
-  BC2 = BC;
+  BC2 = BCMatlab;
  else
   StifMatrices{i,1} = lambda(i-1);
  end
@@ -87,6 +106,9 @@ for i = 1:steps
   mtx(j,3) = mtxSparse(j,5);
   if (row==col)&&(i==1)
    dofslist(row) = row;
+   if mtx(j,3)==1e+36
+    BCAbaqus=[BCAbaqus;row]; %#ok<AGROW>
+   end
   end
   %                n = n+1;
   %                mtx(n,1) = col;
@@ -94,6 +116,22 @@ for i = 1:steps
   %                mtx(n,3) = mtxSparse(j,5);
   %             end
  end
+ 
+ BCsort=unique(BCMatlab(:,1));
+ if i==1
+  assert(dofs(2)==dofs(4),'insconsistent freedoms')
+  assert(dofs(2)==model.dofpNode,'dofpNode %d does not agree with Abaqus %d',model.dofpNode,dofs(2))
+  assert(dofs(1)==dofs(3),'insconsistent nr of nodes')
+  assert(dofs(1)==size(model.Nodes,1),'nr of nodes do not agree with Abaqus')
+ end
+ if all(BCsort==BCAbaqus)
+  BC=BCMatlab;
+ else
+  warning('MyProgram:Problem','Check BC')
+  error('MyProgram:Problem','Check BC')
+  BC=BCMatlab; %#ok<UNRCH>
+ end
+
  
  %mtx2 = sparse(mtx(:,1),mtx(:,2),mtx(:,3));
  %diagmtx2 = speye(size(mtx2,1)).*diag(mtx2);
@@ -136,5 +174,5 @@ for i = 1:steps
  
  StifMatrices{i,2} = mtx;
 end
-
+if usejava('jvm'); waitbar(1,wb,'getStiffnessMatrices finish'); close(wb);end
 end

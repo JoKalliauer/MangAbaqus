@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = detKt2D(L,numofelm,lambda,loadFactor,eltype,~,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -12,14 +12,17 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
   loadFactor = 1.0;
  end
  if nargin<5
-  elType = 'B32OSH';
+  eltype = 'B32OSH';
  end
+
+ 
+ 
  if lambda(1) == 0
   lambda(1) = [];
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename = ['pureBendingBeamJK-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+ filename = ['detKt-',eltype,'-',num2str(numofelm(1)),'-',num2str(numofelm(end)),'-len-',num2str(L),'-f-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
  
  %% IPE400
  h = (400)*10^(-3); %[m]
@@ -27,41 +30,102 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
  tw = 8.6e-3; %[m]
  tf = 13.5e-3; %[m]
  
+
+ 
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
  %% Load
- M = loadFactor*0.5e6; %[N*m ?]
- Last=lambda*M;
+ P = loadFactor*1e6; %[N?]
+ %M = 0; % [N m?]
  
- %% Finite Element Model
+%% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm+1)';
+ xcoords = unique([linspace(-L,0,numofelm(1)+1)';linspace(0,L,numofelm(end)+1)']);
  ycoords = 0*xcoords;
- zcoords = 0*xcoords;
+ %zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
  
- Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
+ Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords];
  Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
  
  rpLeft = Nodes(1,1);
+ rpMiddle= Nodes(Nodes(:,2)==0,1);
  rpRight = Nodes(end,1);
  
- if strcmpi('B32',elType(1:3))
+ if strcmpi('B32',eltype(1:3)) || strcmpi('B22',eltype(1:3))
   Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
   Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
   Nodes = [Nodes; Nodes2];
-  Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
+  Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];%Nr,Anfang,mitte,Ende
  end
+
+   midnode1 = Nodes(Nodes(:,2)==0,1);
+%   Nodes = [Nodes; Nodes(midnode1,:)];
+%   %midnode2 = size(Nodes,1);
+   midnode2=rpMiddle;
+%   Nodes(end,1) = midnode2;
+   Elements(Elements(:,2)==midnode1,2) = midnode2;
  
- u1 = fopen([AbaqusRunsFolder,filename,'-model.inp'],'w');
+ %% Boundary conditions
+ if strcmp(eltype,'B21') || strcmp(eltype,'B23') || strcmp(eltype,'B22')
+  dofpNode=6;
+ else
+  error('MyProgram:Element','unknown Element')
+ end
+ %+1...Nx
+ %+2...Ny
+ %+6...Mz
+ BCrpLeft=[1,2];
+ BCrpMiddle=[2,6];
+ BCmidnode2=BCrpMiddle;
+ BCrpRight=[1,2];
+ BC = ...
+ [dofpNode*(rpLeft  - 1) + 1, 0;
+  dofpNode*(rpLeft  - 1) + 2, 0;
+  %dofpNode*(rpLeft  - 1) + 3, 0;
+  %dofpNode*(rpLeft  - 1) + 4, 0;
+  %dofpNode*(rpMiddle- 1) + 1, 0;
+  dofpNode*(rpMiddle- 1) + 2, 0;
+  %dofpNode*(rpMiddle- 1) + 3, 0;
+  %dofpNode*(rpMiddle- 1) + 4, 0;
+  dofpNode*(rpMiddle- 1) + 6, 0;
+  %dofpNode*(midnode2- 1) + 1, 0;
+  %dofpNode*(midnode2- 1) + 2, 0;
+  %dofpNode*(midnode2- 1) + 3, 0;
+  %dofpNode*(midnode2- 1) + 4, 0;
+  %dofpNode*(rpRight - 1) + 1, 0;
+  dofpNode*(rpRight - 1) + 2, 0;
+  %dofpNode*(rpRight - 1) + 3, 0;
+  %dofpNode*(rpRight - 1) + 4, 0
+  ];
+ for i=1:numel(BCrpLeft)
+  BC=[BC;dofpNode*(rpLeft - 1) + BCrpLeft(i), 0]; %#ok<AGROW>
+ end
+ for i=1:numel(BCrpMiddle)
+  BC=[BC;dofpNode*(rpMiddle - 1) + BCrpMiddle(i), 0]; %#ok<AGROW>
+ end
+ for i=1:numel(BCmidnode2)
+  BC=[BC;dofpNode*(midnode2 - 1) + BCmidnode2(i), 0]; %#ok<AGROW>
+ end
+ for i=1:numel(BCrpRight)
+  BC=[BC;dofpNode*(rpRight - 1) + BCrpRight(i), 0]; %#ok<AGROW>
+ end
+ [~,idx]=unique(BC(:,1));
+ BC=BC(idx,:);
+ 
+ u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
  if u1==-1
-  warning('MyProgram:FileNotOpen','kann die Datei nicht oeffnen')
+  error('MyProgram:FileNotOpen','kann die Datei nicht oeffnen')
  else
   fprintf(u1,'*Part, name=Part-1\n');
   fprintf(u1,'*Node\n');
-  fprintf(u1,'%d, %f, %f, %f\n',Nodes');
-  fprintf(u1,['*Element, type=',elType,'\n']);
-  if strcmpi(elType(1:3),'B32')
+  if strcmpi(eltype(1:2),'B2')
+   fprintf(u1,'%d, %f, %f\n',Nodes');
+  else
+   fprintf(u1,'%d, %f, %f, %f\n',Nodes');
+  end
+  fprintf(u1,['*Element, type=',eltype,'\n']);
+  if strcmpi(eltype(1:3),'B32') || strcmpi(eltype(1:3),'B22')
    fprintf(u1,'%d, %d, %d, %d\n',Elements');
   else
    fprintf(u1,'%d, %d, %d\n',Elements');
@@ -88,8 +152,19 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
   
   fprintf(u1,'*Nset, nset=leftend, instance=Part-1-1\n');
   fprintf(u1,[num2str(rpLeft),'\n']);
+  fprintf(u1,'*Nset, nset=Mitte, instance=Part-1-1\n');
+  fprintf(u1,[num2str(rpMiddle),', ',num2str(midnode2),'\n']);
+  fprintf(u1,'*Nset, nset=MomemntMitte, instance=Part-1-1\n');
+  fprintf(u1,[num2str(midnode2),'\n']);
+  fprintf(u1,'*Nset, nset=ForceMitte, instance=Part-1-1\n');
+  fprintf(u1,[num2str(midnode2),'\n']);
   fprintf(u1,'*Nset, nset=rightend, instance=Part-1-1\n');
   fprintf(u1,[num2str(rpRight),'\n']);
+  
+%   fprintf(u1,'*Element,Type=CONN3D2, Elset=connector\n');
+%   fprintf(u1,'%d, Part-1-1.%d, Part-1-1.%d\n',[size(Elements,1)+1,midnode1,midnode2]);
+%   fprintf(u1,'*Connector Section, Elset=connector\n');
+%   fprintf(u1,'JOIN\n');
   
   fprintf(u1,'*End Assembly\n');
   
@@ -98,34 +173,38 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
   fprintf(u1,'2.1e+11, 0.3\n');
   
   %% Boundary conditions
-  if strcmp(elType,'B32') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
-   dofpNode=6;
-  elseif strcmp(elType,'B32OS') || strcmp(elType,'B32OSH')
-   dofpNode=7;
-  else
-   dofpNode=7;
-  end
-  BC = [dofpNode*(rpLeft - 1) + 1, 0
-        dofpNode*(rpLeft - 1) + 2, 0;
-        dofpNode*(rpLeft - 1) + 3, 0;
-        dofpNode*(rpLeft - 1) + 4, 0;
-        dofpNode*(rpRight - 1) + 2, 0;
-        dofpNode*(rpRight - 1) + 3, 0;
-        dofpNode*(rpRight - 1) + 4, 0];
   %%
   
   fprintf(u1,'*Boundary\n');
-  fprintf(u1,'leftend,  1, 1\n');
-  fprintf(u1,'leftend,  2, 2\n');
-  fprintf(u1,'leftend,  3, 3\n');
-  fprintf(u1,'leftend,  4, 4\n');
-  fprintf(u1,'rightend,  2, 2\n');
-  fprintf(u1,'rightend,  3, 3\n');
-  fprintf(u1,'rightend,  4, 4\n');
+%   %fprintf(u1,'leftend,  1, 1\n');
+%   %fprintf(u1,'leftend,  2, 2\n');
+%   fprintf(u1,'leftend,  3, 3\n');
+%   fprintf(u1,'leftend,  4, 4\n');
+%   %fprintf(u1,'Mitte,  1, 1\n');
+%   %fprintf(u1,'Mitte,  2, 2\n');
+%   fprintf(u1,'Mitte,  3, 3\n');
+%   fprintf(u1,'Mitte,  4, 4\n');
+%   %fprintf(u1,'Mitte,  6, 6\n');
+%   %fprintf(u1,'rightend,  1, 1\n');
+%   %fprintf(u1,'rightend,  2, 2\n');
+%   fprintf(u1,'rightend,  3, 3\n');
+%   fprintf(u1,'rightend,  4, 4\n');
+ for i=1:numel(BCrpLeft)
+  FoN=BCrpLeft(i);
+  fprintf(u1,'leftend,  %d, %d\n',FoN,FoN);
+ end
+ for i=1:numel(BCrpMiddle)
+  FoN=BCrpMiddle(i);
+  fprintf(u1,'Mitte,  %d, %d\n',FoN,FoN);
+ end
+ for i=1:numel(BCrpRight)
+  FoN=BCrpRight(i);
+  fprintf(u1,'rightend,  %d, %d\n',FoN,FoN);
+ end
   
   u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
   
-  fprintf(u3,['*Include, input=',filename,'-model.inp\n']);
+  fprintf(u3,['*Include, input=',filename,'.inpData\n']);
   
   fprintf(u3,'** ----------------------------------------------------------------\n');
   fprintf(u3,'*STEP, name=Lambda-1\n');
@@ -156,8 +235,10 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,
    else
     fprintf(u3,'*Cload, OP=MOD\n');
    end
-   fprintf(u3,'leftend, 5, %f\n',lambda(k)*M);
-   fprintf(u3,'rightend, 5, %f\n',-lambda(k)*M);
+   %fprintf(u3,'leftend, 1, %f\n',lambda(k)*P);
+   fprintf(u3,'ForceMitte, 1, %f\n',-lambda(k)*P);
+   %fprintf(u3,'MomemntMitte, 5, %f\n',lambda(k)*M);
+   %fprintf(u3,'rightend, 5, %f\n',-lambda(k)*M);
    
    fprintf(u3,'** \n');
    fprintf(u3,'** OUTPUT REQUESTS\n');

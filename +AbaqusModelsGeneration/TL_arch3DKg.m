@@ -1,5 +1,5 @@
 function [filename,lambda,BC,Nodes,Elements,load,dofpNode,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
-= TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
+= TL_arch3DKg(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
 razem = [];
 if nargin<1
     lambda = 0.01:0.01:1;
@@ -20,7 +20,7 @@ end
 elmtype=eltype;
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+filename = ['TL_arch3DKg-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
 
 %% RECT
  h = 20e-2;
@@ -122,7 +122,7 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
      end
  end
  
- %P = [Nodes(:,1),P];
+ P = [Nodes(:,1),P];
  Pd = [Elements(:,1),Pd];
  
 %  plotMesh(Nodes,Elements);
@@ -207,7 +207,7 @@ fprintf(u1,'allnodes,  4, 4\n');
 fprintf(u1,'allnodes,  5, 5\n');
 
 
-u2 = fopen([AbaqusRunsFolder,filename,'-imperfections.inp'],'w');
+u2 = fopen([AbaqusRunsFolder,filename,'.inp'],'w'); %u2 = fopen([AbaqusRunsFolder,filename,'-imperfections.inp'],'w');
 fprintf(u2,['*Include, input=',filename,'.inpData\n']);
 fprintf(u2,'** ----------------------------------------------------------------\n');
 fprintf(u2,'** \n');
@@ -240,11 +240,13 @@ fprintf(u2,'** \n');
     fprintf(u2,'ESF1, LE, NFORC, NFORCSO, PE, PEEQ, PEMAG, S, SF\n');
 fprintf(u2,'*NODE FILE\n');
 fprintf(u2,'U\n');
+fprintf(u2,'*NODE PRINT, nset=allnodes\n');
+fprintf(u2,'U\n');
 fprintf(u2,'*End Step\n');
 
 fclose(u2);
 
-u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
+u3 = fopen([AbaqusRunsFolder,filename,'.inp3'],'w');
 
 if impsize~=0
     fprintf(u3,['*Imperfection, File=',filename,'-imperfections, STEP=1\n']);
@@ -257,30 +259,30 @@ fprintf(u3,'*STEP, name=Lambda-1\n');
 fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
 fprintf(u3,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
 fprintf(u3,'*END STEP\n');
-% % % 
-% % % fprintf(u3,'** ----------------------------------------------------------------\n');
-% % % fprintf(u3,'*Step, name=Eig-1, nlgeom=NO, perturbation\n');
-% % % fprintf(u3,'*Buckle, eigensolver=lanczos\n');
-% % % fprintf(u3,'10, , , , \n');
-% % % 
-% % %     fprintf(u3,'*Boundary, op=NEW, load case=1\n');
-% % %     fprintf(u3,'leftend,  1, 1\n');
-% % %     fprintf(u3,'leftend,  2, 2\n');
-% % %     fprintf(u3,'rightend,  1, 1\n');
-% % %     fprintf(u3,'rightend,  2, 2\n');
-% % %     fprintf(u3,'*Boundary, op=NEW, load case=2\n');
-% % %     fprintf(u3,'leftend,  1, 1\n');
-% % %     fprintf(u3,'leftend,  2, 2\n');
-% % %     fprintf(u3,'rightend,  1, 1\n');
-% % %     fprintf(u3,'rightend,  2, 2\n');
-% % %        
-% % %     fprintf(u3,'*Dload, CONSTANT RESULTANT=YES, OP=NEW\n');
-% % %     fprintf(u3,'Part-1-1.%d, PY, %f\n',[Pd(:,1), Pd(:,2)]');
-% % %     
-% % %     fprintf(u3,'*NODE PRINT, nset=allnodes\n');
-% % %     fprintf(u3,'U\n');
-% % %     
-% % % fprintf(u3,'*END STEP\n');
+
+% fprintf(u3,'** ----------------------------------------------------------------\n');
+% fprintf(u3,'*Step, name=Eig-1, nlgeom=NO, perturbation\n');
+% fprintf(u3,'*Buckle, eigensolver=lanczos\n');
+% fprintf(u3,'10, , , , \n');
+% 
+%     fprintf(u3,'*Boundary, op=NEW, load case=1\n');
+%     fprintf(u3,'leftend,  1, 1\n');
+%     fprintf(u3,'leftend,  2, 2\n');
+%     fprintf(u3,'rightend,  1, 1\n');
+%     fprintf(u3,'rightend,  2, 2\n');
+%     fprintf(u3,'*Boundary, op=NEW, load case=2\n');
+%     fprintf(u3,'leftend,  1, 1\n');
+%     fprintf(u3,'leftend,  2, 2\n');
+%     fprintf(u3,'rightend,  1, 1\n');
+%     fprintf(u3,'rightend,  2, 2\n');
+%        
+%     fprintf(u3,'*Dload, CONSTANT RESULTANT=YES, OP=NEW\n');
+%     fprintf(u3,'Part-1-1.%d, PY, %f\n',[Pd(:,1), Pd(:,2)]');
+%     
+%     fprintf(u3,'*NODE PRINT, nset=allnodes\n');
+%     fprintf(u3,'U\n');
+%     
+% fprintf(u3,'*END STEP\n');
 
 stepnum = 1;
 for k = 1:length(lambda)
@@ -347,102 +349,102 @@ for k = 1:length(lambda)
     fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
     fprintf(u3,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
     fprintf(u3,'*END STEP\n');
-% % %     
-% % % fprintf(u3,'** ----------------------------------------------------------------\n');
-% % % fprintf(u3,['*Step, name=Eig-',num2str(stepnum),', nlgeom=NO, perturbation\n']);
-% % % fprintf(u3,'*Buckle, eigensolver=lanczos\n');
-% % % fprintf(u3,'10, , , , \n');
-% % % 
-% % %     fprintf(u3,'*Boundary, op=NEW, load case=1\n');
-% % %     fprintf(u3,'leftend,  1, 1\n');
-% % %     fprintf(u3,'leftend,  2, 2\n');
-% % %     fprintf(u3,'rightend,  1, 1\n');
-% % %     fprintf(u3,'rightend,  2, 2\n');
-% % %     fprintf(u3,'*Boundary, op=NEW, load case=2\n');
-% % %     fprintf(u3,'leftend,  1, 1\n');
-% % %     fprintf(u3,'leftend,  2, 2\n');
-% % %     fprintf(u3,'rightend,  1, 1\n');
-% % %     fprintf(u3,'rightend,  2, 2\n');
-% % %     
-% % %     fprintf(u3,'*Dload, CONSTANT RESULTANT=YES, OP=NEW\n');
-% % % %     fprintf(u3,'Part-1-1.%d, PY, %f\n',[Pd(:,1), (1-lambda(k))*Pd(:,2)]');
-% % %     fprintf(u3,'Part-1-1.%d, PY, %f\n',[Pd(:,1), Pd(:,2)]');
-% % %     fprintf(u3,'*NODE PRINT, nset=allnodes\n');
-% % %     fprintf(u3,'U\n');
-% % % fprintf(u3,'*END STEP\n');
+    
+% fprintf(u3,'** ----------------------------------------------------------------\n');
+% fprintf(u3,['*Step, name=Eig-',num2str(stepnum),', nlgeom=NO, perturbation\n']);
+% %fprintf(u3,'*Buckle, eigensolver=lanczos\n');
+% fprintf(u3,'10, , , , \n');
+% 
+%     fprintf(u3,'*Boundary, op=NEW, load case=1\n');
+%     fprintf(u3,'leftend,  1, 1\n');
+%     fprintf(u3,'leftend,  2, 2\n');
+%     fprintf(u3,'rightend,  1, 1\n');
+%     fprintf(u3,'rightend,  2, 2\n');
+%     fprintf(u3,'*Boundary, op=NEW, load case=2\n');
+%     fprintf(u3,'leftend,  1, 1\n');
+%     fprintf(u3,'leftend,  2, 2\n');
+%     fprintf(u3,'rightend,  1, 1\n');
+%     fprintf(u3,'rightend,  2, 2\n');
+%     
+%     fprintf(u3,'*Dload, CONSTANT RESULTANT=YES, OP=NEW\n');
+% %     fprintf(u3,'Part-1-1.%d, PY, %f\n',[Pd(:,1), (1-lambda(k))*Pd(:,2)]');
+%     fprintf(u3,'Part-1-1.%d, PY, %f\n',[Pd(:,1), Pd(:,2)]');
+%     fprintf(u3,'*NODE PRINT, nset=allnodes\n');
+%     fprintf(u3,'U\n');
+% fprintf(u3,'*END STEP\n');
     
 end
 
 fclose(u3);
-% 
-% u4 = fopen(['AbaqusRuns/',filename,'_initKg.inp'],'w');
-% 
-% fprintf(u4,['*Include, input=',filename,'.inpData\n']);
-% fprintf(u4,'** ----------------------------------------------------------------\n');
-% fprintf(u4,'*STEP, name=Lambda-1\n');
-% fprintf(u4,'*MATRIX GENERATE, STIFFNESS\n');
-% fprintf(u4,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
-% fprintf(u4,'*END STEP\n');
-% 
-%     stepnum = 1;
-%     fprintf(u4,'** ----------------------------------------------------------------\n');
-%     fprintf(u4,'** \n');
-%     fprintf(u4,['** STEP: Step-',num2str(stepnum),'\n']);
-%     fprintf(u4,'** \n');
-%     fprintf(u4,['*Step, name=Step-',num2str(stepnum),', nlgeom=YES\n']);
-%     fprintf(u4,'*Static\n');
-%     fprintf(u4,['1',', ','1',', ','0.0001',', ','1','\n']);
-% 
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'** LOADS\n');
-%     fprintf(u4,'** \n');
-% 
-%     fprintf(u4,'*Dload, CONSTANT RESULTANT=YES, OP=NEW\n');
-%     fprintf(u4,'Part-1-1.%d, PY, %f\n',[Pd(:,1), Pd(:,2)/abs(p)]');
-%         
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'** OUTPUT REQUESTS\n');
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'*Restart, write, frequency=0\n');
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'** FIELD OUTPUT: F-Output-1\n');
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'*Output, field, variable=PRESELECT\n');
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'** HISTORY OUTPUT: H-Output-1\n');
-%     fprintf(u4,'** \n');
-%     fprintf(u4,'*Output, history, variable=PRESELECT\n');
-%     fprintf(u4,'*NODE PRINT, nset=allnodes\n');
-%     fprintf(u4,'U\n');
-%     fprintf(u4,'*EL PRINT\n');
-%     fprintf(u4,'\n');
-%     fprintf(u4,'SE\n');
-%     fprintf(u4,'*EL PRINT\n');
-%     fprintf(u4,'\n');
-%     fprintf(u4,'SF\n');
-%     fprintf(u4,'*End Step\n');
-%     
-%     stepnum = stepnum + 1;
-%     fprintf(u4,'** ----------------------------------------------------------------\n');
-%     fprintf(u4,['*STEP, name=Lambda-',num2str(stepnum),'\n']);
-%     fprintf(u4,'*MATRIX GENERATE, STIFFNESS\n');
-%     fprintf(u4,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
-%     fprintf(u4,'*END STEP\n');
-%     
-% 
-% fclose(u4);
+
+u4 = fopen([AbaqusRunsFolder,filename,'_initKg.inp'],'w');%u4 = fopen([AbaqusRunsFolder,filename,'_initKg.inp'],'w');
+
+fprintf(u4,['*Include, input=',filename,'.inpData\n']);
+fprintf(u4,'** ----------------------------------------------------------------\n');
+fprintf(u4,'*STEP, name=Lambda-1\n');
+fprintf(u4,'*MATRIX GENERATE, STIFFNESS\n');
+fprintf(u4,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
+fprintf(u4,'*END STEP\n');
+
+    stepnum = 1;
+    fprintf(u4,'** ----------------------------------------------------------------\n');
+    fprintf(u4,'** \n');
+    fprintf(u4,['** STEP: Step-',num2str(stepnum),'\n']);
+    fprintf(u4,'** \n');
+    fprintf(u4,['*Step, name=Step-',num2str(stepnum),', nlgeom=YES\n']);
+    fprintf(u4,'*Static\n');
+    fprintf(u4,['1',', ','1',', ','0.0001',', ','1','\n']);
+
+    fprintf(u4,'** \n');
+    fprintf(u4,'** LOADS\n');
+    fprintf(u4,'** \n');
+
+    fprintf(u4,'*Dload, CONSTANT RESULTANT=YES, OP=NEW\n');
+    fprintf(u4,'Part-1-1.%d, PY, %f\n',[Pd(:,1), Pd(:,2)/abs(p)]');
+        
+    fprintf(u4,'** \n');
+    fprintf(u4,'** OUTPUT REQUESTS\n');
+    fprintf(u4,'** \n');
+    fprintf(u4,'*Restart, write, frequency=0\n');
+    fprintf(u4,'** \n');
+    fprintf(u4,'** FIELD OUTPUT: F-Output-1\n');
+    fprintf(u4,'** \n');
+    fprintf(u4,'*Output, field, variable=PRESELECT\n');
+    fprintf(u4,'** \n');
+    fprintf(u4,'** HISTORY OUTPUT: H-Output-1\n');
+    fprintf(u4,'** \n');
+    fprintf(u4,'*Output, history, variable=PRESELECT\n');
+    fprintf(u4,'*NODE PRINT, nset=allnodes\n');
+    fprintf(u4,'U\n');
+    fprintf(u4,'*EL PRINT\n');
+    fprintf(u4,'\n');
+    fprintf(u4,'SE\n');
+    fprintf(u4,'*EL PRINT\n');
+    fprintf(u4,'\n');
+    fprintf(u4,'SF\n');
+    fprintf(u4,'*End Step\n');
+    
+    stepnum = stepnum + 1;
+    fprintf(u4,'** ----------------------------------------------------------------\n');
+    fprintf(u4,['*STEP, name=Lambda-',num2str(stepnum),'\n']);
+    fprintf(u4,'*MATRIX GENERATE, STIFFNESS\n');
+    fprintf(u4,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
+    fprintf(u4,'*END STEP\n');
+    
+
+fclose(u4);
 
 end
 
 
-% function plotMesh(Nodes,Elements)
-%    hold on
-%    for i = 1:size(Elements,1)
-%        nnums = Elements(i,2:end);
-%        nnums = [nnums,nnums(1)];
-%        xcoords = Nodes(nnums,2);
-%        ycoords = Nodes(nnums,3);
-%        zcoords = Nodes(nnums,4);
-%        plot3(xcoords,ycoords,zcoords,'bx-')
-%    end
-% end
+function plotMesh(Nodes,Elements)
+   hold on
+   for i = 1:size(Elements,1)
+       nnums = Elements(i,2:end);
+       nnums = [nnums,nnums(1)];
+       xcoords = Nodes(nnums,2);
+       ycoords = Nodes(nnums,3);
+       zcoords = Nodes(nnums,4);
+       plot3(xcoords,ycoords,zcoords,'bx-')
+   end
+end

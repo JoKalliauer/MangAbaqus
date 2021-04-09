@@ -1,5 +1,5 @@
 function [filename,lambda,BC,Nodes,Elements,load,dofpNode,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
-= TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
+= TL_arch3D_sin(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
 razem = [];
 if nargin<1
     lambda = 0.01:0.01:1;
@@ -13,14 +13,14 @@ if nargin<2
 end
 if length(eltype)>=5
  if strcmp(eltype(1:5),'B32OS')
-  warning('MyProgram:Input','TL_arch3D only with rect tested')
+  warning('MyProgram:Input','TL_arch3D_sin only with rect tested')
  end
 end
 
 elmtype=eltype;
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+filename = ['TL_arch3D_sin-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
 
 %% RECT
  h = 20e-2;
@@ -66,7 +66,9 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(l
  
  xcoords = 1e-12*round(1e12*xcoords);
  xcoords(abs(xcoords)<1e-12) = 0;
- ycoords = 4*H/L^2*xcoords.*(L - xcoords);
+ %ycoords = 4*H/L^2*xcoords.*(L - xcoords);
+ ycoords = H*sin(xcoords*pi/(L));
+ ycoords(abs(ycoords)<eps(2))=0;
 
 %   plot(xcoords,ycoords,'mo-'); hold off
     
@@ -183,8 +185,10 @@ fprintf(u1,'*Elastic\n');
 fprintf(u1,'2e+11, 0.3\n');
 
 %% Boundary conditions
-  if strcmp(elmtype,'B32OSH') || strcmp(elmtype,'B31OSH') %%B31H,B33H 
+  if strcmp(elmtype,'B32OSH') || strcmp(elmtype,'B31OSH')
    dofpNode=7;
+  elseif strcmp(elmtype,'B31H') || strcmp(elmtype,'B33H')
+   dofpNode=6;
   else
    dofpNode=6;
   end
