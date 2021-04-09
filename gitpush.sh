@@ -4,7 +4,7 @@ git config core.eol lf
 git pull
 #git status
 git add .
-git reset -- AbaqusRuns/* AnalysisResults/*  Output/* *.mat
+git reset -- AbaqusRuns/* AnalysisResults/*  Output/* *.mat *.m~
 git status
 
 

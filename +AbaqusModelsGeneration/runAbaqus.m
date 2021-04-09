@@ -26,18 +26,11 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
     if reply0~=127
      reply=reply0;
     else
-<<<<<<< HEAD
      %/home/jkalliau/ownCloud/Linux/bin/imwsrun
      if modelprops.ask_delete==false
       reply=system(['exec /usr/bin/imwsrun abaqus:2021 cpus=1 interactive ask_delete=OFF job=',filename]);
      else
       reply=system(['exec /usr/bin/imwsrun abaqus:2021 cpus=1 interactive job=',filename]);
-=======
-     if modelprops.ask_delete==false
-      reply=system(['exec imwsrun abaqus:2020 cpus=1 interactive ask_delete=OFF job=',filename]);
-     else
-      reply=system(['exec imwsrun abaqus:2020 cpus=1 interactive job=',filename]);
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
      end
     end
     if reply==1
@@ -90,15 +83,12 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
   else
    warning('MyProgram:Untested','Platform not supported')
   end %if isunix/ispc/ismac
-<<<<<<< HEAD
   if (exist([filename,'.sta'], 'file') == 2)
    %cleanup useless staff
    % ls([filename,'_X*.sim'])
    system(['rm ',filename,'_X*.sim'])
    %system(['rm ',filename,'.mdl'])
   end
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  else
   %   if~(exist([filename,'.odb_f'], 'file') == 2)
   %    disp('no .odb_f')
@@ -120,13 +110,9 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
   %    error('MyProgramm:Missing','_STIF*.mtx missing, try rerunning forceAbaqus=true')
   %    %return
   %   end
-<<<<<<< HEAD
   %return
  end %if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
 
-=======
- end %if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  cd ~/ownCloud/Post/MangAbaqus/ %cd ..
 
 end

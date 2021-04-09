@@ -1,11 +1,6 @@
 function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinpsi, ortCond2,ortCond3,ortCond4, t, N, B, r0,...
-<<<<<<< HEAD
  ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR] ...
  = getQuantities(RS,~,DT,r0atl0,~,tatl0,main) %DT=epsilon
-=======
- ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds] ...
- = getQuantities(RS,~,DT,r0atl0,~,tatl0) %DT=epsilon
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 %rm4 = RS(:,1); %dksi04 = dksi(1);
 %rm3 = RS(:,2); %dksi03 = dksi(2); ds04 = sqrt((r03-r04)'*(r03-r04));
 rm2 = RS(:,3); %dksi02 = dksi(3); ds03 = sqrt((r02-r03)'*(r02-r03));
@@ -26,7 +21,7 @@ rp2 = RS(:,7); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
 %    end
 ortCond8=min([dot(rm2,r0),dot(rm1,r0),dot(rp1,r0),dot(rp2,r0)]);
 %assert(ortCond8>.99,'the r vectors are to different')
-<<<<<<< HEAD
+% <<<<<<< HEAD
 NaNcheck=any(isnan(RS(:,4:6)));%any(isnan(RS(:,2:7)));
 if ~isfield(main,'rsame')
  main.rsame=0.8;
@@ -52,35 +47,18 @@ if ortCond8<main.rsame && any(NaNcheck) && main.check==true
  if dot(rp2,r0)<main.rsame
   rp2=NaN*r0;
   %rp1=NaN*r0;
-=======
-if ortCond8<.9999 || any(any(isnan(RS(:,2:8))))
- warning('MyProgram:changingR','there might be a change of order of eigenvektors')
- if dot(rm2,r0)<.9999
-  rm2=NaN*r0;
-  rm1=NaN*r0;
- end
- if dot(rm1,r0)<.9999
-  rm1=NaN*r0;
- end
- if dot(rp1,r0)<.9999
-  rp1=NaN*r0;
- end
- if dot(rp2,r0)<.9999
-  rp2=NaN*r0;
-  rp1=NaN*r0;
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  end
  r0=NaN*r0;
 end
 
-<<<<<<< HEAD
+% <<<<<<< HEAD
 if ~isfield(main,'check')
  main.check=false %#ok<NOPRT>
 end
 if (~any(isnan(r0)) && ~any(isnan(rm1))) || main.check==false
-=======
-if ~any(isnan(r0)) && ~any(isnan(rm1))
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  % Central difference
  v = (rp1 - rm1)/(2*DT); %(10)
  a = (rm1 - 2*r0 + rp1)/(DT)^2; %(11)
@@ -212,7 +190,7 @@ normd3rds3=norm(d3rds3);
  end
  differences=abs(rho-rho2);
  if differences>7.7939e-04%2.2088e-06
-<<<<<<< HEAD
+% <<<<<<< HEAD
   %warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
   if differences>.1 && main.check==true
    rho=NaN;
@@ -222,14 +200,14 @@ normd3rds3=norm(d3rds3);
    warning('MyProgramm:lowPrecission','rho differs from rho2 by %s (kept)',differences)
   end
  elseif isnan(differences) && main.check==true
-=======
-  warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
-  if differences>.1
-   rho=NaN;
-   rho2=NaN;
-  end
- elseif isnan(differences)
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%   warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
+%   if differences>.1
+%    rho=NaN;
+%    rho2=NaN;
+%   end
+%  elseif isnan(differences)
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   warning('MyProgramm:lowPrecission','rho or rho2 are NaN')
   rho=NaN;
   rho2=NaN;
@@ -239,7 +217,7 @@ normd3rds3=norm(d3rds3);
 RxB=dot(r0,B);
 %rhodot=-dsdksi*tau*RxB;%-\dot{s}\,\tau\,(\mathrm{r}\cdot\mathrm{b})
 drhopds=-tau*RxB;
-<<<<<<< HEAD
+% <<<<<<< HEAD
 rconst=r0atl0'*r0;
 phiR=acos(abs(rconst));
 Ebene=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
@@ -247,11 +225,11 @@ Ebene=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
  x1=1-rho^2/(1-rho^2)*drhopds^2;
  x2=dot(d3rds3,r0);
  x3=norm(rho2*d3rds3+t);
-=======
- x1=1-rho^2/(1-rho^2)*drhopds^2;
- x2=-dsdksi*tau*RxB;
- x3=r0atl0'*r0;
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%  x1=1-rho^2/(1-rho^2)*drhopds^2;
+%  x2=-dsdksi*tau*RxB;
+%  x3=r0atl0'*r0;
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  x4=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
 
 Hypo=rho2^2*sqrt(1+tau^2);
@@ -313,10 +291,10 @@ ortCond4 = N'*B;
  %tripJK=dot(r0,cross(T,N));
  %rr0=r0atl0'*r0;
 else
-<<<<<<< HEAD
+% <<<<<<< HEAD
  warning('MyProgram:NaN','returning NaN')
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  v=NaN*r0;
  a=NaN*r0;
  dsdksi=NaN;
@@ -340,13 +318,13 @@ else
  x3=NaN;
  x4=NaN;
  RxB=NaN;
-<<<<<<< HEAD
+% <<<<<<< HEAD
 drhopds=NaN;
 rconst=NaN;
 phiR=NaN;
 Ebene=NaN;
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  rho2=NaN;
  ortCond1=NaN;

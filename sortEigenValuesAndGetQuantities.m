@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 function res = sortEigenValuesAndGetQuantities(model,sortType,~,forcedeig,limit,~,main)
-=======
-function res = sortEigenValuesAndGetQuantities(model,sortType,~,forcedeig,limit,~)
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 if nargin<1
  model = runEigenProblem();
  sortType = 'backwards';
@@ -11,10 +7,7 @@ if nargin<1
  %plotfig = [1,2];
  forcedeig = [];
 end
-<<<<<<< HEAD
 
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 epsilon = model.lambda(2) - model.lambda(1);
 if ~exist('limit','var')
  limit.new=true;
@@ -61,11 +54,7 @@ if ~isfield(limit,'OC6')
  end
 end
 if ~isfield(limit,'OC6a')
-<<<<<<< HEAD
  limit.OC6a=5e-11;
-=======
- limit.OC6a=5e-12;
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 end
 if ~isfield(limit,'OC7')
  if epsilon<0.1
@@ -120,7 +109,6 @@ else
  end
 end
 if ~isfield(limit,'C6Tau')
-<<<<<<< HEAD
  %limit.C6Tau=3.9041e7;
  %limit.C6Tau=191;
  %limit.C6Tau=3000; %AnalysisResults/TL_arch3D-B32-20-loadfac-1-eps0.005-KNL2-1.mat
@@ -129,19 +117,13 @@ if ~isfield(limit,'C6Tau')
  %limit.C6Tau=43452;%AnalysisResults/TL_arch3D-B33H-10-loadfac-1-eps0.01-KNL2-1.mat (?)
  limit.C6Tau=16339;%AnalysisResults/TL_arch3D-B32H-20-loadfac-1-eps0.005-KNL2-1.mat (?,max)
  limit.C6Tau=5757;%AnalysisResults/TL_arch3D-B32H-20-loadfac-1-eps0.01-KNL2-1.mat (?,max)
-=======
- limit.C6Tau=3.9041e7;
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 end
 
 
 if ~isfield(limit,'C8minrho')
  limit.C8minrho=0;
 end
-<<<<<<< HEAD
 limit.C9=19.6;
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 
 
 if sum(strcmp(fieldnames(model), 'check')) == 0
@@ -204,7 +186,6 @@ CosGamma=NaN(f,1);
 Normd3rds3=NaN(f,1);
 SinGamma=NaN(f,1);
 RXB=NaN(f,1);
-<<<<<<< HEAD
 DrhopDs=NaN(f,1);
 Rconst=NaN(f,1);
 EBENE=NaN(f,1);
@@ -213,8 +194,6 @@ PHIR=NaN(f,1);
 
 
 
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 % help quantities:
 POS = NaN(f,1);             %POS(k) = poslam;
 %%
@@ -240,7 +219,6 @@ switch sortType
  case 'none'
   %disp('No sorting of eigenvectors');
  case 'forwards'
-<<<<<<< HEAD
   %k = 1;
   poslam = 1;%; lami = 0;
  case 'backwards'
@@ -255,19 +233,6 @@ if ~strcmpi(sortType, 'none')
  rs = eigvec{kl}(5,:,poslam);  rs = reshape(rs,length(rs),1);
 else
  %r0try = zeros(size(eigvec{1},2),1);
-=======
-  k = 1; poslam = 1;%; lami = 0;
- case 'backwards'
-  [k,~,poslam] = findStabilityLimit(eigval,lambda0);
-end
-
-if ~strcmpi(sortType, 'none')
- r0try = eigvec{k}(5,:,poslam);  r0try = reshape(r0try,length(r0try),1);
- r1 = eigvec{1}(5,:,poslam);  r1 = reshape(r1,length(r1),1);
- rs = eigvec{kl}(5,:,poslam);  rs = reshape(rs,length(rs),1);
-else
- r0try = zeros(size(eigvec{1},2),1);
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  if ~isempty(forcedeig)
   r1 = eigvec{1}(5,:,forcedeig);
   r1 = reshape(r1,length(r1),size(r1,3));
@@ -280,7 +245,6 @@ else
 end
 
 rho2atl0=NaN;
-<<<<<<< HEAD
  if ~isempty(forcedeig)
   is0 = forcedeig;
  end
@@ -320,24 +284,6 @@ for i = 1:f %f = length(eigval)
 %  if ~isempty(forcedeig)
 %   is0 = forcedeig;
 %  end
-=======
-[s1,s2,s3]=size(eigvec{1}(5,:,:));
-assert(s1==1,'programming mistake');
-tatl0=NaN(s2,1);
-for i = 1:f %f = length(eigval)
- %disp(i)
- C0 = eigvec{i}(5,:,:); C0 = reshape(C0,size(C0,2),size(C0,3));
- 
- if strcmpi(sortType, 'none')
-  is0 = 1;
- else
-  [~,is0] = compareEigenmodes(C0,r0try);
- end
- %        val = [is0;val];
- if ~isempty(forcedeig)
-  is0 = forcedeig;
- end
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  eigposition(i) = is0(1);
  %        Lami = eigval{i}(5,is);
@@ -347,7 +293,6 @@ for i = 1:f %f = length(eigval)
  
  %rhotry = 0;
  isi=1;%for isi = 1:1 %length(is)
-<<<<<<< HEAD
  if ~any(isnan(r0atl0)) && strcmp(sortType,'forwardJK')
   for k=1:s3
    rj=transpose(eigvec{i}(5,:,k));
@@ -360,8 +305,6 @@ for i = 1:f %f = length(eigval)
    end
   end
  end
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  r04 = eigvec{i}(1,:,is0(isi)); r04 = reshape(r04,length(r04),1);
  r03 = eigvec{i}(2,:,is0(isi)); r03 = reshape(r03,length(r03),1);
  if r04'*r03<0;  r03 = -r03;  end
@@ -375,17 +318,10 @@ for i = 1:f %f = length(eigval)
  if r0'*r11<0;  r11 = -r11;  end
  r12 = eigvec{i}(7,:,is0(isi)); r12 = reshape(r12,length(r12),1);
  if r11'*r12<0;  r12 = -r12;  end
-<<<<<<< HEAD
  %r13 = eigvec{i}(8,:,is0(isi)); r13 = reshape(r13,length(r13),1);
  %if r12'*r13<0;  r13 = -r13;  end
  %r14 = eigvec{i}(9,:,is0(isi)); r14 = reshape(r14,length(r14),1);
  %if r13'*r14<0;  r14 = -r14;  end
-=======
- r13 = eigvec{i}(8,:,is0(isi)); r13 = reshape(r13,length(r13),1);
- if r12'*r13<0;  r13 = -r13;  end
- r14 = eigvec{i}(9,:,is0(isi)); r14 = reshape(r14,length(r14),1);
- if r13'*r14<0;  r14 = -r14;  end
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
 
  
@@ -397,16 +333,11 @@ for i = 1:f %f = length(eigval)
 %  elseif lambda0(i)<2*epsilon
 %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
 %  end
-<<<<<<< HEAD
  RS = [r04, r03, r02, r01, r0, r11, r12];%RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
-=======
- RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  if ~all(isnan(RS(:)))
   dksi = arclengths{i};
   %            dksi = ones(size(dksi,1),size(dksi,2))*(lambda(2)-lambda(1));
   
-<<<<<<< HEAD
  if any(isnan(r0atl0))
   if any(~isnan(r04)) && lambda0(i)~=0 && norm(dot(r04,r03))>rstabil
    r0atl0=r04;
@@ -440,34 +371,6 @@ for i = 1:f %f = length(eigval)
    = getQuantities(RS,dksi,epsilon,r0atl0,rho2atl0,tatl0,main); % %DT=epsilon
   %EWd1l= ( eigval{i}(4,is0(isi)) - eigval{i}(6,is0(isi)) ) / (2*epsilon);
   %x1=eigvec{i}(5,:,1)*(model.stiffnessMatrices{i,2}-EWd1l*model.stiffnessMatrices{1,1})*r0;
-=======
- if ~exist('r0atl0','var')
-   if any(~isnan(r04)) && lambda0(i)~=0
-    r0atl0=r04;
-   elseif any(~isnan(r03)) && lambda0(i)~=0
-    r0atl0=r03;
-   elseif any(~isnan(r02)) && lambda0(i)~=0
-    r0atl0=r02;
-   elseif any(~isnan(r01)) && lambda0(i)~=0
-    r0atl0=r01;
-   elseif any(~isnan(r0))
-    warning('MyProgram:strange','r0 at lambda0 must be NaN')
-    r0atl0=r0;
-   elseif any(~isnan(r11))
-    r0atl0=r11;
-   elseif any(~isnan(r12))
-    r0atl0=r12;
-   elseif any(~isnan(r13))
-    r0atl0=r13;
-   else
-    warning('MyProgram:strange','r11 at lambda0 schould not be NaN')
-   end
- end
-
-  [v,a,speed,accel,at,an,rho,tau,ortCond1,rho2,drddr_,cosmu_,sinpsi_,ortCond2,ortCond3,ortCond4, t, ~, B, ~,...
-   ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB] ...
-   = getQuantities(RS,dksi,epsilon,r0atl0,rho2atl0,tatl0); %DT=epsilon
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if isnan(rho2atl0) && i>1
    if abs(RHO2(i-1)-rho2)<.1
     rho2atl0=rho2;
@@ -529,13 +432,10 @@ for i = 1:f %f = length(eigval)
   Normd3rds3(i)=normd3rds3;
   SinGamma(i)=singamma;
   RXB(i)=RxB;
-<<<<<<< HEAD
   DrhopDs(i)=drhopds;
   Rconst(i)=rconst;
   EBENE(i)=Ebene;
   PHIR(i)=phiR;
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   
   %        r0try = indi*r0;
   %            end
@@ -580,11 +480,7 @@ if any(RHO2<0)
   warning('MyProgramm:lowPrecission','RHO2 is smaler than -1: %f',min(RHO2))
   RHO2(RHO2<-1)=NaN;
  else
-<<<<<<< HEAD
   warning('MyProgramm:lowPrecission','RHO2 is smaler than zero: %f (%d)',min(RHO2),sum(RHO2<0))
-=======
-  warning('MyProgramm:lowPrecission','RHO2 is smaler than zero: %f',min(RHO2))
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   %RHO2(RHO2<0)=NaN;
  end
 end
@@ -619,11 +515,7 @@ if ~all(Orth5a)
  warning('MyProgam:Limits','OC5 is positive: %f (%d)',max((OC5)),sum(~Orth5a))
 end
 if ~all(Orth6)
-<<<<<<< HEAD
  warning('MyProgam:Limits','|OC6| is large: %f (%d)',max(abs(OC6)),sum(~Orth6))
-=======
- warning('MyProgam:Limits','OC6 is large: %f (%d)',max(abs(OC6)),sum(~Orth6))
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 end
 if ~all(Orth6a)
  warning('MyProgam:Limits','OC6 is positive: %f (%d)',max((OC6)),sum(~Orth6a))
@@ -668,15 +560,9 @@ end
 %TAU(1)=0;
 %TAU(isnan(TAU))=0;
 Cond6 = abs(TAU)<limit.C6Tau;
-<<<<<<< HEAD
 %Cond6(3)=true;
 if ~all(Cond6(3:end))
  warning('MyProgam:Limits','TAU is large: %f (%d)',max(TAU),sum(~Cond6(3:end)))
-=======
-Cond6(3)=true;
-if ~all(Cond6(3:end))
- warning('MyProgam:Limits','TAU is large: %f',max(TAU))
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 end
 
 %RHO2(isnan(RHO2))=0;
@@ -688,7 +574,6 @@ Cond8 = ~(RHO2<limit.C8minrho);
 if ~all(Cond8)
  warning('MyProgam:Limits','RHO2 is small: %f (%d)',min(RHO2),sum(~Cond8))
 end
-<<<<<<< HEAD
 tch=TAU(2:end)./TAU(1:end-1);
 Cond9tmp = (tch<limit.C9) & (tch>1./limit.C9);
 Cond9= [true;Cond9tmp] & [Cond9tmp;true];
@@ -697,10 +582,6 @@ if ~all(Cond9)
 end
  
 OrthNaN=logical(Orth1.*Orth2.*Orth3.*Orth4.*Orth5.*Orth5a.*Orth6.*Orth6a.*Orth7.*Orth7a.*Cond2.*Cond3.*Cond4.*Cond4Atdiff.*Cond5An.*Cond5Andiff.*Cond6.*Cond7.*Cond8.*Cond9);
-=======
- 
-OrthNaN=logical(Orth1.*Orth2.*Orth3.*Orth4.*Orth5.*Orth5a.*Orth6.*Orth6a.*Orth7.*Orth7a.*Cond2.*Cond3.*Cond4.*Cond4Atdiff.*Cond5An.*Cond5Andiff.*Cond6.*Cond7.*Cond8);
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 if ~all(OrthNaN)
  disp(strcat(num2str(numel(OrthNaN)),' values'))
 end
@@ -772,16 +653,12 @@ res.HYPO=HYPO(Orth);
 res.CosGamma=CosGamma(Orth);
 res.Normd3rds3=Normd3rds3(Orth);
 res.SinGamma=SinGamma(Orth);
-<<<<<<< HEAD
 RXB(~OrthNaN)=NaN;
 res.RXB=RXB(Orth);
 res.DrhopDs=DrhopDs(Orth);
 res.Rconst=Rconst(Orth);
 res.EBENE=EBENE(Orth);
 res.PHIR=PHIR(Orth);
-=======
-res.RXB=RXB(Orth);
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 
 %res.rhorho3D = getQuantitiesStern(res.CosPhi,res.RHO2,res.lambda);
 end

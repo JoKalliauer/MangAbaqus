@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 %#!
 %university:TU Wien 
 %filename='~/ownCloud/Post/MangAbaqus/Output/Figures/CSV/fein.csv';
@@ -30,19 +29,6 @@ diagramname='pureBendingBeamJK-B32OSH-20-len-5-loadfac-1-eps0.02-KNL2_rho30.csv'
 
 
  filename=strcat(GFolder,diagramname);
-=======
-%#!/bin/rm
-%university:TU Wien 
- %filename='~/ownCloud/Post/MangAbaqus/Output/Figures/CSV/fein.csv';
- %filename='/home/jokalliau/ownCloud/Mang/Dokumente/own/DurchbiegungslinieB.csv';
- %filename='/home/jokalliau/mydataset.csv';
- %filename='/home/jokalliau/ownCloud/Mang/Dokumente/own/DurchbiegungslinieB_EnergieRho.csv';
- %filename='~/ownCloud/Post/MangAbaqus/Output/Figures/CSV/ecc-B32OS-100-len-5-ecc-0.040447-loadfac-1-eps0.01-KNL2_rho14_JK.csv';
- %filename='/home/jokalliau/Abaqus/abaqus.rpt';
- %filename='/home/jokalliau/Abaqus/Durchbeigung/both16.csv';
- %filename='/home/jokalliau/DurchbiegungMathematicaNSVgl.csv';
- filename='/home/jkalliau/ownCloud/Post/MangAbaqus/Output/Figures/CSV/ecc-B32OS-2-len-5-ecc-0.16467-loadfac-1-eps0.02-KNL2_rho3D_20.csv';
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  %opts = detectImportOptions(filename,'FileType','fixedwidth')
  opts = delimitedTextImportOptions(...
@@ -56,11 +42,8 @@ system(['exec sed -i "s/,/\./g" ',filename])
 %  outputfile='~/Abaqus/Matlab.csv';
 %  writematrix(PT0,outputfile,'Delimiter',';')
 %  system(['exec sed -i "s/\./,/g" ',outputfile]);
-<<<<<<< HEAD
 
 lenJK=size(PT0,1);
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  close all
   figure(14);
@@ -69,18 +52,11 @@ lenJK=size(PT0,1);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape', 'PaperType', 'A4')%,'Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
 
-<<<<<<< HEAD
    %grid on
    %grid minor
    
    %xlabelJK='Lamdba $\lambda$';
   xlabel(xlabelJK,'Interpreter','latex');
-=======
-   grid on
-   grid minor
-
-  xlabel('Lamdba $\lambda$','Interpreter','latex');
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   %ylabel('$w_m$','Interpreter','latex');
   bbb = gca();
   bbb.YLim = [0,1];
@@ -89,13 +65,9 @@ lenJK=size(PT0,1);
   bbb.YAxisLocation = 'origin';
   %daspect([1 1 1])
   %plot(lambda(3:end),res(k3).RHO2(3:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
-<<<<<<< HEAD
   plot(PT0(:,1),PT0(:,2:end),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',[1 0 0]);%,'Color',[0, 0.4470, 0.7410]
   plot(0,PT0(5,2),'o','Color',[0 0 0],'MarkerSize',12,'LineWidth',3,'MarkerFaceColor',[1 1 1])
   text(0,PT0(5,2),'$\rho_0$','interpreter','latex')
-=======
-  plot(PT0(:,1),PT0(:,2:end),'LineStyle','-','Marker','none','LineWidth',1.5);%,'Color',[0, 0.4470, 0.7410]
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   %legend('Energieverhaelntis Abaqus','Energieverhaeltnis Th. II. Ord.','Kruemmungsradius Abaqus','Location','southeast')
   %yticks(0:.05:1)
   %bbb.XLim = [0 2.2];
@@ -103,7 +75,6 @@ lenJK=size(PT0,1);
    print('-dsvg',strcat(filename,'.svg'))
    print('-dpng',strcat(filename,'.png'))
    print('-dpdf',strcat(filename,'.pdf'),'-fillpage')
-<<<<<<< HEAD
    
    
    
@@ -145,6 +116,4 @@ lenJK=size(PT0,1);
    
    diagramname %#ok<NOPTS>
    
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 
