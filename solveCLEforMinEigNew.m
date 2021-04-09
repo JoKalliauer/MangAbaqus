@@ -17,10 +17,13 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
   %evec0 = []; eval0 = [];
   error('MyProgram:Strange','no input')
  end
+<<<<<<< HEAD
 
  if sum(strcmp(fieldnames(modelprops), 'sigma')) == 0
   modelprops.sigma=0;
  end
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
 
   DOFKt=size(Kt,1);
@@ -78,7 +81,11 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
      %B = NaN(size(Kt,1),size(Kt,1)); %B = eye(size(Kt,1),size(Kt,1));
     end
     %EWgesucht=0;
+<<<<<<< HEAD
     sortJK=-1;%take the most negativ real value
+=======
+    sortJK=-1;
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    case 'KNL3' % [ Kt0 + EW * (Kts+Ktu) ]
     %B = Kt - Kt0_0;
     LM = Kt0_0;
@@ -156,11 +163,17 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
    return
   end
   
+<<<<<<< HEAD
   if exist('B','var')
    if full(sum(B(:)))==0
     warning('MyProgram:Empty','B is zero')
     B = NaN(size(LM,1),size(LM,1));
    end
+=======
+  if full(sum(B(:)))==0
+   warning('MyProgram:Empty','B is zero')
+   B = NaN(size(LM,1),size(LM,1));
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   end
   
   if ~exist('RM','var')%~strcmpi(typeofanal,'KNL4') && ~strcmpi(typeofanal,'KNL3')
@@ -168,7 +181,11 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
   end
 
   
+<<<<<<< HEAD
   if any(any(~isnan(RM))) && any(any(Kt))
+=======
+  if ~isnan(RM)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
     %iter %#ok<NOPRT>
     %     if iter==10
     %      [row,col,v] = find(RM);
@@ -199,11 +216,15 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
     %     else
     %     end
     assert(any(any(LM~=RM)),'LM and RM must be different')
+<<<<<<< HEAD
 %     if fast==true
 %      [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma);
 %     else
      [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
 %     end
+=======
+    [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
     diageval = diag(eval);
     diffs=diageval(2:end)-diageval(1:end-1);
     relevantAbs=(abs(diffs)<2.923e-15);%1.0e-06
@@ -268,9 +289,12 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
   evec0 = evec(:,s(1:numofeigs));
   evec0(abs(evec0)<8.5e-14)=0;
   eval0 = diageval(s(1:numofeigs));
+<<<<<<< HEAD
   if ~isreal(eval0)
    warning('MyProgram:Komplex','eval0 is complex')
   end
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   
   if modelprops.allowComplex==false
    relations=abs(imag(eval0(:)))./(real(eval0(:)));
@@ -305,9 +329,13 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
     end
    end
    
+<<<<<<< HEAD
    if abs(norm(evec0(:,1))-1)>eps(1)
     assert(abs(norm(evec0(:,1))-1)<=eps(1),'norm nicht eins');
    end
+=======
+   assert(abs(norm(evec0(:,1))-1)<=eps(1),'norm nicht eins');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    
    numofeigs=find(~isnan(eval0), 1, 'last' );%currently no use of this line
   end

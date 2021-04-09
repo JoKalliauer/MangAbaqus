@@ -2,9 +2,14 @@
 %university:TU Wien
  %#ok<*NOPTS>
  % close all
+<<<<<<< HEAD
  format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
  
+=======
+ format longG
+
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
   %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
@@ -42,17 +47,25 @@
   %eltype = 'B32H' %Timoshenko 
   eltype = 'B32OS'; %Timoshenko 
   %eltype = 'B32OSH'; %Timoshenko 
+<<<<<<< HEAD
   eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
   
   
   % possible types of analysis
+<<<<<<< HEAD
   %modelprops.typeofanalysis = 'I'; modelprops.sigma=eps(1e-292); %identity matrix
+=======
+  modelprops.typeofanalysis = 'I';modelprops.sigma=eps(1e-292); %identity matrix
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   %modelprops.typeofanalysis = 'CLE';modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
+<<<<<<< HEAD
   modelprops.typeofanalysisB = 'Kt0';
   %modelprops.typeofanalysisA = 'Ksigma';
   modelprops.typeofanalysisA = 'KNoLinear';
@@ -65,12 +78,24 @@
   %sortType = 'forwardJK';
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   plotfig= [14,15,16]; %#ok<*NBRAK>
+=======
+  
+  modelprops.numofelm = 2;
+  
+  epsil = 0.01;  % finite difference step %epsil = 0.005;
+  sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
+  plotfig= [2,4,7,14,15,211,23,26]; %#ok<*NBRAK>
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
   modelprops.elementtype = eltype;
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
+<<<<<<< HEAD
   modelprops.lambda = epsil:epsil:max([1.8,20*epsil]);%3.725;%10;%2.19;%1.5;%2.169;%3.72; %0:0.01:5.68 %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+=======
+  modelprops.lambda = 4*epsil:epsil:max(3.72,20*epsil);%3.725;%10;%2.19;%1.5;%2.169;%3.72; %0:0.01:5.68 %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   
   modelprops.epsilon = epsil;
   modelprops.loadfactor = 1.0;
@@ -81,6 +106,7 @@
   modelprops.forceAbaqus=false; %default: false
   %modelprops.forcerun=true; %default=true
   modelprops.forcerun=false;
+<<<<<<< HEAD
   modelprops.numofeigs=56;
   modelprops.allowComplex=true;
   main.closall=true;
@@ -103,3 +129,21 @@
 [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
 %   end
+=======
+  modelprops.numofeigs=2;
+  modelprops.allowComplex=true;
+  main.closall=true;
+  %main.closall=false;
+  %main.savefigures=true;
+  main.savefigures=false;
+  %main.check=true;
+  main.check=false;
+  main.colorshift=0;
+  modelprops.ask_delete=true;
+  
+  modelprops.sigma=0;
+  
+  % modelprops.forceAbaqus=true; modelprops.forcerun=true;
+[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+modelprops=rmfield(modelprops,'forceAbaqus');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2

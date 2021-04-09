@@ -67,9 +67,15 @@ function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadF
   Elements(Elements(:,2)==midnode1,2) = midnode2;
  
  %% Boundary conditions
+<<<<<<< HEAD
  if strcmp(elType,'B32OS') || strcmp(elType,'B31') || strcmp(elType,'B33') || strcmp(elType,'B31OS') || strcmp(elType,'B32')
   dofpNode=6;
  elseif strcmp(elType,'B32OSH') || strcmp(elType,'B31H') || strcmp(elType,'B33H') || strcmp(elType,'B31OSH') || strcmp(elType,'B32H')
+=======
+ if strcmp(elType,'B32OS')
+  dofpNode=6;
+ elseif strcmp(elType,'B32OSH')
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   dofpNode=7;
  else
   error('MyProgram:Element','unknown Element')
@@ -125,6 +131,7 @@ function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadF
   fprintf(u1,[num2str(rpLeft),'\n']);
   fprintf(u1,'*Nset, nset=Mitte, instance=Part-1-1\n');
   fprintf(u1,[num2str(rpMiddle),', ',num2str(midnode2),'\n']);
+<<<<<<< HEAD
   fprintf(u1,'*Nset, nset=MomemntMitte, instance=Part-1-1\n');
   fprintf(u1,[num2str(midnode2),'\n']);
   fprintf(u1,'*Nset, nset=ForceMitte, instance=Part-1-1\n');
@@ -136,6 +143,15 @@ function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadF
 %   fprintf(u1,'%d, Part-1-1.%d, Part-1-1.%d\n',[size(Elements,1)+1,midnode1,midnode2]);
 %   fprintf(u1,'*Connector Section, Elset=connector\n');
 %   fprintf(u1,'JOIN\n');
+=======
+  fprintf(u1,'*Nset, nset=rightend, instance=Part-1-1\n');
+  fprintf(u1,[num2str(rpRight),'\n']);
+  
+  fprintf(u1,'*Element,Type=CONN3D2, Elset=connector\n');
+  fprintf(u1,'%d, Part-1-1.%d, Part-1-1.%d\n',[size(Elements,1)+1,midnode1,midnode2]);
+  fprintf(u1,'*Connector Section, Elset=connector\n');
+  fprintf(u1,'JOIN\n');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   
   fprintf(u1,'*End Assembly\n');
   
@@ -192,8 +208,13 @@ function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadF
     fprintf(u3,'*Cload, OP=MOD\n');
    end
    fprintf(u3,'leftend, 1, %f\n',lambda(k)*P);
+<<<<<<< HEAD
    fprintf(u3,'ForceMitte, 1, %f\n',-lambda(k)*P);
    fprintf(u3,'MomemntMitte, 5, %f\n',lambda(k)*M);
+=======
+   fprintf(u3,'Mitte, 1, %f\n',-lambda(k)*P);
+   fprintf(u3,'Mitte, 5, %f\n',lambda(k)*M);
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    fprintf(u3,'rightend, 5, %f\n',-lambda(k)*M);
    
    fprintf(u3,'** \n');

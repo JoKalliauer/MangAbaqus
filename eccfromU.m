@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 function [sectiondata,yecc,zecc]=eccfromU(UMpUges)
+=======
+function [sectiondata,ecc]=eccfromU(UMpUges)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 
 
  % A=80.678; %cm^2
@@ -13,9 +17,14 @@ function [sectiondata,yecc,zecc]=eccfromU(UMpUges)
  
 assert(UMpUges>=0,'Energyratio must be larger than 0')
 assert(UMpUges<=1,'Energyratio must be smaler then 1')
+<<<<<<< HEAD
 %1-eps(10000000)=0.999999998137355=1-1-eps(10000000)Izz
 %UMpUges=min(UMpUges,1-eps(10000000));
 UMpUges=min(UMpUges,1-eps(100000000));
+=======
+%1-eps(10000000)=0.999999998137355=1-1-eps(10000000)
+UMpUges=min(UMpUges,1-eps(10000000));
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 
  sectiondata.sectionType = 'Idoublysymmetric';
  sectiondata.b = 180e-3; % [m]
@@ -37,9 +46,16 @@ UMpUges=min(UMpUges,1-eps(100000000));
  assert(Izz>0,'Izz negativ')
  
  BpM=UMpUges/(1-UMpUges);
+<<<<<<< HEAD
  yecc=sqrt(BpM*Izz/Area);
  zecc=sqrt(BpM*Iyy/Area);
  
  
 end
 Izz
+=======
+ ecc=sqrt(BpM*Izz/Area);
+ 
+ 
+end
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2

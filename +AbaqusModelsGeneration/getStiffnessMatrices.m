@@ -21,6 +21,7 @@ if ~exist(model.AbaqusRunsFolder, 'dir')
 end
  if ~exist([model.AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
   %warning('MyProgramm:Missing','_STIF*.mtx missing')
+<<<<<<< HEAD
   if usejava('jvm'); waitbar(1,wb,'getStiffnessMatrices error');end
   if ~exist([model.AbaqusRunsFolder,filename,'_STIF7.mtx'],'file') && ~strcmp(typeofanalysis,'Kg')
    if usejava('jvm'); close(wb);end
@@ -30,6 +31,10 @@ end
   else
    warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')
   end
+=======
+  error('MyProgramm:Missing','_STIF*.mtx missing, try rerunning forceAbaqus=true')
+  %return
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  end
 cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
  lenFN = length(filename);

@@ -24,6 +24,7 @@
  % 211 debugging
  % 22 OC5
  % 23 Hypo
+<<<<<<< HEAD
  % 24 =>7
  % 25 CosGamma
  % 26 r*b
@@ -87,6 +88,12 @@
   end
  end
  
+=======
+ % 24 tau
+ % 25 CosGamma
+ % 26 r*b
+ % 27 r*b (3D)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
   %% Figuredef
   FontSize0=(get(0,'defaultaxesfontsize')+get(0,'defaulttextfontsize'))/2;
@@ -111,11 +118,15 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
 
  
  if ~exist('model','class')
+<<<<<<< HEAD
   if isfield(model,'filename')
    modelfilename=model.filename;
   else
    modelfilename=model.TestCase;
   end
+=======
+  modelfilename=model.filename;
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  else
   modelfilename='unknown';
  end
@@ -126,10 +137,13 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
 
  %maxlam = max(lambda);
  %maxlam = 1.0;
+<<<<<<< HEAD
  if ~exist('main','var')
   main.savefigures=false;
   main.colorshift=0;
  end
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  if main.savefigures==true
   if ~exist('Output/Figures/', 'dir')
    if isunix
@@ -144,13 +158,18 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    end
   end
  end
+<<<<<<< HEAD
  model.savefigures=false;%might get overwritten for k3==resEWs(end)
+=======
+ model.savefigures=false;
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  for k3=resEWs
   %k3 %#ok<NOPRT>
   if k3==resEWs(end)
    model.savefigures=main.savefigures;
   end
   colJK=MyColours{mod(k3+main.colorshift-1,19)+1};
+<<<<<<< HEAD
   %lambda1 = res.lambdaorg;
   lambda = res(k3).lambda;
   if numel(lambda)<=41
@@ -158,6 +177,15 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   else
    markJK='none';
   end
+=======
+ %lambda1 = res.lambdaorg;
+ lambda = res(k3).lambda;
+ if numel(lambda)<=41
+  markJK=MyMarker(mod(k3+main.colorshift-1,2)+1);
+ else
+  markJK='none';
+ end
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 % markJK=MyMarker(mod(k3+main.colorshift-1,2)+1);
  %V = res.V;
  %A = res.A;
@@ -167,7 +195,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  An = res(k3).An;
  RHO = res(k3).RHO;
  %RHO2 = res.RHO2;
+<<<<<<< HEAD
  %TAU = res(k3).TAU;
+=======
+ TAU = res(k3).TAU;
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  cosmu = res(k3).cosmu;
  sinpsi = res(k3).sinpsi;
  %       OC1 = OC1(Orth);
@@ -199,12 +231,19 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
 
  
+<<<<<<< HEAD
  lambda = reshape(lambda,numel(lambda),1);
+=======
+ lambda = reshape(lambda,length(lambda),1);
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  LAM = reshape(LAM,length(LAM),1);
  %LAM = LAM/maxlam;
  if ismember(1,plotfig)
   figure(1);
+<<<<<<< HEAD
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]); 
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   hold on
   %        plot(lambda(2:end), lambda(2:end)+LAM(2:end),'LineStyle','-','Marker','none');%,'Color',colo);
   %        plot(lambda(2:end), LAM(2:end),'LineStyle','--','Marker','none');%,'Color',colo);
@@ -216,7 +255,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   plot(lambda(2:end), lambda(2:end)+real(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
   xlabel('Lambda');
   %        ylabel('Lambda + chi | or | chi');
+<<<<<<< HEAD
   ylabel('EW');
+=======
+  ylabel('chi=real(EW)+lambda');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if k3==resEWs(1) && main.colorshift==0
    grid on
    grid minor
@@ -247,13 +290,21 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   ylabel('rho');
   %title('rho');
   bbb = gca();
+<<<<<<< HEAD
   %bbb.YLim = [0.0,1.1];
+=======
+  bbb.YLim = [0.0,1.1];
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   bbb.XLim = [0 inf];
   %col = bbb.Children(1).Color;
   
   %        plot(lambda(kl),RHO(kl),'LineStyle','none','Marker','x','LineWidth',1.5,'Color',col);
   grid on
+<<<<<<< HEAD
   title(modelfilename,'Interpreter','none')
+=======
+  title(modelfilename)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
   if model.savefigures==true
@@ -370,6 +421,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   figure(7)
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
+<<<<<<< HEAD
   %plot(lambda(4:end),abs(TAU(4:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
   plot(lambda(1:end),(res(k3).TAU(1:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
   %       plot(lambda,abs(TAU2),'LineStyle','--','Marker','o',2'Color',colo);
@@ -384,6 +436,16 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   bbb = gca();
   bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
+=======
+  plot(lambda(4:end),abs(TAU(4:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
+  %       plot(lambda,abs(TAU2),'LineStyle','--','Marker','o',2'Color',colo);
+  xlabel('lambda');
+  ylabel('torque');
+  title(modelfilename);
+  grid on
+  %nopeaks = (TAU(TAU<10*mean(TAU(:))));
+  %bbb = gca();
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   %bbb.YLim = [0.0,max([nopeaks;eps(1)])];
   %line(xlim(), [1,1], 'LineWidth', eps(0), 'Color', 'k');
   xl = xlim; % Get current limits.
@@ -393,7 +455,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_torque.png'))
    print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_torque.pdf'),'-fillpage')
   end
+<<<<<<< HEAD
   disp(median(abs(res(k3).TAU(2:end)),'omitnan'));
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  end
  
  if ismember(8,plotfig)
@@ -520,11 +585,15 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
  if ismember(14,plotfig)
   figure(14);
+<<<<<<< HEAD
   %set(gca, 'YScale', 'log')
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   if k3==resEWs(1) && main.colorshift==0
    grid on
+<<<<<<< HEAD
    %grid minor
   end
   xlabelJK='$\lambda$';
@@ -540,13 +609,32 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   plot(lambda(2:end),(res(k3).RHO2(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
   %yticks(0:.05:1)
   %bbb.XLim = [0 inf];
+=======
+   grid minor
+  end
+  xlabel('lambda');
+  ylabel('$\rho$','Interpreter','latex');
+  bbb = gca();
+  bbb.YLim = [0.0,1];
+  title(modelfilename)
+  bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  %plot(lambda(3:end),res(k3).RHO2(3:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
+  plot(lambda(3:end),(res(k3).RHO2(3:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
+  %yticks(0:.05:1)
+  bbb.XLim = [0 inf];
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if model.savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_rho14.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_rho14.png'))
    print('-fillpage',strcat('Output/Figures/PDF/',modelfilename,'_rho14.pdf'),'-dpdf')
+<<<<<<< HEAD
    %plotitJK(lambda(2:end),res(k3).RHO2(2:end),'Output/Figures/',xlabelJK,ylabelJK,strcat(modelfilename,'_rho14'),NaN,NaN,cfig) 
   end
   disp(median(res(k3).RHO2(2:lamlast),'omitnan'));
+=======
+  end
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  end
  if ismember(-14,plotfig)
   disp([lambda(2:end),res(k3).RHO2(2:end)])
@@ -557,19 +645,32 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   figure(15);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
+<<<<<<< HEAD
   plot(model.fulllambda(1:end),real(model.fullEV(k3,1:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);%,'Color',colJK ,'Color',colo);
   xlabel('Lambda');
   ylabel('Eigenwert');
   title(modelfilename,'Interpreter','none')
+=======
+  %aaa = gca();
+  plot(model.fulllambda(1:end),real(model.fullEV(k3,1:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);%,'Color',colJK ,'Color',colo);
+  xlabel('Lambda');
+  ylabel('Eigenwert');
+  title(modelfilename)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if k3==resEWs(1) && main.colorshift==0
    grid on
    grid minor
   end
+<<<<<<< HEAD
   aaa = gca();
   %aaa.XLim = [0 inf];
   if strcmp(main.typeofanalysis,'KNL2')
    aaa.YLim = [-.2 1.2];
   end
+=======
+  %aaa.XLim = [0 inf];
+  %aaa.YLim = [-1 1];
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if model.savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM15.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_LAM15.png'))
@@ -580,21 +681,35 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
  if ismember(16,plotfig)
   figure(16);
+<<<<<<< HEAD
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+=======
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   hold on
   
   plot(lambda(3:end),(res(k3).EWd2l(3:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   ylabel('$\frac{(EW(x-\Delta)-2EW(x)+EW(x+\Delta)}{(\Delta^2)}$','Interpreter','latex');
+<<<<<<< HEAD
   title(modelfilename,'Interpreter','none')
+=======
+  title(modelfilename)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if k3==resEWs(1) && main.colorshift==0
    grid on
    grid minor
   end
+<<<<<<< HEAD
   aaa = gca(); 
   %aaa.XLim = [0 inf];
   %set(aaa, 'YScale', 'log');aaa.YLim = [1e-4 1e1];
   aaa.YLim = [-inf 1];
+=======
+  %aaa = gca(); %#ok<NASGU>
+  %aaa.XLim = [0 inf];
+  %set(aaa, 'YScale', 'log');aaa.YLim = [1e-4 1e1];
+  %aaa.YLim = [-0.04 0.04];
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   %
   if model.savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_EWd2l.svg'))
@@ -618,7 +733,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   plot(lambda(3:end),(res(k3).OC6(3:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   ylabel('OC6','Interpreter','latex');
+<<<<<<< HEAD
   title(modelfilename,'Interpreter','none')
+=======
+  title(modelfilename)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if k3==resEWs(1) && main.colorshift==0
    grid on
    grid minor
@@ -749,7 +868,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    hold on
    plot(lambda(2:end),res(k3).X3(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
    xlabel('Lambda');
+<<<<<<< HEAD
    ylabel('x3','Interpreter','latex');
+=======
+   ylabel('$dot(\mathbf{r},\mathbf{b})$','Interpreter','latex');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    title(modelfilename)
    if k3==resEWs(1) && main.colorshift==0
     grid on
@@ -766,7 +889,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    hold on
    plot(lambda(2:end),res(k3).X4(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
    xlabel('Lambda');
+<<<<<<< HEAD
    ylabel('$x_4$','Interpreter','latex');
+=======
+   ylabel('$\frac{\partial \dot{\rho}}{\partial \dot{s}}=-\tau\,\left(\mathbf{r}\cdot\mathbf{b}\right)$','Interpreter','latex');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    title(modelfilename)
    if k3==resEWs(1) && main.colorshift==0
     grid on
@@ -836,7 +963,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   xlabel('lambda');
   ylabel('$\tau$','Interpreter','latex');
   bbb = gca();
+<<<<<<< HEAD
   %bbb.YLim = [0.0,10];
+=======
+  bbb.YLim = [0.0,10];
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   title(modelfilename)
   bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
@@ -907,7 +1038,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   hold on
   plot(lambda(2:end),res(k3).RXB(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
+<<<<<<< HEAD
   ylabel('Skalarpodukt von $\mathbf{r}$ mit $\mathbf{b}$: ($\mathbf{r}\cdot\mathbf{b})$','Interpreter','latex');
+=======
+  ylabel('$dot(\mathbf{r},\mathbf{b})$','Interpreter','latex');
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   title(modelfilename)
   if k3==resEWs(1) && main.colorshift==0
    grid on
@@ -918,10 +1053,16 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_RxB_26.png'))
    print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_RxB_26.pdf'),'-fillpage')
   end
+<<<<<<< HEAD
   disp(median(res(k3).RXB(2:end),'omitnan'));
  end
  
  if ismember(27,plotfig)
+=======
+ end
+ 
+  if ismember(27,plotfig)
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   figure(27);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
@@ -940,6 +1081,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
+<<<<<<< HEAD
  if ismember(28,plotfig)
   figure(28);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -1177,4 +1319,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
+=======
+ end %for k3
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 end %function

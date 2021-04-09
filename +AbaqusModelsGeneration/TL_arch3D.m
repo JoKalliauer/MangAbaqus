@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 function [filename,lambda,BC,Nodes,Elements,load,dofpNode,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
+=======
+function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 = TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
 razem = [];
 if nargin<1
@@ -183,7 +187,11 @@ fprintf(u1,'*Elastic\n');
 fprintf(u1,'2e+11, 0.3\n');
 
 %% Boundary conditions
+<<<<<<< HEAD
   if strcmp(elmtype,'B32OSH') || strcmp(elmtype,'B31OSH') %%B31H,B33H 
+=======
+  if strcmp(eltype,'B32OSH')
+>>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    dofpNode=7;
   else
    dofpNode=6;
