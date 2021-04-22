@@ -64,13 +64,13 @@
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %sortType = 'forwardJK';
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
-  plotfig= [14,15,16]; %#ok<*NBRAK>
+  plotfig= [14,15,16,15,900,902,906]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
   modelprops.elementtype = eltype;
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = epsil:epsil:max([1.8,20*epsil]);%3.725;%10;%2.19;%1.5;%2.169;%3.72; %0:0.01:5.68 %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = epsil:epsil:max([10,20*epsil]);%3.725;%10;%2.19;%1.5;%2.169;%3.72; %0:0.01:5.68 %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
   modelprops.loadfactor = 1.0;
@@ -81,7 +81,7 @@
   modelprops.forceAbaqus=false; %default: false
   %modelprops.forcerun=true; %default=true
   modelprops.forcerun=false;
-  modelprops.numofeigs=56;
+  modelprops.numofeigs=3;
   modelprops.allowComplex=true;
   main.closall=true;
   %main.closall=false;

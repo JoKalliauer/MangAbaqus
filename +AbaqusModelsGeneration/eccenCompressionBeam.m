@@ -1,8 +1,8 @@
-<<<<<<< HEAD
+% <<<<<<< HEAD
 function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
-=======
-function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+% function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  if nargin<1
   L = 5.0;
  end
@@ -41,10 +41,10 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  
  %% Load
  P = loadFactor*500e3; %[N?]
-<<<<<<< HEAD
+% <<<<<<< HEAD
  load=lambda*P;
-=======
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  %% Finite Element Model
  
@@ -53,16 +53,16 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
  
-<<<<<<< HEAD
+% <<<<<<< HEAD
  if ecc~=0
-=======
- %if ecc~=0
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%  %if ecc~=0
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  % add eccentric rods:
  xcoords = [xcoords(1); xcoords; xcoords(end)];
  ycoords = [ecc; ycoords; ecc];
  zcoords = [0; zcoords; 0];
-<<<<<<< HEAD
+% <<<<<<< HEAD
  end
  
  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
@@ -78,20 +78,20 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  else
   rpLeft1 = Nodes(1,1);
   rpRight1 = Nodes(end,1);
-=======
- %end
- 
- Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
- Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
- 
- rpLeft1 = Nodes(2,1);
- rpRight1 = Nodes(end-1,1);
- 
- if ecc~=0
-  rpLeft2 = Nodes(1,1); %LEFTENDFORCE
-  rpRight2 = Nodes(end,1);
- else
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%  %end
+%  
+%  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
+%  Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
+%  
+%  rpLeft1 = Nodes(2,1);
+%  rpRight1 = Nodes(end-1,1);
+%  
+%  if ecc~=0
+%   rpLeft2 = Nodes(1,1); %LEFTENDFORCE
+%   rpRight2 = Nodes(end,1);
+%  else
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   rpLeft2 = rpLeft1; %LEFTENDFORCE=leftend
   rpRight2 = rpRight1;
  end
@@ -119,28 +119,28 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  fprintf(u1,'*Node\n');
  fprintf(u1,'%d, %f, %f, %f\n',Nodes');
  fprintf(u1,['*Element, type=',elType,'\n']);
-<<<<<<< HEAD
+% <<<<<<< HEAD
  if ecc~=0
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
   else
    fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
   end
-=======
- if strcmpi(elType(1:3),'B32')
-  fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
- else
-  fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
- end
- if ecc~=0
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%  if strcmpi(elType(1:3),'B32')
+%   fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
+%  else
+%   fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
+%  end
+%  if ecc~=0
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   fprintf(u1,['*Element, type=',elType,'\n']);
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',[Elements(1,:); Elements(end,:)]');
   else
    fprintf(u1,'%d, %d, %d\n',[Elements(1,:); Elements(end,:)]');
   end
-<<<<<<< HEAD
+% <<<<<<< HEAD
  else
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',Elements(1:end,:)');
@@ -162,17 +162,17 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
   fprintf(u1,'*Elset, elset=Vert\n');
   fprintf(u1,'%d, %d\n',[Elements(1,1),Elements(end,1)]);
  end
-=======
- end
- 
- fprintf(u1,'*Elset, elset=AllElements\n');
- fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(2:end-1,1));
- if length(Elements(:,1))/16~=floor(length(Elements(:,1))/16)
-  fprintf(u1,'\n');
- end
- fprintf(u1,'*Elset, elset=Vert\n');
- fprintf(u1,'%d, %d\n',[Elements(1,1),Elements(end,1)]);
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%  end
+%  
+%  fprintf(u1,'*Elset, elset=AllElements\n');
+%  fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(2:end-1,1));
+%  if length(Elements(:,1))/16~=floor(length(Elements(:,1))/16)
+%   fprintf(u1,'\n');
+%  end
+%  fprintf(u1,'*Elset, elset=Vert\n');
+%  fprintf(u1,'%d, %d\n',[Elements(1,1),Elements(end,1)]);
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  fprintf(u1,'** Section: Section-1  Profile: Profile-1\n');
  fprintf(u1,'*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I\n');
@@ -206,21 +206,21 @@ function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,
  
  fprintf(u1,'*Material, name=Material-1\n');
  fprintf(u1,'*Elastic\n');
-<<<<<<< HEAD
+% <<<<<<< HEAD
  fprintf(u1,'2.1e+11, 0.3\n'); %[N/m² , -]?
  
  %% Boundary conditions
  %dofpNode=7;
  if strcmp(elType,'B32') || strcmp(elType,'B32H') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
   dofpNode=6;
-=======
- fprintf(u1,'2.1e+11, 0.3\n');
- 
- %% Boundary conditions
- dofpNode=7;
- if strcmp(elType,'B32OS')
-  %dofpNode=6;
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%  fprintf(u1,'2.1e+11, 0.3\n');
+%  
+%  %% Boundary conditions
+%  dofpNode=7;
+%  if strcmp(elType,'B32OS')
+%   %dofpNode=6;
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  else
   dofpNode=7;
  end
