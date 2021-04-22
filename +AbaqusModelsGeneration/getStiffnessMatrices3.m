@@ -1,7 +1,7 @@
-function [StifMatrices,num0,activeDofs,BC] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
+function [StifMatrices] = getStiffnessMatrices3(model,lambdareq,typeofanalysis)
 
 
-if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices','name','getStiffnessMatrices');end
+if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices','title','getStiffnessMatrices3');end
 %Loads = [];
 
 filename = model.filename;
@@ -56,12 +56,12 @@ else
  num = num([0;lambda]==lambdareq);
 end
 steps=min(length(num),length(lambda)+1);
-if steps~=length(num)
- warning('MyProgram:Inputchange','Abaqus calculated more Loadsteps than requested, try using modelprops.forceAbaqus=true')
- num0 = num(1:steps);
-else
- num0 = num;
-end
+% if steps~=length(num)
+%  warning('MyProgram:Inputchange','Abaqus calculated more Loadsteps than requested, try using modelprops.forceAbaqus=true')
+%  num0 = num(1:steps);
+% else
+%  num0 = num;
+% end
 stepsAbaqus=length(num);
 %num0Abaqus=num;
 maxsteps=max(steps,stepsAbaqus);
@@ -75,8 +75,13 @@ for i = 1:steps
   waitbar(i/maxsteps,wb,fname,'interpreter','none');
  end
  mtxSparse = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname);
+ model.dofpNode=2;
+ mtxSparse(mtxSparse(:,2)>3,:)=[];
+ mtxSparse(mtxSparse(:,4)>3,:)=[];
+ mtxSparse(mtxSparse(:,2)<1,:)=[];
+ mtxSparse(mtxSparse(:,4)<1,:)=[];
  dofs = max(mtxSparse(:,1:4));
- dofsinv = min(mtxSparse(:,1:4)); %#ok<NASGU>
+ %dofsinv = min(mtxSparse(:,1:4)); %#ok<NASGU>
  %avoid internat degrees of freedom
  internalNodes = unique(mtxSparse(mtxSparse(:,1)<0,1));
  internalNodesNew = ctranspose(1:length(internalNodes)) + dofs(1);
@@ -85,7 +90,6 @@ for i = 1:steps
   mtxSparse(mtxSparse(:,3)==internalNodes(j),3) = internalNodesNew(j);
  end
  
- %activeNodes = unique(mtxSparse(:,1));
  
  if i==1 % initial stiffness matrix
   StifMatrices{i,1} = 0;
@@ -96,11 +100,9 @@ for i = 1:steps
  end
  
  mtx = zeros(size(mtxSparse,1),3);
- %n = 0;
  for j = 1:size(mtxSparse,1)
   row = (mtxSparse(j,1)-1)*dofs(2) + mtxSparse(j,2);
   col = (mtxSparse(j,3)-1)*dofs(4) + mtxSparse(j,4);
-  %             n = n+1;
   mtx(j,1) = row;
   mtx(j,2) = col;
   mtx(j,3) = mtxSparse(j,5);
@@ -110,52 +112,37 @@ for i = 1:steps
     BCAbaqus=[BCAbaqus;row]; %#ok<AGROW>
    end
   end
-  %                n = n+1;
-  %                mtx(n,1) = col;
-  %                mtx(n,2) = row;
-  %                mtx(n,3) = mtxSparse(j,5);
-  %             end
+
  end
  
  BCsort=unique(BCMatlab(:,1));
  if i==1
   assert(dofs(2)==dofs(4),'insconsistent freedoms')
-  if sum(strcmp(fieldnames(model), 'dofpNode')) == 0
-   warning('MyProgram:notExist','model.dofpNode does not exist')
-  else
-   assert(dofs(2)==model.dofpNode,'dofpNode %d does not agree with Abaqus %d',model.dofpNode,dofs(2))
-  end
+  assert(dofs(2)==model.dofpNode,'dofpNode %d does not agree with Abaqus %d',model.dofpNode,dofs(2))
   assert(dofs(1)==dofs(3),'insconsistent nr of nodes')
   assert(dofs(1)==size(model.Nodes,1),'nr of nodes do not agree with Abaqus')
  end
- if all(BCsort==BCAbaqus)
-  BC=BCMatlab;
- else
-  warning('MyProgram:Problem','Check BC')
-  error('MyProgram:Problem','Check BC')
-  BC=BCMatlab; %#ok<UNRCH>
- end
+%  if all(BCsort==BCAbaqus)
+%   BC=BCMatlab;
+%  else
+%   warning('MyProgram:Problem','Check BC')
+%   error('MyProgram:Problem','Check BC')
+%   BC=BCMatlab; %#ok<UNRCH>
+%  end
 
  
- %mtx2 = sparse(mtx(:,1),mtx(:,2),mtx(:,3));
- %diagmtx2 = speye(size(mtx2,1)).*diag(mtx2);
- %mtx2 = mtx2+mtx2'-diagmtx2;
+
  
  if i==1
   dofslist(dofslist==0) = [];
-  %             for k = 1:size(BC,1)
-  %                dofslist(dofslist==BC(k,1)) = [];
-  %             end
+
   dofslist = [dofslist,ctranspose(1:length(dofslist))]; %#ok<AGROW>
   dofslist2 = zeros(max(dofslist(:,1)),2);
   dofslist2(dofslist(:,1),:) = dofslist;
  end
- %unactiveDofs = find(dofslist2(:,1)==0);
- %numofDofs = size(Nodes,1)*dofs(2);
- activeDofs = find(dofslist2(:,1)~=0);
-%  if length(unactiveDofs)+length(activeDofs) < numofDofs
-%   %unactiveDofs = [unactiveDofs; ctranspose((numofDofs-dofs(2)+1):numofDofs)];
-%  end
+
+%  activeDofs = find(dofslist2(:,1)~=0);
+
  for k = 1:length(dofslist)
   BC(BC2(:,1)==dofslist(k,1),1) = dofslist(k,2);
  end
@@ -169,8 +156,7 @@ for i = 1:steps
  diagmtx = speye(size(mtx,1)).*diag(mtx);
  mtx = mtx+mtx'-diagmtx;
  
- %         mtx = applyStiffBeam(mtx,rpLeft,leftnodes,Nodes);
- %         mtx = applyStiffBeam(mtx,rpRight,rightnodes,Nodes);
+
  
  mtx(BC(:,1),:) = 0;
  mtx(:,BC(:,1)) = 0;

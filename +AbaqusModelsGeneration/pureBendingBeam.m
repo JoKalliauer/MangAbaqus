@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
-=======
-function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(Linp,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
  if nargin<1
-  L = 5.0;
+  Linp = 5.0;
  end
  if nargin<2
   numofelm = 20;
@@ -23,22 +19,30 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
-<<<<<<< HEAD
- filename = ['pureBendingBeamJK-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
-=======
- filename = ['pureBendingBeam-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+ 
+  MV=modelprops.MeterValue;
+  
+% <<<<<<< HEAD
+ filename = ['pureBendingBeamJK-',elType,'-',num2str(numofelm(end)),'-len-',num2str(Linp),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+% =======
+%  filename = ['pureBendingBeam-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+
+
  
  %% IPE400
- h = (400)*10^(-3); %[m]
- b = 180e-3; %[m]
- tw = 8.6e-3; %[m]
- tf = 13.5e-3; %[m]
+ h = (400)*10^(-3)*MV; %[m]
+ b = 180e-3*MV; %[m]
+ tw = 8.6e-3*MV; %[m]
+ tf = 13.5e-3*MV; %[m]
+ L=Linp*MV;
  
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
+ Emodul=2.1e+11/MV;
+ 
  %% Load
- M = loadFactor*0.5e6; %[N*m ?]
+ M = loadFactor*0.5e6*MV*MV; %[N*m ?]
  Last=lambda*M;
  
  %% Finite Element Model
@@ -103,18 +107,19 @@ function [filename,lambda,BC,Nodes,Elements]  = pureBendingBeam(L,numofelm,lambd
   
   fprintf(u1,'*Material, name=Material-1\n');
   fprintf(u1,'*Elastic\n');
-  fprintf(u1,'2.1e+11, 0.3\n');
+%   fprintf(u1,'2.1e+11, 0.3\n');
+  fprintf(u1,[num2str(Emodul) ', 0.3\n']);
   
   %% Boundary conditions
-<<<<<<< HEAD
+% <<<<<<< HEAD
   if strcmp(elType,'B32') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
    dofpNode=6;
   elseif strcmp(elType,'B32OS') || strcmp(elType,'B32OSH')
    dofpNode=7;
-=======
-  if strcmp(elType,'B32OS')
-   dofpNode=6;
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%   if strcmp(elType,'B32OS')
+%    dofpNode=6;
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   else
    dofpNode=7;
   end

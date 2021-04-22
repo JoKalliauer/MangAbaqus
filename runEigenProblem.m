@@ -1,4 +1,4 @@
-function model = runEigenProblem(modelprops)
+function [model] = runEigenProblem(modelprops)
  %modelname,lambda,epsil,numofelm,typeofanal,additionalParameters
  if nargin<1
   %testcase = 'TL_arch';
@@ -124,11 +124,12 @@ function model = runEigenProblem(modelprops)
  elseif ~isempty(files) && modelprops.forcerun==false
   if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem search mat-file');end
   modeldef=model;
+  retryload=true;
   load([AnalysisResultsFolder,files(1).name],'model');
   modelload=model;
   model=modeldef;
   nrldef=numel(model.lambda);
-  nrlload=numel(modelload.lambda);
+  nrlload=min(numel(modelload.lambda),numel(modelload.load));
   if nrldef<nrlload
    warning('MyProgram:Inputchange','Less Lambda requested than in another run')
    model.lambda(nrldef+1:nrlload)=modelload.lambda(nrldef+1:nrlload);
@@ -171,6 +172,24 @@ function model = runEigenProblem(modelprops)
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem get Stiffness');end
  %[StifMatrices,num0,activeNodes,activeDofs,unactiveDofs,BC,Loads]  = AbaqusModelsGeneration.getStiffnessMatrices(model)
  [Kts,num,~,BC]  = AbaqusModelsGeneration.getStiffnessMatrices(model,[],modelprops.typeofanalysis);
+ 
+ if exist('retryload','var')
+  if retryload==true
+   Kt0_0 = Kts{1,2};
+   ru = diag(Kt0_0==1e36);% remove boundary conditions
+   Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
+   newsizeKt0=size(Kt0_0,1);
+   if modelprops.numofeigs>newsizeKt0 
+    modelprops.numofeigs=min(newsizeKt0,modelprops.numofeigs);
+    if exist([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'], 'file') == 2 && modelprops.forcerun==false
+     load([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'],'model')
+     warning('MyProgram:NumEigs','too many eigs requested, no further check')
+     return
+    end
+   end
+  end
+ end
+ 
 %  if size(Kts,1)>numel(fulllambda)
 %   warning('MyProgram:OldFiles','Old *.mtx-files ignored');
 %   Ktsnew=Kts{1:numel(fulllambda),:};
@@ -182,7 +201,7 @@ function model = runEigenProblem(modelprops)
 %  end
 %  %unactiveDofs = sort(unique(unactiveDofs));
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem getHistoryOutputFromDatFile');end
- [~, Nres, EigRes] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
+ [~, Nres, Kg] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
  % [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
  
  Displ = NodalResults2Displ(Nres);
@@ -191,7 +210,7 @@ function model = runEigenProblem(modelprops)
 %  else
 %   displacementsenable=true;
 %  end
- Kg = EigRes;
+ %Kg = EigRes;
  
  %eigval = cell(length(lambda0),1);
  %eigvec = cell(length(lambda0),1);
@@ -242,7 +261,13 @@ function model = runEigenProblem(modelprops)
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
  
  model.lambda0 = lambda0';
+ %modelDisp=model;
  model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP);
+ %modelDisp=model;
+ %[Kts3]  = AbaqusModelsGeneration.getStiffnessMatrices3(model,[],modelprops.typeofanalysis);
+%  [~, Nres3] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
+ Displ3 = NodalResults2DisplJK(Nres);
+ model=runEigenProblemDispJK([],model,Displ3,[],[],matches,wbrEP);
  
  if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
  

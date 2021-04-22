@@ -1,11 +1,12 @@
-%#!/bin/rm
+%#!/usr/bin/env octave
 %university:TU Wien
  %#ok<*NOPTS>
  % close all
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
 
   % there are following predefined test cases:
-  modelprops.testcase = 'detKt';
+  %modelprops.testcase = 'detKt';
+  modelprops.testcase = 'd2bock';
   
   modelprops.length = 5;
   
@@ -42,27 +43,30 @@
   %modelprops.numofelm = 3;
   
   epsil = .2;  % finite difference step %epsil = 0.005;
-  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  sortType = 'forwardJK';
-  plotfig= [15]; %#ok<*NBRAK>
+  sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
+  %sortType = 'forwardJK';
+  plotfig= [15,900,902,906]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
   modelprops.elementtype = eltype;
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:100; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:epsil:4; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor = 1.0;
+  modelprops.loadfactor = 1;
+%   modelprops.MeterValue=1;
   %
   
-  modelprops.profil.tw= 8.6e-3;
+  modelprops.a=.15;
+  
+  
   %modelprops.forceAbaqus=true;
   modelprops.forceAbaqus=false; %default: false
   %modelprops.forcerun=true; %default=true
   modelprops.forcerun=false;
-  modelprops.numofeigs=2;
+  modelprops.numofeigs=17;
   modelprops.allowComplex=true;
   main.closall=true;
   %main.closall=false;
@@ -75,12 +79,14 @@
   
   %modelprops.sigma=-5;
   
-  % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-%list=[1,2,3,4,5,6,10,20,50,100,200,500];
-list=[5,50]
-for i=list
- modelprops.numofelm=[i 2*i];
-   [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+  %  modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+%list=[2,3,4,5,6,10,20,50];
+list=[1];
+modelprops.numelFac=1;
+%list=[5,50]
+for i=1:numel(list)
+ numofelm=list(i);
+   [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm);
 end
 
 modelprops=rmfield(modelprops,'forceAbaqus');

@@ -19,7 +19,7 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
   if isunix
    %[~, name] = system('hostname');
    %if strcmp(name(1:6),'fedora') ||strcmp(name(1:17),'jkalliau-Z87M-D3H') || strcmp(name(1:21),'localhost.localdomain') ||strcmp(name(1:22),'dhcp46.imws.tuwien.ac.') ||strcmp(name(1:29),'e250-200.eduroam.tuwien.ac.at')
-%     system(['rm -f ',[filename,'.sta ',filename,'_STIF*.mtx']]);
+       if modelprops.forceAbaqus==true && modelprops.ask_delete==false;   system(['rm -f ',[filename,'.sta ',filename,'_STIF*.mtx']]); end
        disp(AbaqusRunsFolder)
        %mesJK=strcat('imwsrun abaqus:2020 cpus=1 interactive job=',filename);disp(mesJK)
     reply0=system(['exec abq2020hf5 cpus=1 interactive job=',filename]) %#ok<NOPRT>
@@ -114,5 +114,16 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
  end %if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
 
  cd ~/ownCloud/Post/MangAbaqus/ %cd ..
+ 
+ if ~exist([AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
+  %warning('MyProgramm:Missing','_STIF*.mtx missing')
+  if ~exist([AbaqusRunsFolder,filename,'_STIF7.mtx'],'file')
+   AbaqusRunsFolder %#ok<NOPRT>
+   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true',AbaqusRunsFolder)
+   %return
+  else
+   warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')
+  end
+ end
 
 end

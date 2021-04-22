@@ -1,11 +1,19 @@
-%#!/bin/rm
+%#!
 %university:TU Wien
 
-function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,ecc)
+function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc)
 
 %% Inputkontrolle
  if exist('ecc','var')
   modelprops.ecc=ecc;
+ end
+ if sum(strcmp(fieldnames(modelprops), 'numelFac')) == 0
+  numelFac=1;
+ else
+  numelFac=modelprops.numelFac;
+ end
+ if exist('numofelm','var')
+  modelprops.numofelm=numofelm*numelFac;
  end
  assert(min(modelprops.numofelm)>0,'numberOfElements must be greater zero')
  mustBeInteger(modelprops.numofelm)
@@ -19,12 +27,14 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
 %   modelprops.lambda=sort(modelprops.lambda(modelprops.lambda>=3*modelprops.epsilon));
 %  end
  %assert(all(modelprops.lambda>=4*modelprops.epsilon),'first lamdavalue must be four times epsilon or larger')
- if numel(modelprops.lambda)>201
+ if numel(modelprops.lambda)>251
   warning('MyProgram:Input','using %f>201 lambda-values takes much resources',numel(modelprops.lambda))
   %assert(numel(modelprops.lambda)<=1001,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
 %  assert(numel(modelprops.lambda)<=2195,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
  end
  assert(max([forcedeig 0])<=modelprops.numofeigs,'forceeig must be smaler or equal that number of calculated ones')
+ [sl1, sl2]=size(modelprops.lambda);
+ if sl1>1 && sl2==1; modelprops.lambda=transpose(modelprops.lambda); end
  modelprops.lambda=unique(sort([0 modelprops.lambda]));
  diffs=modelprops.lambda(2:end) - modelprops.lambda(1:end-1);
  mindiff=min(diffs);
@@ -51,13 +61,24 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  end
  %assert(modelprops.numofelm<=1024,'more than 1000 Elements need more than 24GB RAM')
  assert(sum(modelprops.numofelm)<=2000,'more than 1000 Elements need more than 24GB RAM')
+
  
  %%% Setting default values
 
  
  %% Programm
  
- model = runEigenProblem(modelprops);
+ if modelprops.loadfactor==0 && numel(modelprops.numelFac)>1
+  modelpropsNEW=modelprops;
+  modelpropsNEW.loadfactor=1;
+  [modelP1] = runEigenProblem(modelpropsNEW);
+  %modelpropsNEW.numelFac=fliplr(modelpropsNEW.numelFac);
+  modelpropsNEW.numofelm=fliplr(modelpropsNEW.numofelm);
+  [modelM1] = runEigenProblem(modelpropsNEW);
+  model=mergeModel(modelP1,modelM1);
+ else
+  [model] = runEigenProblem(modelprops);
+ end
  %model.fullEV
  
  %% post process
@@ -67,7 +88,9 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  model.lambdainput=model.lambda0;
  for i=1:numel(model.eigenvalues)
   if numel(model.eigenvalues{i})==0
-   warning('MyProgram:Empty','some eigenvalues are empty, please rerun using modelprops.forceAbaqus=true')
+   if modelprops.numofeigs>0
+    warning('MyProgram:Empty','some eigenvalues are empty, please rerun using modelprops.forceAbaqus=true')
+   end
    model.eigenvalues=model.eigenvalues(1:i-1);
    model.lambda0=model.lambda0(1:i-1);
    break
@@ -120,6 +143,7 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  end
  
  lastLambda=max(modelprops.lambda);
+ minLambda=min([modelprops.lambda,-lastLambda,0]);
  for k3 = resEWs
   if strcmp(modelprops.testcase,'eccenCompressionBeam') && strcmp(modelprops.elementtype,'B32OS') && strcmp(modelprops.typeofanalysis,'KNL2') && modelprops.epsilon == 0.01 && max(modelprops.lambda)>1.8
    %limit.OC5a=0.49e-4;
@@ -143,7 +167,11 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
    res(k3).lambda(toostart)=NaN; 
   end
  end % for k3 = resEWs
- 
+   toolarge=model.lambda0>max(modelprops.lambda);
+  if any(toolarge)
+   warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
+   model.lambda0(toolarge)=NaN; 
+  end
  
  
 if usejava('desktop')
@@ -172,9 +200,11 @@ if usejava('desktop')
   model.fulllambda(all(isnan(real(model.fullEV)), 1)) = [];
   model.fullEV(:,all(isnan(real(model.fullEV)), 1)) = [];
  end
- tooLarge= (model.fulllambda>lastLambda);
+ tooLarge= (model.fulllambda>lastLambda+eps(lastLambda));
  if any(tooLarge)
   model.fulllambda(tooLarge)=NaN;
+  tooNegativ=(model.fulllambda<minLambda-eps(minLambda));
+  model.fulllambda(tooNegativ)=NaN;
  end
  main.typeofanalysis=modelprops.typeofanalysis;
  plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)

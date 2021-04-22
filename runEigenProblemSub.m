@@ -13,7 +13,9 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  eigval = cell(length(lambda0),1);
  eigvec = cell(length(lambda0),1);
  displacements = cell(length(lambda0),1);
- arclengths = cell(length(lambda0),1);
+ darclengths = cell(length(lambda0),1);
+ arclengthJK = cell(length(lambda0),1);
+ arclengthHM = cell(length(lambda0),1);
  StiffMtxs = cell(length(lambda0),3);
  DetKtx = NaN(length(lambda0),1);
  
@@ -31,8 +33,8 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
 %   matches = [1,matches] %#ok<NOPRT>
 %  end
  
- Energy = zeros(length(lambda0),3);
- Energy(:,1) = lambda0;
+ %Energy = zeros(length(lambda0),3);
+ %Energy(:,1) = lambda0;
 %  mintest=max(min(size(Kts,1),size(Displ,1)),3);
 %  if max(matches)+2>mintest
 %   %warning('MyProgram:Abaqus','Abaqus might exited with error (step %d, l=%f) befor last lamdba (l=%f)',size(Kts,1),model.fulllambda(min(size(Kts,1),numel(model.fulllambda))),max(model.fulllambda))
@@ -41,6 +43,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  
  %% solve EigvalueProblem
  Kt0_0 = Kts{matches(1),2};
+ oldsizeKt0=size(Kts{matches(1),2},1);
  ru = diag(Kt0_0==1e36);% remove boundary conditions
  Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
  newsizeKt0=size(Kt0_0,1);
@@ -53,6 +56,16 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  newra = transpose(1:newsizeKt0);
  fullEV=NaN(numofeigs,size(model.fulllambda,1));
  RR0 = NaN(newsizeKt0,numofeigs);
+ if numel(Displ)>0
+  sizeDisp=size(Displ{1},1);
+  if size(Displ{1},1)~=oldsizeKt0
+   warning('MyProgram:Disp','size(Displ{1},1) has a different size than oldsizeKt0')
+  end
+ else
+  warning('MyProgram:Disp','Displ from *.dat are empty, maybe Abaqus-Error')
+  sizeDisp=min(oldsizeKt0);
+ end
+ displacements_=NaN(sizeDisp,9);
  
  model.N0=size(Kt0_0,1);
  
@@ -206,10 +219,12 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    end
    
    dksi = [dksi04, dksi03, dksi02, dksi01, dksi11,dksi12];
-   arclengths{i} = dksi;
+   darclengths{i} = dksi;
    
+   displacements_(abs(displacements_)<=1e-31)=0;%remove numeric issues close to zero
    displacements{i} = displacements_;
-   
+   arclengthJK{i}=mean(sqrt(displacements_(:,5).*displacements_(:,5)));
+   arclengthHM{i}=sqrt(sum(displacements_(:,5).*displacements_(:,5)));
    
    if i>1
     if matches(i)==matches(i-1)+1
@@ -367,8 +382,10 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  
  model.eigenvalues = eigval;
  model.eigenvectors = eigvec;
- model.energy = Energy;
- model.arclengths = arclengths;
+ %model.energy = Energy;
+ model.arclengths = darclengths;
+ model.arclengthurJK = arclengthJK;
+ model.arclengthurHM = arclengthHM;
  model.displacements = displacements;
  model.lambda0 = lambda0';
  model.stiffnessMatrices = StiffMtxs;

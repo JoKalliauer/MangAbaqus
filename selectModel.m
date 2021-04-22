@@ -29,6 +29,9 @@ end
 if ~exist('L','var')
  L = modelprops.length;
 end
+ if sum(strcmp(fieldnames(modelprops), 'MeterValue')) == 0
+   modelprops.MeterValue=1;
+ end
 
 if strcmp(testcase,'detKt') && strcmp(eltype(1:2),'B2')
  testcase=[testcase '2D'];
@@ -68,7 +71,9 @@ end
     case 'twoBeams'
      [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.twoBeams(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'detKt2D'
-     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.detKt2D(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
+     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.detKt2D(L,numofelm,lambda,loadFactor,eltype,[],modelprops,AbaqusRunsFolder);
+    case 'd2bock'
+     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.d2bock(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     otherwise 
      warning('MyProgram:unknown','testcase unknown')
    end

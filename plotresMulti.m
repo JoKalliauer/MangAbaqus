@@ -38,6 +38,8 @@
  
  
  %900 detKt
+ %901 sqrt[N]{detKt}
+ %902 \xiJK -- \xi
  
  
  if numel(resEWs)>0
@@ -557,18 +559,20 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   figure(15);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
+  if k3==resEWs(1) && main.colorshift==0
+   plot(model.fulllambda(1:end),zeros(size(model.fulllambda(1:end))),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+   grid on
+   grid minor
+  end
   plot(model.fulllambda(1:end),real(model.fullEV(k3,1:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);%,'Color',colJK ,'Color',colo);
   xlabel('Lambda');
   ylabel('Eigenwert');
   title(modelfilename,'Interpreter','none')
-  if k3==resEWs(1) && main.colorshift==0
-   grid on
-   grid minor
-  end
+
   aaa = gca();
   %aaa.XLim = [0 inf];
   if strcmp(main.typeofanalysis,'KNL2')
-   aaa.YLim = [-.2 1.2];
+   aaa.YLim = [-.2 2];
   end
   if model.savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM15.svg'))
@@ -1122,11 +1126,14 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
  end %for k3
  
-
+  if all(isnan(lambda))
+   lambda=model.lambda0;
+  end
+ 
  %model.savefigures=main.savefigures;
  colJK=MyColours{mod(main.colorshift,19)+1};
  %lambda1 = res.lambdaorg;
- lambda = res(k3).lambda;
+ %lambda = res(k3).lambda;
  if numel(lambda)<=41
   markJK=MyMarker(mod(main.colorshift,2)+1);
  else
@@ -1139,10 +1146,12 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   relDetKtx=model.DetKtx./1;%model.DetKtx(1);
-  plot(model.lambdainput,relDetKtx,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  %model.lambdainput
+  plot(lambda,zeros(size(model.lambdainput)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  plot(lambda,relDetKtx,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   plot([0 0],[0 0],'LineWidth',eps(0));
   xlabel('$\lambda$','Interpreter','latex');
-  ylabel('$\det(K_T)/\det(K_T)_0$','Interpreter','latex');
+  ylabel('$\det(K_T)$','Interpreter','latex');%/\det(K_T)_0
   title(modelfilename,'Interpreter','none')
   %if k3==resEWs(1) && main.colorshift==0
    grid on
@@ -1163,6 +1172,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   DetKtx(DetKtx<0)=[];
   relDetKtx=DetKtx.^(1/model.N0);
   %relDetKtx=relDetKtx./relDetKtx(1);
+  plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
   plot(lambdaplot,relDetKtx,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   plot([0 0],[0 0],'LineWidth',eps(0));
   xlabel('$\lambda$','Interpreter','latex');
@@ -1173,7 +1183,136 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    grid minor
   %end
   if main.savefigures==true
-   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'DetKt901.pdf'),'-fillpage')
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'sqrtDetKt901.pdf'),'-fillpage')
+  end
+ end
+ 
+ if ismember(902,plotfig)
+  figure(902);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  y=cell2mat(model.arclengthuJK);
+  lambdaplot=lambda;
+  %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+%   plot(lambdaplot,cell2mat(model.arclengthurHM),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
+ % plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
+%   plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
+  plot(lambdaplot(1:numel(y)),y,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
+  %legend('arclengthurJK','arclengthuJK')
+  %plot([0 0],[0 0],'LineWidth',eps(0));
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('arc-length $\xi [m]$','Interpreter','latex');
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+   grid on
+   grid minor
+  %end
+  if main.savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'xi902.pdf'),'-fillpage')
+  end
+ end
+ 
+ if ismember(903,plotfig)
+  figure(903);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  y=cell2mat(model.arclengths);
+  %y4=cell2mat(model.arclengthsJK);
+  lambdaplot=model.lambdainput;
+  %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  plot(lambdaplot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
+  %plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
+  %plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
+  %plot(lambdaplot,y4(:,5),'LineStyle',':','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
+  %legend('arclengthsurHM','arclengthsuJK')
+  %plot([0 0],[0 0],'LineWidth',eps(0));
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('$d\xi [-]$','Interpreter','latex');
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+  grid on
+  grid minor
+  %end
+  if main.savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'dxi903.pdf'),'-fillpage')
+  end
+ end
+ 
+ if ismember(904,plotfig)
+  figure(904);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  %y=cell2mat(model.arclengths);
+  y4=cell2mat(model.darclengthsJK);
+  lambdaplot=model.lambdainput;
+  %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  %plot(lambdaplot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
+  %plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
+  %plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
+  plot(lambdaplot,y4(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
+  %legend('arclengthsurHM','arclengthsuJK')
+  %plot([0 0],[0 0],'LineWidth',eps(0));
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('$d\xi(JK) [\textrm{m}]$','Interpreter','latex');
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+  grid on
+  grid minor
+  %end
+  if main.savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'dxi904.pdf'),'-fillpage')
+  end
+ end
+
+ if ismember(905,plotfig)
+  figure(905);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  %y=cell2mat(model.arclengths);
+  y4=cell2mat(model.dxidl);
+  lambdaplot=model.lambdainput;
+  %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  %plot(lambdaplot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
+  %plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
+  %plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
+  plot(lambdaplot,y4,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
+  %legend('arclengthsurHM','arclengthsuJK')
+  %plot([0 0],[0 0],'LineWidth',eps(0));
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('$d\xi(JK)/d\lambda [\textrm{m}]$','Interpreter','latex');
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+  grid on
+  grid minor
+  %end
+  if main.savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'dxidl905.pdf'),'-fillpage')
+  end
+ end
+
+ if ismember(906,plotfig)
+  figure(906);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  %y=cell2mat(model.arclengths);
+  y4=1./cell2mat(model.dxidl);
+  lambdaplot=lambda;
+  %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  %plot(lambdaplot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
+  %plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
+  %plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
+  plot(lambdaplot(1:numel(y4)),y4,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
+  %legend('arclengthsurHM','arclengthsuJK')
+  %plot([0 0],[0 0],'LineWidth',eps(0));
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('$d\lambda/d\xi(JK) [1/\textrm{m}]$','Interpreter','latex');
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+  grid on
+  grid minor
+  %end
+  if main.savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'dxidl905.pdf'),'-fillpage')
   end
  end
  

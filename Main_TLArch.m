@@ -45,9 +45,9 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'Kg';
-  modelprops.typeofanalysisB = 'Kt0';
+  %modelprops.typeofanalysisB = 'Kt0';
   %modelprops.typeofanalysisA = 'Ksigma';
-  modelprops.typeofanalysisA = 'KNoLinear';
+  %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
   modelprops.numofelm = 20;
@@ -61,7 +61,7 @@
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
-  plotfig=[14];
+  plotfig=[14,15,30];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -91,6 +91,7 @@
   modelprops.ask_delete=false;
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
+  modelprops.MeterValue=1;
   
   modelprops.followsigma=false;
 

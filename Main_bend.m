@@ -1,4 +1,4 @@
-%#!/bin/rm
+%#!
 %university:TU Wien
  %#ok<*NOPTS>
  % close all
@@ -46,44 +46,45 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'Kg';
-  modelprops.typeofanalysisB = 'Kt0';
+  %modelprops.typeofanalysisB = 'Kt0';
   %modelprops.typeofanalysisA = 'Ksigma';
-  modelprops.typeofanalysisA = 'KNoLinear';
+  %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
   modelprops.numofelm = 20;
   numofelms = {2,5,10,20,50,100,200,500,1000,2000};
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,7,14,15,21,211,26,28,29]; %#ok<*NBRAK>
-  plotfig=[14,15,30];
+  plotfig=[14];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
   modelprops.elementtype = eltype;
   
-  modelprops.epsilon = 1;  % finite difference step %epsil = 0.005;
+  modelprops.epsilon = .02;  % finite difference step %epsil = 0.005;
   epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
-  modelprops.lambda = 0:modelprops.epsilon:max(4,20*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:modelprops.epsilon:max(1,20*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.loadfactor = 1.0;
   %
   
-  modelprops.profil.tw= 8.6e-3;
+  %modelprops.profil.tw= 8.6e-3;
   %modelprops.forceAbaqus=true;
   modelprops.forceAbaqus=false; %default: false
   %modelprops.forcerun=true; %default=true
   modelprops.forcerun=false;
-  modelprops.numofeigs=1;
+  modelprops.numofeigs=2;
   modelprops.allowComplex=false;
   main.closall=true;
   %main.closall=false;
-  %main.savefigures=true;
-  main.savefigures=false;
+  main.savefigures=true;
+  %main.savefigures=false;
   main.check=true;
   %main.check=false;
   main.colorshift=0;
   modelprops.ask_delete=true;
+  modelprops.MeterValue=1;
   
   %modelprops.sigma=-10;
   modelprops.followsigma=false;

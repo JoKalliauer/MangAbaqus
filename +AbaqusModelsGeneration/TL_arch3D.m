@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 function [filename,lambda,BC,Nodes,Elements,load,dofpNode,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
-=======
-function [filename,lambda,BC,Nodes,Elements,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 = TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
 razem = [];
 if nargin<1
@@ -23,16 +19,20 @@ end
 
 elmtype=eltype;
 
+ MV=modelprops.MeterValue;
+
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 
 %% RECT
- h = 20e-2;
- b = 10e-2;
+ h = 20e-2*MV;
+ b = 10e-2*MV;
   
 %% Span
- L = 600e-2; % m
- H = 240e-2; % m
+ L = 600e-2*MV; % m
+ H = 240e-2*MV; % m
+ 
+ Emodul=2e+11/MV;
 
 %% Load
  p = -83.3*10^3*10^2*loadFactor; % [N/m ?]ca
@@ -184,14 +184,14 @@ fprintf(u1,'*End Assembly\n');
 
 fprintf(u1,'*Material, name=Material-1\n');
 fprintf(u1,'*Elastic\n');
-fprintf(u1,'2e+11, 0.3\n');
+fprintf(u1,[num2str(Emodul),', 0.3\n']);
 
 %% Boundary conditions
-<<<<<<< HEAD
+% <<<<<<< HEAD
   if strcmp(elmtype,'B32OSH') || strcmp(elmtype,'B31OSH') %%B31H,B33H 
-=======
-  if strcmp(eltype,'B32OSH')
->>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+% =======
+%   if strcmp(eltype,'B32OSH')
+% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    dofpNode=7;
   else
    dofpNode=6;
