@@ -63,19 +63,19 @@ end
      model.load=lambda*M;
      [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.pureBendingBeam_Malendowski(L,numofelm,lambda,loadFactor,eltype);
     case 'cantilever'
-     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.cantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.cantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam'
      [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.eccenCompressionBeam(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam2D'
      [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.eccenCompressionBeam2D(L,numofelm,lambda,loadFactor,eltype,ecc);
     case 'twoBeams'
-     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.twoBeams(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
+     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.twoBeams(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'detKt2D'
      [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.detKt2D(L,numofelm,lambda,loadFactor,eltype,[],modelprops,AbaqusRunsFolder);
     case 'd2bock'
-     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode] = AbaqusModelsGeneration.d2bock(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+     [filename,lambda,BC,Nodes,Elements,model.load,model.dofpNode,model.JC] = AbaqusModelsGeneration.d2bock(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     otherwise 
-     warning('MyProgram:unknown','testcase unknown')
+     warning('MyProgram:unknown','testcase "%s" unknown',testcase)
    end
    
    model.filename = filename;

@@ -21,6 +21,8 @@ function [evec0,eval0,numofeigs] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,t
 
  if sum(strcmp(fieldnames(modelprops), 'sigma')) == 0
   modelprops.sigma=0;
+ elseif numel(modelprops.sigma)==0
+  modelprops.sigma=0;
  end
 % =======
 % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2

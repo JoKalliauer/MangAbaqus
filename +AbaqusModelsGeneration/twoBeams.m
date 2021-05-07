@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = twoBeams(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L = 5.0;
  end
@@ -67,15 +67,9 @@ function [filename,lambda,BC,Nodes,Elements]  = twoBeams(L,numofelm,lambda,loadF
   Elements(Elements(:,2)==midnode1,2) = midnode2;
  
  %% Boundary conditions
-% <<<<<<< HEAD
  if strcmp(elType,'B31') || strcmp(elType,'B33') || strcmp(elType,'B32') || strcmp(elType,'B31H') || strcmp(elType,'B33H') || strcmp(elType,'B32H')
   dofpNode=6;
  elseif strcmp(elType,'B32OSH') || strcmp(elType,'B31OSH') || strcmp(elType,'B32OS') || strcmp(elType,'B31OS')
-% =======
-%  if strcmp(elType,'B32OS')
-%   dofpNode=6;
-%  elseif strcmp(elType,'B32OSH')
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   dofpNode=7;
  else
   error('MyProgram:Element','unknown Element')

@@ -18,6 +18,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  arclengthHM = cell(length(lambda0),1);
  StiffMtxs = cell(length(lambda0),3);
  DetKtx = NaN(length(lambda0),1);
+ eigvecDRH = cell(length(lambda0),1);% DRH...Displacement,Rotation,Hybrid(splitted)
  
 %  matches = NaN(0);
 %  n = 0;
@@ -35,7 +36,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  
  %Energy = zeros(length(lambda0),3);
  %Energy(:,1) = lambda0;
-%  mintest=max(min(size(Kts,1),size(Displ,1)),3);
+ mintest=max(min(size(Kts,1),size(Displ,1)),3);
 %  if max(matches)+2>mintest
 %   %warning('MyProgram:Abaqus','Abaqus might exited with error (step %d, l=%f) befor last lamdba (l=%f)',size(Kts,1),model.fulllambda(min(size(Kts,1),numel(model.fulllambda))),max(model.fulllambda))
 %   matches(matches+2>mintest)=[];
@@ -44,14 +45,18 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  %% solve EigvalueProblem
  Kt0_0 = Kts{matches(1),2};
  oldsizeKt0=size(Kts{matches(1),2},1);
- ru = diag(Kt0_0==1e36);% remove boundary conditions
+ ru36 = diag(Kt0_0==1e36);% remove boundary conditions
+ ruinf = diag(Kt0_0==inf);
+ ru=logical(ru36+ruinf);
+ BC=find(ru);
+ assert(all(BC==model.BC(:,1)),'ru does not agree with BC')
  Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
  newsizeKt0=size(Kt0_0,1);
  %[~ ,~ ,numofeigs0 ] = solveCLEforMinEigNew(Kt0_0,Kt0_0,Kg,Kt0_0,modelprops.typeofanalysis,matches(1),NaN,modelprops);
  Kt11= Kts{matches(1)+1,2};
  Kt11(ru,:) = []; Kt11(:,ru) = [];
  Ktprim0_0 = 1/(modelprops.epsilon)*(Kt11 - Kt0_0);
- [~ ,~ ,numofeigs0 ] = solveCLEforMinEigNew(Kt11,Ktprim0_0,Kg,Kt0_0,modelprops.typeofanalysis,matches(1)+1,model,modelprops,Ktprim0_0);
+ [r0t0 ,~ ,numofeigs0 ] = solveCLEforMinEigNew(Kt11,Ktprim0_0,Kg,Kt0_0,modelprops.typeofanalysis,matches(1)+1,model,modelprops,Ktprim0_0);
  numofeigs=min([modelprops.numofeigs,newsizeKt0,numofeigs0]);
  newra = transpose(1:newsizeKt0);
  fullEV=NaN(numofeigs,size(model.fulllambda,1));
@@ -68,6 +73,33 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  displacements_=NaN(sizeDisp,9);
  
  model.N0=size(Kt0_0,1);
+ 
+ if strcmp(modelprops.elementtype(1:2),'B2')
+  model.RestrictedDOFs=3:5;
+  model.Dim=2;
+ else
+  model.RestrictedDOFs=[];
+  model.Dim=3;
+ end
+ 
+ R = NaN(7,size(r0t0,1),size(r0t0,2)); % dl x DoF x NrEigs
+ R_DRsize=[5,model.dofpNode,size(model.Nodes,1),size(r0t0,2)]; % dl x DoFpNode x Nodes x NrEigs
+ R_DRHsize=R_DRsize+[0 -numel(model.RestrictedDOFs) model.inDOF(2)-model.inDOF(1)+1 0]; % dl x DoFpNode(reducedRestricted) x Nodes(inkl.Hyb) x NrEigs
+ R_DRH = NaN(R_DRHsize); % dl x DoFpNode x Nodes x NrEigs
+ R_DRHsizeIn=R_DRHsize(2:4);%+[0 inNr 0]; %DoFpNode x Nodes(inkl.Hyb) x NrEigs
+ ReducedHybridDofa=model.inDOF(3)+1:R_DRHsizeIn(1);
+ ReducedHybridDofb=model.inDOF(4)+1:R_DRHsizeIn(1);
+ nA=false(R_DRHsizeIn(1:2));
+ nA(ReducedHybridDofa,model.inDOF(1):2:model.inDOF(2))=true;
+ nA(ReducedHybridDofb,model.inDOF(1)+1:2:model.inDOF(2))=true;
+ if sum(strcmp(fieldnames(model), 'JC')) == 0
+  model.JC=[];
+ else
+  for i=1:size(model.JC,1)
+   nA(model.JC(i,2),model.JC(i,1))=true;%only works if model.JC(i,2) is smaller than model.RestrictedDOFs
+  end
+ end
+
  
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
 
@@ -306,7 +338,6 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
     %if r13t(:,k)'*r14t(:,k)<0; r14t(:,k) = -r14t(:,k); end
    end
    
-   R = NaN(9,size(r0t,1),size(r0t,2));
    %R(2,:,:) = r03t;
    R(3,:,:) = r02t;
    R(4,:,:) = r01t;
@@ -315,6 +346,11 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    R(7,:,:) = r12t;
    %R(8,:,:) = r13t;
    %R(9,:,:) = r14t;
+   R_DRH(1,:,:,:)=RealEV(r02t,BC,R_DRHsize,nA);
+   R_DRH(2,:,:,:)=RealEV(r01t,BC,R_DRHsize,nA);
+   R_DRH(3,:,:,:)=RealEV(r0t ,BC,R_DRHsize,nA);
+   R_DRH(4,:,:,:)=RealEV(r11t,BC,R_DRHsize,nA);
+   R_DRH(5,:,:,:)=RealEV(r12t,BC,R_DRHsize,nA);
    if max(abs(imag(R)))>eps(0)
     warning('MyProgram:Complex','R is komplex');
    end
@@ -363,6 +399,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
 
   eigval{i} = EV;
   eigvec{i} = R;
+  eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
   StiffMtxs{i,1} = Kt0;
   StiffMtxs{i,2} = Ktprim0;
   Kt0rel=Kt0*5*10^-11;
@@ -382,6 +419,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  
  model.eigenvalues = eigval;
  model.eigenvectors = eigvec;
+ model.eigvecDRH=eigvecDRH;% DRH...Displacement,Rotation,Hybrid(splitted)
  %model.energy = Energy;
  model.arclengths = darclengths;
  model.arclengthurJK = arclengthJK;

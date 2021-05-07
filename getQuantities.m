@@ -3,11 +3,11 @@ function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinp
  = getQuantities(RS,~,DT,r0atl0,~,tatl0,main) %DT=epsilon
 %rm4 = RS(:,1); %dksi04 = dksi(1);
 %rm3 = RS(:,2); %dksi03 = dksi(2); ds04 = sqrt((r03-r04)'*(r03-r04));
-rm2 = RS(:,3); %dksi02 = dksi(3); ds03 = sqrt((r02-r03)'*(r02-r03));
-rm1 = RS(:,4); %dksi01 = dksi(4); ds02 = sqrt((r01-r02)'*(r01-r02));
-r0  = RS(:,5);
-rp1 = RS(:,6); %dksi11 = dksi(5); %ds01 = sqrt((r0-r01)'*(r0-r01));
-rp2 = RS(:,7); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
+rm2 = RS(:,1)/norm(RS(:,1)); %dksi02 = dksi(3); ds03 = sqrt((r02-r03)'*(r02-r03));
+rm1 = RS(:,2)/norm(RS(:,2)); %dksi01 = dksi(4); ds02 = sqrt((r01-r02)'*(r01-r02));
+r0  = RS(:,3)/norm(RS(:,3));
+rp1 = RS(:,4)/norm(RS(:,4)); %dksi11 = dksi(5); %ds01 = sqrt((r0-r01)'*(r0-r01));
+rp2 = RS(:,5)/norm(RS(:,5)); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
 %rp3 = RS(:,8); %dksi13 = dksi(7); %ds12 = sqrt((r12-r11)'*(r12-r11));
 %rp4 = RS(:,9);
 %dksi14 = dksi(8);
@@ -22,7 +22,7 @@ rp2 = RS(:,7); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
 ortCond8=min([dot(rm2,r0),dot(rm1,r0),dot(rp1,r0),dot(rp2,r0)]);
 %assert(ortCond8>.99,'the r vectors are to different')
 % <<<<<<< HEAD
-NaNcheck=any(isnan(RS(:,4:6)));%any(isnan(RS(:,2:7)));
+NaNcheck=any(isnan(RS(:,2:4)));%any(isnan(RS(:,2:7)));
 if ~isfield(main,'rsame')
  main.rsame=0.8;
 end
@@ -190,7 +190,6 @@ normd3rds3=norm(d3rds3);
  end
  differences=abs(rho-rho2);
  if differences>7.7939e-04%2.2088e-06
-% <<<<<<< HEAD
   %warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
   if differences>.1 && main.check==true
    rho=NaN;
@@ -200,14 +199,6 @@ normd3rds3=norm(d3rds3);
    warning('MyProgramm:lowPrecission','rho differs from rho2 by %s (kept)',differences)
   end
  elseif isnan(differences) && main.check==true
-% =======
-%   warning('MyProgramm:lowPrecission','rho differs from rho2 by %s',differences)
-%   if differences>.1
-%    rho=NaN;
-%    rho2=NaN;
-%   end
-%  elseif isnan(differences)
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   warning('MyProgramm:lowPrecission','rho or rho2 are NaN')
   rho=NaN;
   rho2=NaN;
@@ -218,9 +209,9 @@ RxB=dot(r0,B);
 %rhodot=-dsdksi*tau*RxB;%-\dot{s}\,\tau\,(\mathrm{r}\cdot\mathrm{b})
 drhopds=-tau*RxB;
 % <<<<<<< HEAD
-rconst=r0atl0'*r0;
+rconst=r0atl0(:)'*r0;
 phiR=acos(abs(rconst));
-Ebene=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
+Ebene=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
 
  x1=1-rho^2/(1-rho^2)*drhopds^2;
  x2=dot(d3rds3,r0);
@@ -230,7 +221,7 @@ Ebene=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
 %  x2=-dsdksi*tau*RxB;
 %  x3=r0atl0'*r0;
 % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
- x4=norm(r0-(tatl0'*r0)*tatl0-(r0'*r0atl0)*r0atl0);
+ x4=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
 
 Hypo=rho2^2*sqrt(1+tau^2);
 if imag(Hypo)~=0

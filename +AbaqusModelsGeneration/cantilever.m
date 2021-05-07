@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = cantilever(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = cantilever(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
 if nargin<1
     L = 5.0;
 end
@@ -67,10 +67,13 @@ filename=[filename,'-eps',num2str(modelprops.epsilon)];
       Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
  end
 %% Boundary conditions
- if strcmp(elType,'B32OS')
+ if strcmp(elType,'B31') || strcmp(elType,'B33') || strcmp(elType,'B32') || strcmp(elType,'B31H') || strcmp(elType,'B33H') || strcmp(elType,'B32H')
   dofpNode=6;
- else
+ elseif strcmp(elType,'B32OSH') || strcmp(elType,'B31OSH') || strcmp(elType,'B32OS') || strcmp(elType,'B31OS')
   dofpNode=7;
+ else
+  %dofpNode=7;
+  error('MyProgram:Element','unknown Element')
  end
  BC = [dofpNode*(rpLeft - 1) + 1, 0
        dofpNode*(rpLeft - 1) + 2, 0;

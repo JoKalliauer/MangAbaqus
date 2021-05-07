@@ -1,8 +1,4 @@
-% <<<<<<< HEAD
 function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
-% =======
-% function [filename,lambda,BC,Nodes,Elements]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  if nargin<1
   L = 5.0;
  end
@@ -23,7 +19,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-ecc-',num2str(ecc),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+ filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
  
  %% IPE400
  h = (400)*10^(-3); %[m]

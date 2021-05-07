@@ -1,4 +1,4 @@
-function res = sortEigenValuesAndGetQuantities(model,sortType,~,forcedeig,limit,~,main)
+function res = sortEigenValuesAndGetQuantities(model,sortType,~,forcedeig,limit,~,main) % forcedeig=k3;
 if nargin<1
  model = runEigenProblem();
  sortType = 'backwards';
@@ -129,9 +129,104 @@ limit.C9=19.6;
 if sum(strcmp(fieldnames(model), 'check')) == 0
  model.check=true;
 end
-
-eigvec = model.eigenvectors;
-if forcedeig>size(eigvec{1},3)
+%model.filename
+if strcmp(main.whichEV,'bungle')
+ eigvecTMP = model.eigenvectors;
+ realistic=false;
+ evmiddle=5;
+elseif strcmp(main.whichEV,'Disp')
+ eigvecTMP = model.eigvecDRH;
+ realistic=true;
+ evmiddle=3;
+ if model.Dim==2
+  relDofs=1:2;
+ else
+  relDofs=1:3;
+ end
+ relNodes=1:model.inDOF(1)-1;
+elseif strcmp(main.whichEV,'Rot')
+ eigvecTMP = model.eigvecDRH;
+ realistic=true;
+ evmiddle=3;
+ if model.Dim==2
+  relDofs=3;
+ else
+  relDofs=4:6;
+ end
+ relNodes=1:model.inDOF(1)-1;
+elseif strcmp(main.whichEV,'wrap')
+ eigvecTMP = model.eigvecDRH;
+ realistic=true;
+ evmiddle=3;
+ if model.Dim==2
+  relDofs=[];
+ else
+  relDofs=7:model.dofpNode;
+ end
+ relNodes=1:model.inDOF(1)-1;
+elseif strcmp(main.whichEV,'Hyb')
+ eigvecTMP = model.eigvecDRH;
+ realistic=true;
+ evmiddle=3;
+ relDofs=1:model.inDOF(3);
+ relNodes=model.inDOF(1):model.inDOF(2);
+elseif strcmp(main.whichEV,'all')
+ eigvecTMP = model.eigvecDRH;
+ realistic=true;
+ evmiddle=3;
+ relDofs=1:model.dofpNode;
+ relNodes=1:model.inDOF(2);
+else
+%  eigvecTMP = model.eigvecDRH;
+%  realistic=true;
+%  evmiddle=3;
+%  warning('MyProgam:whichEV','main.whichEV not regogniced')
+ %relDofs=...;
+ %relNodes=...;
+ error('MyProgam:whichEV','main.whichEV not regogniced')
+end
+EVtmpsize=size(eigvecTMP{1});
+eigvec=cell(size(eigvecTMP));
+DimsEVtmp=numel(EVtmpsize);
+if model.numofeigs<=1.5
+ DimsEVtmp=DimsEVtmp+1;
+end
+if DimsEVtmp>3
+%  eigvec=cell(size(eigvecTMP));
+ for i=1:numel(eigvecTMP)
+  if ~isempty(eigvecTMP{i})
+   if isempty(relNodes)
+    warning('MyProgram:Input','no relevant data found')
+    res=[];
+    return
+    %forcedeig=[];
+    %error('MyProgram:Input','no relevant data found')
+   end
+   eigvec{i}=eigvecTMP{i}(:,relDofs,relNodes,:);
+  else
+   eigvec{i}=eigvecTMP{i};
+  end
+ end
+else
+%  eigvec=eigvecTMP;
+ for i=1:numel(eigvecTMP)
+  eigvec{i}(:,:,1,:)=eigvecTMP{i}(:,:,:);
+ end
+end
+EVsize=size(eigvec{1});
+if model.numofeigs<=1
+ s2=EVsize(2:end);
+ sEig=model.numofeigs;
+else 
+ s2=EVsize(2:end-1);
+ sEig=EVsize(end);
+end
+if realistic
+ EVdofs=prod(EVsize(2:3));
+else
+ EVdofs=EVsize(2);
+end
+if forcedeig>EVsize(end)
  error('MyProgam:Input','forcedeig larger than num of eigenvalues')
 end
 
@@ -148,8 +243,8 @@ f=fold;% f=min(fold,find(lambda0==lastLambda));
 eigposition = zeros(length(lambda0),1);
 
 %% Computed Quantities:
-V    = NaN(size(eigvec{1},2),f); %V(:,k) = vs;
-A    = NaN(size(eigvec{1},2),f); %A(:,k) = as;
+V    = NaN(EVdofs,f); %V(:,k) = vs;
+A    = NaN(EVdofs,f); %A(:,k) = as;
 S    = NaN(f,1);            %S(k) = speeds;
 A0   = NaN(f,1);            %A0(k) = a0s;
 At   = NaN(f,1);            %At(k) = ats;
@@ -172,7 +267,7 @@ OCeig  = NaN(f,1);          %OCeig(k) = 1;
 LAM  = NaN(f,1);            %LAM(k) = lams;
 EWd2l= NaN(f,1);
 oneEWd2l=NaN(f,1);
-R    = NaN(size(eigvec{1},2),f); %R(:,k) = r0s;
+R    = NaN(EVdofs,f); %R(:,k) = r0s;
 r1ri = NaN(f,1);
 rsri = NaN(f,1);
 drddr = NaN(f,1);
@@ -200,7 +295,7 @@ POS = NaN(f,1);             %POS(k) = poslam;
 
 lambda = lambda0(1:f);
 
-[kl,lami,~] = findStabilityLimit(eigval,lambda0);
+[kl,lami] = findStabilityLimit(model.fullEV,model.fulllambda);
 % if lami<0
 %  kstability = kl;% kl - 1;
 % else
@@ -209,12 +304,15 @@ lambda = lambda0(1:f);
 % if kstability == 0
 %  kstability = 1;
 % end
-
 if kl==0
+ kl=[];
+end
+if isempty(kl)
  warning('MyProgram:noStabilityLimit','assuming Stability-limit with last step')
  kl=numel(lambda0);
 end
-stability_limit = lambda0(kl) + lami;
+% stability_limit = lambda0(kl) + lami;
+res.stability_limit = [kl,lami];
 switch sortType
  case 'none'
   %disp('No sorting of eigenvectors');
@@ -226,33 +324,41 @@ switch sortType
  otherwise
    poslam=forcedeig;
 end
-
+kl=min([round(kl),numel(lambda0),numel(eigvec)]);
 if ~strcmpi(sortType, 'none')
  %r0try = eigvec{k}(5,:,poslam);  %r0try = reshape(r0try,length(r0try),1);
- r1 = eigvec{1}(5,:,poslam);  r1 = reshape(r1,length(r1),1);
- rs = eigvec{kl}(5,:,poslam);  rs = reshape(rs,length(rs),1);
+ r1 = eigvec{1}(evmiddle,:,:,poslam);  r1 = reshape(r1,numel(r1),1);
+ rs = eigvec{kl}(evmiddle,:,:,poslam);  rs = reshape(rs,numel(rs),1);
 else
  %r0try = zeros(size(eigvec{1},2),1);
  if ~isempty(forcedeig)
-  r1 = eigvec{1}(5,:,forcedeig);
-  r1 = reshape(r1,length(r1),size(r1,3));
-  rs = eigvec{kl}(5,:,forcedeig);
-  rs = reshape(rs,length(rs),size(rs,3));
+  r1 = eigvec{1}(evmiddle,:,:,forcedeig);
+  r1 = reshape(r1,numel(r1),size(forcedeig,1));
+  rs = eigvec{kl}(evmiddle,:,:,forcedeig);
+  rs = reshape(rs,numel(rs),size(forcedeig,1));
  else
-  r1 = eigvec{1}(5,:,1);  r1 = reshape(r1,length(r1),1);
-  rs = eigvec{kl}(5,:,1);  rs = reshape(rs,length(rs),1);
+  r1 = eigvec{1}(evmiddle,:,:,1);  r1 = reshape(r1,numel(r1),1);
+  rs = eigvec{kl}(evmiddle,:,:,1);  rs = reshape(rs,numel(rs),1);
  end
 end
+r1=r1/norm(r1);
+rs=rs/norm(rs);
 
 rho2atl0=NaN;
- if ~isempty(forcedeig)
+if ~isempty(forcedeig)
+%  if numel(forcedeig)>0
   is0 = forcedeig;
- end
-[s1,s2,s3]=size(eigvec{1}(5,:,:));
-assert(s1==1,'programming mistake');
+%  else
+%   is0=NaN;
+%  end
+else
+ is0=NaN;
+end
+
+assert(numel(evmiddle)==1,'programming mistake');
 s3alt=numel(is0);
-tatl0=NaN(s2,s3alt);
-r0atl0=NaN(s2,s3alt);
+tatl0=NaN([s2,s3alt]);
+r0atl0=NaN([s2,s3alt]);
 
 %rstabil=0.99992;%TL_arch3D-B31H-20-loadfac-1-eps0.01-KNL2-1.mat
 %rstabil=0.99999981;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat
@@ -293,30 +399,35 @@ for i = 1:f %f = length(eigval)
  
  %rhotry = 0;
  isi=1;%for isi = 1:1 %length(is)
- if ~any(isnan(r0atl0)) && strcmp(sortType,'forwardJK')
-  for k=1:s3
-   rj=transpose(eigvec{i}(5,:,k));
+ if ~any(isnan(r0atl0(:))) && strcmp(sortType,'forwardJK')
+  for k=1:sEig
+   rj=eigvec{i}(evmiddle,:,:,k);
+   rj = reshape(rj,numel(rj),1);
+   rj=rj/norm(rj);
    %rj = reshape(rj,length(rj),1);
    if norm(r0atl0-rj)<1 || norm(r0atl0+rj)<1 || norm(dot(r0atl0,rj))>0.33
     if is0(isi)~=k
-     warning('MyProgram:OderChange','The oder of %d eV %d changed to %d',forcedeig,is0(isi),k)
+     %warning('MyProgram:OderChange','The oder of %d eV %d changed to %d',forcedeig,is0(isi),k)
      is0(isi)=k;
     end
    end
   end
  end
- r04 = eigvec{i}(1,:,is0(isi)); r04 = reshape(r04,length(r04),1);
- r03 = eigvec{i}(2,:,is0(isi)); r03 = reshape(r03,length(r03),1);
- if r04'*r03<0;  r03 = -r03;  end
- r02 = eigvec{i}(3,:,is0(isi)); r02 = reshape(r02,length(r02),1);
- if r03'*r02<0;  r02 = -r02;  end
- r01 = eigvec{i}(4,:,is0(isi)); r01 = reshape(r01,length(r01),1);
+ r02 = eigvec{i}(evmiddle-2,:,:,is0(isi));
+ r02 = reshape(r02,numel(r02),1);
+ r02 = r02/norm(r02);
+ r01 = eigvec{i}(evmiddle-1,:,:,is0(isi)); r01 = reshape(r01,numel(r01),1);
+ r01 = r01/norm(r01);
  if r02'*r01<0;  r01 = -r01;  end
- r0 = eigvec{i}(5,:,is0(isi)); r0 = reshape(r0,length(r0),1);
+ r0 = eigvec{i}(evmiddle,:,:,is0(isi));
+ r0 = reshape(r0,numel(r0),1);
+ r0 = r0/norm(r0);
  if r01'*r0<0;  r0 = -r0;  end
- r11 = eigvec{i}(6,:,is0(isi)); r11 = reshape(r11,length(r11),1);
+ r11 = eigvec{i}(evmiddle+1,:,:,is0(isi)); r11 = reshape(r11,numel(r11),1);
+ r11 = r11/norm(r11);
  if r0'*r11<0;  r11 = -r11;  end
- r12 = eigvec{i}(7,:,is0(isi)); r12 = reshape(r12,length(r12),1);
+ r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
+ r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
  %r13 = eigvec{i}(8,:,is0(isi)); r13 = reshape(r13,length(r13),1);
  %if r12'*r13<0;  r13 = -r13;  end
@@ -333,17 +444,13 @@ for i = 1:f %f = length(eigval)
 %  elseif lambda0(i)<2*epsilon
 %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
 %  end
- RS = [r04, r03, r02, r01, r0, r11, r12];%RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
+ RS = [r02, r01, r0, r11, r12];%RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
  if ~all(isnan(RS(:)))
   dksi = arclengths{i};
   %            dksi = ones(size(dksi,1),size(dksi,2))*(lambda(2)-lambda(1));
   
  if any(isnan(r0atl0))
-  if any(~isnan(r04)) && lambda0(i)~=0 && norm(dot(r04,r03))>rstabil
-   r0atl0=r04;
-  elseif any(~isnan(r03)) && lambda0(i)~=0  && norm(dot(r03,r02))>rstabil
-   r0atl0=r03;
-  elseif any(~isnan(r02)) && lambda0(i)~=0  && norm(dot(r02,r01))>rstabil
+  if any(~isnan(r02)) && lambda0(i)~=0  && norm(dot(r02,r01))>rstabil
    r0atl0=r02;
   elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,r0))>rstabil
    r0atl0=r01;
@@ -416,8 +523,8 @@ for i = 1:f %f = length(eigval)
   R(:,i) = indi*r0;
   POS(i) = is0(1);
   
-  r1ri(i) = abs(r1'*r0);
-  rsri(i) = abs(rs'*r0);
+  r1ri(i) = abs(r1(:)'*r0);
+  rsri(i) = abs(rs(:)'*r0);
   drddr(i) = drddr_;
   cosmu(i) = cosmu_;
   sinpsi(i) = sinpsi_;
@@ -645,7 +752,7 @@ res.OC7 = OC7(Orth);
 
 res.OC0 = OC0; res.OC1 = OC1; res.OC2 = OC2; res.OC3 = OC3; res.OC4 = OC4; res.OC5 = OC5;
 res.eigposition = eigposition;
-res.stability_limit = [kl,stability_limit];
+% res.stability_limit = [kl,stability_limit];
 
 res.X1=X1(Orth);res.X2=X2(Orth);res.X3=X3(Orth);res.X4=X4(Orth);
 

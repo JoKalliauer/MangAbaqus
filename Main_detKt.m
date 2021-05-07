@@ -1,12 +1,12 @@
 %#!/usr/bin/env octave
 %university:TU Wien
  %#ok<*NOPTS>
- % close all
+ close all
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
 
   % there are following predefined test cases:
-  %modelprops.testcase = 'detKt';
-  modelprops.testcase = 'd2bock';
+  modelprops.testcase = 'detKt2D'; % Knickstab mitte
+  %modelprops.testcase = 'd2bock';
   
   modelprops.length = 5;
   
@@ -40,52 +40,54 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=0;-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  %modelprops.numofelm = 3;
+  modelprops.numofelm = 2;
   
-  epsil = .2;  % finite difference step %epsil = 0.005;
+  epsil = 1;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %sortType = 'forwardJK';
-  plotfig= [15,900,902,906]; %#ok<*NBRAK>
+  plotfig= [900,913,914]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
   modelprops.elementtype = eltype;
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:4; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:epsil:100; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor = 1;
+  modelprops.loadfactor = 0;
 %   modelprops.MeterValue=1;
   %
   
-  modelprops.a=.15;
+%   modelprops.a=.15;
   
   
   %modelprops.forceAbaqus=true;
   modelprops.forceAbaqus=false; %default: false
   %modelprops.forcerun=true; %default=true
   modelprops.forcerun=false;
-  modelprops.numofeigs=17;
+  modelprops.numofeigs=1;
   modelprops.allowComplex=true;
-  main.closall=true;
-  %main.closall=false;
-  main.savefigures=true;
-  %main.savefigures=false;
+  %main.closall=true;
+  main.closall=false;
+  %main.savefigures=true;
+  main.savefigures=false;
   main.check=true;
-  %main.check=false;
+  main.check=false;
   main.colorshift=0;
   modelprops.ask_delete=true;
   
   %modelprops.sigma=-5;
   
   %  modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-%list=[2,3,4,5,6,10,20,50];
-list=[1];
-modelprops.numelFac=1;
+% list=[1,2,3,4,5,6,10,20,50];
+list=[4,8,16,32,64,128,256];
+%list=[2];
+%modelprops.numelFac=[1 2];
 %list=[5,50]
 for i=1:numel(list)
  numofelm=list(i);
+ main.colorshift=i-1;
    [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm);
 end
 

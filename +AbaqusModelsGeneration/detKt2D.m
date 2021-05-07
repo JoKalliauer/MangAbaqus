@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = detKt2D(L0,numofelm,lambda,loadFactor,eltype,~,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = detKt2D(L0,numofelm,lambda,loadFactor,eltype,~,modelprops,AbaqusRunsFolder)
  if nargin<1
   L0 = 5.0;
  end
@@ -32,6 +32,7 @@ function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = detKt2D(L0,numofelm,l
  tf = 13.5e-3*MV; %[m]
  %% Load
  P = loadFactor*1e6*MV; %[N?]
+ Last=lambda*P;
  Emodul=2.1e+11/MV;
  %M = 0; % [N m?]
  
@@ -66,8 +67,10 @@ function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = detKt2D(L0,numofelm,l
  %% Boundary conditions
  if strcmp(eltype,'B21') || strcmp(eltype,'B23') || strcmp(eltype,'B22')
   dofpNode=6;
+ elseif strcmp(eltype(1:2),'B3')
+  error('MyProgram:Element','3D Element "%s" not allowed, use 2Delement "%s"',eltype,[eltype(1) '2' eltype(3:end)])
  else
-  error('MyProgram:Element','unknown Element')
+  error('MyProgram:Element','unknown Element "%s"',eltype)
  end
  %+1...Nx
  %+2...Ny

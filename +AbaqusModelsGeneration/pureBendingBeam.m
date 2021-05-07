@@ -111,17 +111,13 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(Li
   fprintf(u1,[num2str(Emodul) ', 0.3\n']);
   
   %% Boundary conditions
-% <<<<<<< HEAD
-  if strcmp(elType,'B32') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
+  if strcmp(elType,'B32') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H') || strcmp(elType,'B32H')
    dofpNode=6;
-  elseif strcmp(elType,'B32OS') || strcmp(elType,'B32OSH')
+  elseif strcmp(elType,'B32OS') || strcmp(elType,'B32OSH')|| strcmp(elType,'B31OS') || strcmp(elType,'B31OSH')
    dofpNode=7;
-% =======
-%   if strcmp(elType,'B32OS')
-%    dofpNode=6;
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   else
-   dofpNode=7;
+   %dofpNode=7;
+   dofpNode=[];
   end
   BC = [dofpNode*(rpLeft - 1) + 1, 0
         dofpNode*(rpLeft - 1) + 2, 0;

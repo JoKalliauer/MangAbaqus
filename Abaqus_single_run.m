@@ -1,7 +1,7 @@
 %#!
 %university:TU Wien
 
-function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc)
+function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc,elementtype)
 
 %% Inputkontrolle
  if exist('ecc','var')
@@ -13,7 +13,12 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
   numelFac=modelprops.numelFac;
  end
  if exist('numofelm','var')
-  modelprops.numofelm=numofelm*numelFac;
+  if numel(numofelm)>0
+   modelprops.numofelm=numofelm*numelFac;
+  end
+ end
+ if exist('elementtype','var')
+  modelprops.elementtype=elementtype;
  end
  assert(min(modelprops.numofelm)>0,'numberOfElements must be greater zero')
  mustBeInteger(modelprops.numofelm)
@@ -21,6 +26,10 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  %modelprops.numofeigs=min(modelprops.numofeigs,uint8(14));
  if modelprops.numofeigs>14
   warning('MyProgramm:Input','For higher precission reduce the number of requested eigenvalues')
+  if modelprops.numofeigs>2500
+   warning('MyProgramm:Input','The eigenvalues are reduced to 2500, otherwise it will need more than 30GB RAM')
+   modelprops.numofeigs=2500;
+  end
  end
 %  if any(modelprops.lambda<4*modelprops.epsilon)
 %   warning('MyProgram:Input','first lamdavalue must be four times epsilon or larger')
@@ -61,6 +70,15 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  end
  %assert(modelprops.numofelm<=1024,'more than 1000 Elements need more than 24GB RAM')
  assert(sum(modelprops.numofelm)<=2000,'more than 1000 Elements need more than 24GB RAM')
+ if sum(strcmp(fieldnames(main), 'whichEV')) == 0
+   main.whichEV='split';
+ end
+ if strcmp(main.whichEV,'split')
+  main.whichEV={'Disp'};
+ end
+ if strcmp(main.whichEV,'Hyb') && modelprops.numofeigs>0
+  assert(strcmp(modelprops.elementtype(end),'H'),'modelprops.elementtype does not have hybrid dofs')
+ end
 
  
  %%% Setting default values
@@ -82,7 +100,7 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  %model.fullEV
  
  %% post process
-
+%  main.numofeigs=modelprops.numofeigs;
  model.check=main.check;
  model.filename=[model.filename,'-',modelprops.typeofanalysis];
  model.lambdainput=model.lambda0;
@@ -144,6 +162,7 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
  
  lastLambda=max(modelprops.lambda);
  minLambda=min([modelprops.lambda,-lastLambda,0]);
+ main.typeofanalysis=modelprops.typeofanalysis;
  for k3 = resEWs
   if strcmp(modelprops.testcase,'eccenCompressionBeam') && strcmp(modelprops.elementtype,'B32OS') && strcmp(modelprops.typeofanalysis,'KNL2') && modelprops.epsilon == 0.01 && max(modelprops.lambda)>1.8
    %limit.OC5a=0.49e-4;
@@ -155,23 +174,31 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
   if strcmp(modelprops.testcase,'pureBendingBeam') && strcmp(modelprops.elementtype,'B32OSH') && strcmp(modelprops.typeofanalysis,'KNL2')
    limit.C8minrho=.991;
   end
-  res(k3) = sortEigenValuesAndGetQuantities(model,sortType,plotfig,k3,limit,lastLambda,main); 
+   res(k3) = sortEigenValuesAndGetQuantities(model,sortType,plotfig,k3,limit,lastLambda,main);  % forcedeig=k3;
   toolarge=res(k3).lambda>max(modelprops.lambda);
   if any(toolarge)
    warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
    res(k3).lambda(toolarge)=NaN; 
   end
-  toostart=res(k3).lambda(2:end)<min(modelprops.lambda(2:end));
+  toostart = abs(res(k3).lambda(2:end))<min(modelprops.lambda(2:end));
   if any(toostart)
    warning('MyProgram:Input','first lambdas ignored try using modelprops.forcerun=true')
    res(k3).lambda(toostart)=NaN; 
   end
  end % for k3 = resEWs
-   toolarge=model.lambda0>max(modelprops.lambda);
-  if any(toolarge)
-   warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
-   model.lambda0(toolarge)=NaN; 
-  end
+ toolarge=model.lambda0>max(modelprops.lambda);
+ if any(toolarge)
+  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
+  model.lambda0(toolarge)=NaN;
+  model.DetKtx(toolarge)=NaN;
+ end
+ toolarge=model.lambda>max(modelprops.lambda);
+ if any(toolarge)
+  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
+  model.lambda(toolarge)=NaN;
+  %   model.DetKtx(toolarge)=NaN;
+  model.load(toolarge)=NaN;
+ end
  
  
 if usejava('desktop')
@@ -206,7 +233,6 @@ if usejava('desktop')
   tooNegativ=(model.fulllambda<minLambda-eps(minLambda));
   model.fulllambda(tooNegativ)=NaN;
  end
- main.typeofanalysis=modelprops.typeofanalysis;
  plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 end%if usejava('desktop')
 if main.savefigures==true

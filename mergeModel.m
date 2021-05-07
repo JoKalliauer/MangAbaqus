@@ -10,8 +10,16 @@ model.DetKtx=[modelP1.DetKtx;NaN;modelM1.DetKtx];
 model.arclengthuJK=[modelP1.arclengthuJK;NaN;modelM1.arclengthuJK];
 model.dxidl=[modelP1.dxidl;NaN;modelM1.dxidl];
 model.lambda0=[modelP1.lambda0;NaN;-modelM1.lambda0];
+model.load=[modelP1.load;NaN;-modelM1.load];
 model.eigenvalues=[modelP1.eigenvalues;NaN*modelP1.eigenvalues{1};modelM1.eigenvalues];
-model.eigenvectors=[modelP1.eigenvectors;NaN*modelP1.eigenvectors{1};modelM1.eigenvectors];
+NanEV=NaN*modelP1.eigenvectors{1};
+if numel(NanEV)==0
+ model.eigenvectors=[];
+ model.eigvecDRH=[];
+else
+ model.eigenvectors=[modelP1.eigenvectors;NaN*modelP1.eigenvectors{1};modelM1.eigenvectors];
+ model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
+end
 model.arclengths=[modelP1.arclengths;NaN*modelP1.arclengths{1};modelM1.arclengths];
 end
 

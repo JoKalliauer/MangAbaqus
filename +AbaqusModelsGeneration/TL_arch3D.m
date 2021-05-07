@@ -22,7 +22,7 @@ elmtype=eltype;
  MV=modelprops.MeterValue;
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 
 %% RECT
  h = 20e-2*MV;
@@ -187,14 +187,13 @@ fprintf(u1,'*Elastic\n');
 fprintf(u1,[num2str(Emodul),', 0.3\n']);
 
 %% Boundary conditions
-% <<<<<<< HEAD
   if strcmp(elmtype,'B32OSH') || strcmp(elmtype,'B31OSH') %%B31H,B33H 
-% =======
-%   if strcmp(eltype,'B32OSH')
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
    dofpNode=7;
-  else
+  elseif  strcmp(elmtype,'B32') || strcmp(elmtype,'B31') || strcmp(elmtype,'B33') || strcmp(elmtype,'B32H') || strcmp(elmtype,'B31H') || strcmp(elmtype,'B33H')
    dofpNode=6;
+  else
+%    dofpNode=6;
+   dofpNode=[];
   end
  BC = [dofpNode*(rpLeft - 1) + 1, 0
        dofpNode*(rpLeft - 1) + 2, 0;

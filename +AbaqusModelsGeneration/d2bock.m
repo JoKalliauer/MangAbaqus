@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = d2bock(L0,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,P,dofpNode,JC]  = d2bock(L0,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder)
  if nargin<1
   L0 = 5.0;
  end
@@ -100,6 +100,11 @@ function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = d2bock(L0,numofelm,la
    rpallMat(i)=find(rpall(i)==Nodes(:,1));
   end
  end
+ LetzerKnoten=Nodes(end,1);
+ zuweisung=[transpose(1:LetzerKnoten),NaN(LetzerKnoten,1)];
+ for i=1:size(Nodes,1)
+  zuweisung( Nodes(i,1) ,2)=i;
+ end
  
  rpMiddle= Nodes(Nodes(:,2)==0,1);
  
@@ -154,6 +159,15 @@ function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = d2bock(L0,numofelm,la
  end
  [~,idx]=unique(BC(:,1));
  BC=BC(idx,:);
+ 
+ JC=[]; % Joint-Codition
+ JCrpMiddle=1:2;
+ connetedNodes=zuweisung( rpMiddle(2:end) ,2);
+ for i=1:numel(JCrpMiddle)
+  for j=1:numel(connetedNodes)
+  JC=[JC;connetedNodes(j),JCrpMiddle(i),dofpNode*(connetedNodes(j) - 1) + JCrpMiddle(i)]; %#ok<AGROW>
+  end
+ end
  
  u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
  if u1==-1

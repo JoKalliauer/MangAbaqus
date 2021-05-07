@@ -43,11 +43,11 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  modelprops.numofelm = 20;
+  modelprops.numofelm = 10;
   
   epsil = 0.01;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig= [15,14,22,24]; %#ok<*NBRAK>
+  plotfig= [15,900,902,906,911]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  

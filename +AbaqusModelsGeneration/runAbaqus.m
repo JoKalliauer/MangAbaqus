@@ -2,6 +2,9 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
  if nargin<1
   %modelname = 'pureBendingBeamShellElm';
  end
+ if sum(strcmp(fieldnames(modelprops), 'ask_delete')) == 0
+  modelprops.ask_delete=true;
+ end
  
  if ~exist(AbaqusRunsFolder, 'dir')
   if isunix

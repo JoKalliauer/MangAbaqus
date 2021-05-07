@@ -1,7 +1,7 @@
 %#!
 %university:TU Wien
  %#ok<*NOPTS>
- % close all
+ close all
 %format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
 
@@ -35,6 +35,7 @@
   %eltype = 'B32H' %Timoshenko 
   eltype = 'B32OS'; %Timoshenko 
   %eltype = 'B32OSH'; %Timoshenko 
+  eltypes={'B32OS','B32OSH','B31OS','B31OSH'}
  
   
   
@@ -55,7 +56,7 @@
   numofelms = {2,5,10,20,50,100,200,500,1000,2000};
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,7,14,15,21,211,26,28,29]; %#ok<*NBRAK>
-  plotfig=[14];
+  plotfig=[14,15,16,37];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
@@ -64,39 +65,60 @@
   
   modelprops.epsilon = .02;  % finite difference step %epsil = 0.005;
   epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
-  modelprops.lambda = 0:modelprops.epsilon:max(1,20*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:modelprops.epsilon:max(.7,2*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
-  modelprops.loadfactor = 1.0;
+  modelprops.loadfactor = 1;
   %
   
   %modelprops.profil.tw= 8.6e-3;
   %modelprops.forceAbaqus=true;
+  %%%%%modelprops.forceAbaqus=0.5; % force run if last lambda smaller than requested
   modelprops.forceAbaqus=false; %default: false
+  %modelprops.forceAbaqus=-1; %don't run simulation even if not existing
   %modelprops.forcerun=true; %default=true
-  modelprops.forcerun=false;
-  modelprops.numofeigs=2;
+  modelprops.forcerun=0.5; % force run if last lambda smaller than requested
+  %modelprops.forcerun=false;
+  modelprops.numofeigs=1;
   modelprops.allowComplex=false;
-  main.closall=true;
-  %main.closall=false;
+  %main.closall=true;
+  main.closall=false;
   main.savefigures=true;
   %main.savefigures=false;
-  main.check=true;
-  %main.check=false;
+  %main.check=true;
+  main.check=false;
   main.colorshift=0;
   modelprops.ask_delete=true;
-  modelprops.MeterValue=1;
+  modelprops.MeterValue=1000;
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb';
   
   %modelprops.sigma=-10;
   modelprops.followsigma=false;
   
   % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+% [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+
+% eltypes={'B32OS','B32OSH','B31OS','B31OSH'}
+eltypes={'B32OS','B32OSH','B31OS','B31OSH'}
+%plotfig=[];
+for i=1:numel(eltypes)
+ elementtype = char(eltypes(i))
+%  if strcmp(elementtype,'B32OSH') ||  strcmp(elementtype,'B31OSH')
+%   main.check=true;
+%  else
+%   main.check=false;
+%  end
+ % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+ main.colorshift=i-1;
+ [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,[],elementtype);
+ 
+end
   
-%   for i=epsils
+%   for i= {.05,.02,.01}
 %    %modelprops.numofelm = cell2mat(i)
 %    modelprops.epsilon = cell2mat(i);
-%    modelprops.lambda = 0:modelprops.epsilon:max(4)
-%    plotfig=[];
+%    modelprops.lambda = 0:modelprops.epsilon:max(4,20*modelprops.epsilon)
+%    %    plotfig=[];
+%    modelprops.ask_delete=true;
 % 
 % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
 % [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);

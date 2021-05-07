@@ -1,4 +1,4 @@
-function [StifMatrices,num0,activeDofs,BC] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
+function [StifMatrices,num0,activeDofs,BC,inDOF] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
 
 
 if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices','name','getStiffnessMatrices');end
@@ -19,29 +19,29 @@ if ~exist(model.AbaqusRunsFolder, 'dir')
   return
  end
 end
- if ~exist([model.AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
-  %warning('MyProgramm:Missing','_STIF*.mtx missing')
-  if usejava('jvm'); waitbar(1,wb,'getStiffnessMatrices error');end
-  if ~exist([model.AbaqusRunsFolder,filename,'_STIF7.mtx'],'file') && ~strcmp(typeofanalysis,'Kg')
-   if usejava('jvm'); close(wb);end
-   model.AbaqusRunsFolder
-   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true',model.AbaqusRunsFolder)
-   %return
-  else
-   warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')
-  end
+if ~exist([model.AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
+ %warning('MyProgramm:Missing','_STIF*.mtx missing')
+ if usejava('jvm'); waitbar(1,wb,'getStiffnessMatrices error');end
+ if ~exist([model.AbaqusRunsFolder,filename,'_STIF7.mtx'],'file') && ~strcmp(typeofanalysis,'Kg')
+  if usejava('jvm'); close(wb);end
+  model.AbaqusRunsFolder
+  error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true',model.AbaqusRunsFolder)
+  %return
+ else
+  warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')
  end
+end
 cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
- lenFN = length(filename);
- StifFilesMatlabVersion = ls([filename,'_STIF*.mtx']);
- StifFilesMatlabVersionTranspose=StifFilesMatlabVersion.';
- StifFiles = convertCharsToStrings(StifFilesMatlabVersionTranspose);
- beg_ = strfind(StifFiles,[filename,'_STIF']);
- end_ = strfind(StifFiles,'.mtx');
- num = zeros(length(beg_),1);
- for i = 1:length(beg_)
-  num(i) = str2double(StifFilesMatlabVersionTranspose((beg_(i)+lenFN+5):(end_(i)-1)));
- end
+lenFN = length(filename);
+StifFilesMatlabVersion = ls([filename,'_STIF*.mtx']);
+StifFilesMatlabVersionTranspose=StifFilesMatlabVersion.';
+StifFiles = convertCharsToStrings(StifFilesMatlabVersionTranspose);
+beg_ = strfind(StifFiles,[filename,'_STIF']);
+end_ = strfind(StifFiles,'.mtx');
+num = zeros(length(beg_),1);
+for i = 1:length(beg_)
+ num(i) = str2double(StifFilesMatlabVersionTranspose((beg_(i)+lenFN+5):(end_(i)-1)));
+end
 cd ~/ownCloud/Post/MangAbaqus/ %cd ..
 
 num = sort(num);
@@ -76,10 +76,32 @@ for i = 1:steps
  end
  mtxSparse = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname);
  dofs = max(mtxSparse(:,1:4));
- dofsinv = min(mtxSparse(:,1:4)); %#ok<NASGU>
+
  %avoid internat degrees of freedom
- internalNodes = unique(mtxSparse(mtxSparse(:,1)<0,1));
- internalNodesNew = ctranspose(1:length(internalNodes)) + dofs(1);
+ internalNodes = unique(mtxSparse(mtxSparse(:,1)<0,1));%list all negative Nodes
+ internalNodesNewFirst=1+dofs(1);
+ internalNodesNewLast=length(internalNodes)+dofs(1);
+ internalNodesNew=ctranspose(internalNodesNewFirst:internalNodesNewLast);%internalNodesNew = ctranspose(1:length(internalNodes)) + dofs(1);% assign negative Nodes a pos Node-Value
+ if i==1
+  dofsinv = min(mtxSparse(:,1:4)); %#ok<NASGU>
+  NrInNod=numel(internalNodes);
+  if NrInNod>0
+   inDOFpNList=NaN(NrInNod,1);
+   for j=1:NrInNod
+    inDOFpNList(j) = max(mtxSparse(mtxSparse(:,1)==internalNodes(j),2));
+   end
+   inDOFpNa = max(mtxSparse(mtxSparse(:,1)==internalNodes(1),2));
+   if NrInNod>1
+    inDOFpNb = max(mtxSparse(mtxSparse(:,1)==internalNodes(2),2));
+   else
+    inDOFpNb=NaN;
+   end
+   inDOFpN=[inDOFpNa inDOFpNb];
+  else
+   inDOFpN=[0 0];
+  end
+  inDOF = [internalNodesNewFirst internalNodesNewLast inDOFpN];
+ end
  for j = 1:length(internalNodes)
   mtxSparse(mtxSparse(:,1)==internalNodes(j),1) = internalNodesNew(j);
   mtxSparse(mtxSparse(:,3)==internalNodes(j),3) = internalNodesNew(j);
@@ -174,7 +196,7 @@ for i = 1:steps
  
  mtx(BC(:,1),:) = 0;
  mtx(:,BC(:,1)) = 0;
- mtx(BC(:,1),BC(:,1)) = 1e36*speye(size(BC,1),size(BC,1));
+ mtx(BC(:,1),BC(:,1)) = inf*speye(size(BC,1),size(BC,1)); %1e36*speye(size(BC,1),size(BC,1));
  
  StifMatrices{i,2} = mtx;
 end

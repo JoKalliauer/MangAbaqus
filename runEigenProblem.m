@@ -105,23 +105,34 @@ function [model] = runEigenProblem(modelprops)
  %filename = model.filename;
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem check mat-file');end
  files=dir([AnalysisResultsFolder,model.filename,'-*.mat']);
- if exist([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'], 'file') == 2 && modelprops.forcerun==false
+ if exist([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'], 'file') == 2 && modelprops.forcerun<=.501
   tmp=modelprops.numofeigs;
-  %mpl=modelprops.lambda;
+  mpl=modelprops.lambda;
+  if strcmp(modelprops.testcase,'TL_arch3D')
+   mpl=min(mpl,.8);
+  end
   if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem load mat-file');end
-  load([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'],'model');
+  loadFileName=[AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'] %#ok<NOPRT>
+  FileInfo = dir(loadFileName);
+  TimeStamp = FileInfo.date %#ok<NASGU,NOPRT>
+  load(loadFileName,'model');
   %only use the result if numofeigs is the same, 
   %since numofeigs changes the results
-  %ml=model.lambda;
-  if usejava('jvm'); close(wbrEP);end
-  if tmp==size(model.eigenvalues{1},2) %&& mpl(end)==ml(end)
-   clear tmp ml mpl
-   return
+  ml=model.lambda;
+  if tmp==size(model.eigenvalues{1},2)
+   if mpl(end-3)<=ml(end) || modelprops.forcerun<.499
+    if usejava('jvm'); close(wbrEP);end
+    clear tmp ml mpl
+    return
+   else
+    warning('MyPrgm:Different','modelprops.lambda(end) > model.lambda(end), reruning simulation')
+    modelprops.forceAbaqus=true;
+   end
   else
    warning('MyProgram:Input','requested %f eigenvalues, but %f exist in mat-file',tmp,size(model.eigenvalues{1},2))
   end
   clear tmp ml mpl
- elseif ~isempty(files) && modelprops.forcerun==false
+ elseif ~isempty(files) && modelprops.forcerun==false % es existiert eine ähnliche Datei aber nicht die gleiche
   if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem search mat-file');end
   modeldef=model;
   retryload=true;
@@ -156,22 +167,27 @@ function [model] = runEigenProblem(modelprops)
   noresults=false;
  end
  
- if (modelprops.forcerun==true && modelprops.forceAbaqus==true) || ~usejava('desktop') || noresults==true
-  if usejava('desktop')
-   %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
-   assert(numel(fulllambda)<=10005,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
-  else
-   %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
-   assert(numel(fulllambda)<=37205,'using %f>2000 fulllambda-values will take more than 12GB by Abaqus',numel(fulllambda))
+
+  if (modelprops.forcerun>=0.499 && modelprops.forceAbaqus==true) || ~usejava('desktop') || noresults==true % wenn (a) es erzwungen wird (b) es im Terminal läuft oder (c) wenn es keine Ergebnisse gibt
+   if usejava('desktop')
+    %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
+    assert(numel(fulllambda)<=10005,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
+   else
+    %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
+    assert(numel(fulllambda)<=37205,'using %f>2000 fulllambda-values will take more than 12GB by Abaqus',numel(fulllambda))
+   end
+   if modelprops.forceAbaqus>=0
+    AbaqusModelsGeneration.runAbaqus(model.filename,AbaqusRunsFolder,modelprops);
+   else
+    error('MyProgram:Input','No Abaqus results found')
+   end
   end
-  AbaqusModelsGeneration.runAbaqus(model.filename,AbaqusRunsFolder,modelprops);
- end
  % Kg = AbaqusModelsGeneration.getKgmatrix(model);
  
  %% get Stiffness
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem get Stiffness');end
  %[StifMatrices,num0,activeNodes,activeDofs,unactiveDofs,BC,Loads]  = AbaqusModelsGeneration.getStiffnessMatrices(model)
- [Kts,num,~,BC]  = AbaqusModelsGeneration.getStiffnessMatrices(model,[],modelprops.typeofanalysis);
+ [Kts,num,~,BC,model.inDOF]  = AbaqusModelsGeneration.getStiffnessMatrices(model,[],modelprops.typeofanalysis);
  
  if exist('retryload','var')
   if retryload==true
@@ -180,9 +196,9 @@ function [model] = runEigenProblem(modelprops)
    Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
    newsizeKt0=size(Kt0_0,1);
    if modelprops.numofeigs>newsizeKt0 
-    modelprops.numofeigs=min(newsizeKt0,modelprops.numofeigs);
-    if exist([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'], 'file') == 2 && modelprops.forcerun==false
-     load([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'],'model')
+    model.numofeigs=min(newsizeKt0,modelprops.numofeigs);
+    if exist([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(model.numofeigs),'.mat'], 'file') == 2 && modelprops.forcerun==false
+     load([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(model.numofeigs),'.mat'],'model')
      warning('MyProgram:NumEigs','too many eigs requested, no further check')
      return
     end
@@ -194,7 +210,7 @@ function [model] = runEigenProblem(modelprops)
 %   warning('MyProgram:OldFiles','Old *.mtx-files ignored');
 %   Ktsnew=Kts{1:numel(fulllambda),:};
 %  end
- model.BC = BC;
+%  model.BC = BC;
  
 %  for j = 1:size(BC,1)
 %   activeDofs(activeDofs==BC(j,1)) = []; %unactiveDofs = [unactiveDofs; BC(j,1)];
@@ -262,11 +278,12 @@ function [model] = runEigenProblem(modelprops)
  
  model.lambda0 = lambda0';
  %modelDisp=model;
+ model.BC=sort(BC);
  model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP);
  %modelDisp=model;
  %[Kts3]  = AbaqusModelsGeneration.getStiffnessMatrices3(model,[],modelprops.typeofanalysis);
 %  [~, Nres3] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
- Displ3 = NodalResults2DisplJK(Nres);
+ [Displ3,~] = NodalResults2DisplJK(Nres);
  model=runEigenProblemDispJK([],model,Displ3,[],[],matches,wbrEP);
  
  if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end

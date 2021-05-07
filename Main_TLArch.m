@@ -1,8 +1,7 @@
 %#!
 %university:TU Wien
  %#ok<*NOPTS>
- % close all
- 
+ close all 
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
 
   % there are following predefined test cases:
@@ -53,7 +52,7 @@
   modelprops.numofelm = 20;
   numofelms = {2,5,10,20,50,100,200,500,1000,2000};
   
-  epsil = 0.02;% finite difference step %epsil = 0.01;
+  epsil = 0.01;% finite difference step %epsil = 0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [1,2,3,12,14,15,16,19,21,24,22,25]; %#ok<*NBRAK>
   %plotfig= [3,7,14,15,28,33]
@@ -61,44 +60,64 @@
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
-  plotfig=[14,15,30];
+  plotfig=[14,15,16,37,900];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
   modelprops.elementtype = eltype;
   
+  maxload=30
+  maxlambda=maxload/83.3;
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:1; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:epsil:maxlambda; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor = 1.0;
+  modelprops.loadfactor = 1;
   %
   
   modelprops.profil.tw= 8.6e-3;
   %modelprops.forceAbaqus=true;
   modelprops.forceAbaqus=false; %default: false
   %modelprops.forcerun=true; %default=true
-  modelprops.forcerun=false;
+  modelprops.forcerun=0.5;
+  %modelprops.forcerun=false;
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
-  main.closall=true;
-  %main.closall=false;
+  %main.closall=true;
+  main.closall=false;
   main.savefigures=true;
   %main.savefigures=false;
-  main.check=true;
+  %main.check=true;
   %main.check=false;
   main.colorshift=0;
   modelprops.ask_delete=false;
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
-  modelprops.MeterValue=1;
+  modelprops.MeterValue=0.001;
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb';
   
   modelprops.followsigma=false;
 
   % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+% [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 %modelprops=rmfield(modelprops,'forceAbaqus');
 
+% 
+% eltypes={'B32','B32H','B31','B31H','B33','B33H'}
+%plotfig=[];
+eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
+for i=1:numel(eltypes)
+ modelprops.elementtype = char(eltypes(i))
+ if strcmp(modelprops.elementtype,'B32H')
+  main.check=false;
+ else
+  main.check=false;
+ end
+ main.colorshift=i-1;
+ % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+ [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+ 
+end
 
 % for i=numofelms
 %  modelprops.numofelm = cell2mat(i)
