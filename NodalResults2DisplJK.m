@@ -18,17 +18,22 @@ if numel(NreskeysIn)>0
   elseif  strcmp(key(1:2),'WA')
    remove(NresDisp, key)
    remove(NresRot, key)
+  elseif  strcmp(key,'NODE')
+   remove(Nres, key)
+   remove(NresDisp, key)
+   remove(NresRot, key)
   else
    error('MyProg:Strange','key not recogniced')
   end
  end
  NresDispkeys = NresDisp.keys;
- RES = NaN(length(NresDispkeys),size(Nres(NresDispkeys{1}),1),size(Nres(NresDispkeys{1}),2)-1); % Richtungen(max6) x NrKnoten x NrLastschritte
+ RES = NaN(length(NresDispkeys),size(Nres(NresDispkeys{1}),1),size(Nres(NresDispkeys{1}),2)); % Richtungen(max6) x NrKnoten x NrLastschritte
  for i = 1:length(NresDispkeys)
   key = NresDispkeys{i};
 
 
-  val = Nres(key); val = val(:,2:end);
+  val = Nres(key);
+  %val = val(:,2:end);
   %val(abs(val)<=1e-31)=0;%remove numeric issues close to zero
   RES(i,:,:) = val;
  end %for
@@ -47,10 +52,11 @@ if numel(NreskeysIn)>0
  end
 
  NresRotkeys = NresRot.keys;
- RES = NaN(length(NresRotkeys),size(Nres(NresRotkeys{1}),1),size(Nres(NresRotkeys{1}),2)-1); % Richtungen(max6) x NrKnoten x NrLastschritte
+ RES = NaN(length(NresRotkeys),size(Nres(NresRotkeys{1}),1),size(Nres(NresRotkeys{1}),2)); % Richtungen(max6) x NrKnoten x NrLastschritte
  for i = 1:length(NresRotkeys)
   key = NresRotkeys{i};
-  val = Nres(key); val = val(:,2:end);
+  val = Nres(key);
+  %val = val(:,2:end);
   %val(abs(val)<=1e-31)=0;%remove numeric issues close to zero
   RES(i,:,:) = val;
  end %for

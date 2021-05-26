@@ -20,7 +20,7 @@ function [model] = runEigenProblem(modelprops)
  end
  
  
- if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start','name','runEigenProblem'); end
+ if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start','name','runEigenProblem','WindowState','minimized'); else; wbrEP=[]; end
  lambda =   modelprops.lambda;
  if sum(strcmp(fieldnames(modelprops), 'forcerun')) == 0
   modelprops.forcerun=true;
@@ -126,7 +126,9 @@ function [model] = runEigenProblem(modelprops)
     return
    else
     warning('MyPrgm:Different','modelprops.lambda(end) > model.lambda(end), reruning simulation')
-    modelprops.forceAbaqus=true;
+    if modelprops.forceAbaqus>-1
+     modelprops.forceAbaqus=true;
+    end
    end
   else
    warning('MyProgram:Input','requested %f eigenvalues, but %f exist in mat-file',tmp,size(model.eigenvalues{1},2))
@@ -144,7 +146,7 @@ function [model] = runEigenProblem(modelprops)
   if nrldef<nrlload
    warning('MyProgram:Inputchange','Less Lambda requested than in another run')
    model.lambda(nrldef+1:nrlload)=modelload.lambda(nrldef+1:nrlload);
-   lambda0   = sort(unique(round([0,transpose(model.lambda)]   *100000))/100000);
+   %lambda0   = sort(unique(round([0,transpose(model.lambda)]   *100000))/100000);
    if isfield(modelload,'load')
     model.load(nrldef+1:nrlload)=modelload.load(nrldef+1:nrlload);
    end
@@ -274,11 +276,12 @@ function [model] = runEigenProblem(modelprops)
  
  %model.N0=size(Kt0_0,1);
  
- if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
+ if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem'); end
  
  model.lambda0 = lambda0';
  %modelDisp=model;
  model.BC=sort(BC);
+ model.fullload0=[0;model.fullload];
  model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP);
  %modelDisp=model;
  %[Kts3]  = AbaqusModelsGeneration.getStiffnessMatrices3(model,[],modelprops.typeofanalysis);

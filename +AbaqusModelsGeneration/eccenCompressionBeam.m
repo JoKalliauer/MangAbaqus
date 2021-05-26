@@ -37,14 +37,11 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  %% Load
  P = loadFactor*500e3; %[N?]
-% <<<<<<< HEAD
  load=lambda*P;
-% =======
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  %% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm+1)';
+ xcoords = linspace(-L/2,L/2,numofelm(end)+1)';
  ycoords = 0*xcoords;
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;

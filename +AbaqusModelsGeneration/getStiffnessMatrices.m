@@ -1,7 +1,7 @@
 function [StifMatrices,num0,activeDofs,BC,inDOF] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
 
 
-if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices','name','getStiffnessMatrices');end
+if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices','name','getStiffnessMatrices','WindowState','minimized');end
 %Loads = [];
 
 filename = model.filename;

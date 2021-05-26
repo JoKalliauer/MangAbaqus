@@ -79,7 +79,10 @@ while ~feof(u)
        Val(ecount,:) = sscanf(tline,'%f',[1 length(C)]);
        tline = fgetl(u);
       end
-      for i = 2:length(C)
+      for i = 2:length(C) %C{1}='NODE'
+       if ~Nres.isKey(C{i})
+        Nres(C{i}) = [Val(:,1),Val(:,i)];
+       end
        if Nres.isKey(C{i})
         toupdate = [Nres(C{i}),NaN(size(Nres(C{i}),1),1)];
         toupdate(Val(:,1),DispNr) = Val(:,i);

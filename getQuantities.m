@@ -1,18 +1,13 @@
 function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinpsi, ortCond2,ortCond3,ortCond4, t, N, B, r0,...
- ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR] ...
+ ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
  = getQuantities(RS,~,DT,r0atl0,~,tatl0,main) %DT=epsilon
-%rm4 = RS(:,1); %dksi04 = dksi(1);
-%rm3 = RS(:,2); %dksi03 = dksi(2); ds04 = sqrt((r03-r04)'*(r03-r04));
-rm2 = RS(:,1)/norm(RS(:,1)); %dksi02 = dksi(3); ds03 = sqrt((r02-r03)'*(r02-r03));
-rm1 = RS(:,2)/norm(RS(:,2)); %dksi01 = dksi(4); ds02 = sqrt((r01-r02)'*(r01-r02));
-r0  = RS(:,3)/norm(RS(:,3));
-rp1 = RS(:,4)/norm(RS(:,4)); %dksi11 = dksi(5); %ds01 = sqrt((r0-r01)'*(r0-r01));
-rp2 = RS(:,5)/norm(RS(:,5)); %dksi12 = dksi(6); %ds11 = sqrt((r11-r0)'*(r11-r0));
-%rp3 = RS(:,8); %dksi13 = dksi(7); %ds12 = sqrt((r12-r11)'*(r12-r11));
-%rp4 = RS(:,9);
-%dksi14 = dksi(8);
-%ds13 = sqrt((r13-r12)'*(r13-r12));
-%ds14 = sqrt((r14-r13)'*(r14-r13));
+assert(size(RS,2)==5,'size of RS not 5 vectors');
+
+rm2 = RS(:,1);%/norm(RS(:,1));
+rm1 = RS(:,2);%/norm(RS(:,2)); 
+r0  = RS(:,3);%/norm(RS(:,3));
+rp1 = RS(:,4);%/norm(RS(:,4));
+rp2 = RS(:,5);%/norm(RS(:,5)); 
 
 %r0check = (r11 + 3*r01)/(2*(0.5*(ds01+ds11))^2 + 4);
 
@@ -213,15 +208,10 @@ rconst=r0atl0(:)'*r0;
 phiR=acos(abs(rconst));
 Ebene=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
 
- x1=1-rho^2/(1-rho^2)*drhopds^2;
- x2=dot(d3rds3,r0);
+ x1=dot(r0,d2rds2)+1;
+ x2=1/norm(d2rds2);
  x3=norm(rho2*d3rds3+t);
-% =======
-%  x1=1-rho^2/(1-rho^2)*drhopds^2;
-%  x2=-dsdksi*tau*RxB;
-%  x3=r0atl0'*r0;
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
- x4=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
+ x4=abs(dot(r0,d2rds2)+1);
 
 Hypo=rho2^2*sqrt(1+tau^2);
 if imag(Hypo)~=0
@@ -277,6 +267,7 @@ ortCond4 = N'*B;
  % rd2l=(r01-2*r0+r11)/(DT)^2;
  % ortCond6a=transpose(r)*rd2l+transpose(rdl)*rdl;
  ortCond7=2*transpose(r0)*(rm1+rp1)-transpose(rm1)*rp1-3;
+ ortCond8=dot(r0,d2rds2)+1;
 
  
  %tripJK=dot(r0,cross(T,N));
@@ -298,6 +289,7 @@ else
  ortCond3=NaN;
  ortCond4=NaN;
  t=NaN;
+ d2rds2=NaN;
  N=NaN;
  B=NaN*r0;
  Hypo=NaN;

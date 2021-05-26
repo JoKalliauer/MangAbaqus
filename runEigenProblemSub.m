@@ -18,6 +18,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  arclengthHM = cell(length(lambda0),1);
  StiffMtxs = cell(length(lambda0),3);
  DetKtx = NaN(length(lambda0),1);
+ load0 = NaN(length(lambda0),1);
  eigvecDRH = cell(length(lambda0),1);% DRH...Displacement,Rotation,Hybrid(splitted)
  
 %  matches = NaN(0);
@@ -95,8 +96,8 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  if sum(strcmp(fieldnames(model), 'JC')) == 0
   model.JC=[];
  else
-  for i=1:size(model.JC,1)
-   nA(model.JC(i,2),model.JC(i,1))=true;%only works if model.JC(i,2) is smaller than model.RestrictedDOFs
+  for i1=1:size(model.JC,1)
+   nA(model.JC(i1,2),model.JC(i1,1))=true;%only works if model.JC(i,2) is smaller than model.RestrictedDOFs
   end
  end
 
@@ -195,11 +196,11 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    if displacementsenable
    displacements_(:,6) = Displ{matches(i)-0};
    displacements_(:,7) = Displ{matches(i)+1};
-   %if size(Displ,1)<matches(i)+2
-    %displacements_(:,8)=NaN*displacements_(:,7);
-   %else
+   if size(Displ,1)<matches(i)+2
+    displacements_(:,8)=NaN*displacements_(:,7);
+   else
     displacements_(:,8) = Displ{matches(i)+2};
-   %end
+   end
    %displacements_(:,9) = Displ{matches(i)+3};
    end
    
@@ -229,9 +230,9 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
     if numel(Kt13)>0
      Kt13(ru,:) = [];
      Kt13(:,ru) = [];
-    end
-    if numel(Kt13)>0
      Ktprim12 = 1/(2*modelprops.epsilon)*(Kt13 - Kt11);
+    else
+     Ktprim12=0*Ktprim11;
     end
    end
    
@@ -355,7 +356,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
     warning('MyProgram:Complex','R is komplex');
    end
    
-   EV = NaN(9,length(eigval0_)); %overwrite everything with NaNs
+   EV = NaN(7,length(eigval0_)); %overwrite everything with NaNs
    %EV(2,:) = eigval03_;
    EV(3,:) = eigval02_;
    EV(4,:) = eigval01_;
@@ -404,6 +405,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   StiffMtxs{i,2} = Ktprim0;
   Kt0rel=Kt0*5*10^-11;
   DetKtx(i)=det(Kt0rel);
+  %load(i)=model.fullload(matches(i));
   
   %StiffMtxs{i,3} = dKtprim0;
   
@@ -426,6 +428,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  model.arclengthurHM = arclengthHM;
  model.displacements = displacements;
  model.lambda0 = lambda0';
+ model.load0=[0;model.load];
  model.stiffnessMatrices = StiffMtxs;
  model.DetKtx=DetKtx;
  %model.N0=size(Kt0_0,1);

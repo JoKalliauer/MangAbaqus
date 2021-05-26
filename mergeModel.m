@@ -11,6 +11,8 @@ model.arclengthuJK=[modelP1.arclengthuJK;NaN;modelM1.arclengthuJK];
 model.dxidl=[modelP1.dxidl;NaN;modelM1.dxidl];
 model.lambda0=[modelP1.lambda0;NaN;-modelM1.lambda0];
 model.load=[modelP1.load;NaN;-modelM1.load];
+model.load0=[modelP1.load0;NaN;-modelM1.load0];
+model.fullload0=[modelP1.fullload0;NaN;-modelM1.fullload0];
 model.eigenvalues=[modelP1.eigenvalues;NaN*modelP1.eigenvalues{1};modelM1.eigenvalues];
 NanEV=NaN*modelP1.eigenvectors{1};
 if numel(NanEV)==0
@@ -21,5 +23,6 @@ else
  model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
 end
 model.arclengths=[modelP1.arclengths;NaN*modelP1.arclengths{1};modelM1.arclengths];
+model.uMaxJK=[modelP1.uMaxJK;NaN*modelP1.uMaxJK{1};modelM1.uMaxJK];
 end
 

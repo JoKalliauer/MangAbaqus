@@ -23,7 +23,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(Li
   MV=modelprops.MeterValue;
   
 % <<<<<<< HEAD
- filename = ['pureBendingBeamJK-',elType,'-',num2str(numofelm(end)),'-len-',num2str(Linp),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+ filename = ['pureBendingBeamJK-',elType,'-',num2str(numofelm(1)),'-len-',num2str(Linp),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 % =======
 %  filename = ['pureBendingBeam-',elType,'-',num2str(numofelm(end)),'-len-',num2str(L),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
 % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
@@ -47,7 +47,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(Li
  
  %% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm+1)';
+ xcoords = linspace(-L/2,L/2,numofelm(1)+1)';
  ycoords = 0*xcoords;
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;

@@ -3,6 +3,7 @@
  %#ok<*NOPTS>
  close all 
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
+ set(0, 'DefaultFigureWindowState', 'normal');
 
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
@@ -50,9 +51,9 @@
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
   modelprops.numofelm = 20;
-  numofelms = {2,5,10,20,50,100,200,500,1000,2000};
   
-  epsil = 0.01;% finite difference step %epsil = 0.01;
+  
+  epsil = 0.005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [1,2,3,12,14,15,16,19,21,24,22,25]; %#ok<*NBRAK>
   %plotfig= [3,7,14,15,28,33]
@@ -60,7 +61,8 @@
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
-  plotfig=[14,15,16,37,900];
+  %plotfig=[14,15,16,37,38,900,211];
+  plotfig=38;
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -76,56 +78,64 @@
   %
   
   modelprops.profil.tw= 8.6e-3;
-  %modelprops.forceAbaqus=true;
-  modelprops.forceAbaqus=false; %default: false
-  %modelprops.forcerun=true; %default=true
-  modelprops.forcerun=0.5;
+  modelprops.forceAbaqus=-1; 
+  modelprops.forcerun=.5; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=true;
+  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
   %main.savefigures=false;
-  %main.check=true;
-  %main.check=false;
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
-  modelprops.MeterValue=0.001;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb';
+  modelprops.MeterValue=1;
+  main.whichEV='bungle_rKr'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   modelprops.followsigma=false;
 
   % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-% [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
-%modelprops=rmfield(modelprops,'forceAbaqus');
+%[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
-% 
-% eltypes={'B32','B32H','B31','B31H','B33','B33H'}
-%plotfig=[];
-eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
+close all
+% % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
+% % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
+eltypes={'B32','B31','B33'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i))
- if strcmp(modelprops.elementtype,'B32H')
-  main.check=false;
- else
-  main.check=false;
- end
  main.colorshift=i-1;
  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
  
 end
 
-% for i=numofelms
-%  modelprops.numofelm = cell2mat(i)
-% %for j=epsils
-%  %modelprops.epsilon = cell2mat(j);
-%  %modelprops.lambda = 0:modelprops.epsilon:max(4)
-%  plotfig=[];
+% eltype = 'B32'
+% %plotfig=902;
+% numofelms = {4,8,16,32,64,128,256};
+% for i=1:numel(numofelms)
+%  modelprops.numofelm = cell2mat(numofelms(i));
+%  main.colorshift=i-1;
 %  
 %  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 %  
 % end
+
+% modelprops.numofelm=20;
+% %% epsilon
+% epsils={.2,.1,.05,.02,.01,.005,.002};
+%   for i= 1:numel(epsils)
+%    %modelprops.numofelm = cell2mat(i);
+%    modelprops.epsilon = cell2mat(epsils(i));
+%    modelprops.lambda = 0:modelprops.epsilon:max(4,20*modelprops.epsilon);
+%    %    plotfig=[];
+%    modelprops.ask_delete=true;
+%    
+%    main.colorshift=i-1;
+% 
+% % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+% [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+% 
+%   end

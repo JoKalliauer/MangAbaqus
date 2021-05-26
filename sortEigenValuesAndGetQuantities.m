@@ -39,7 +39,7 @@ if ~isfield(limit,'OC5a')
   %limit.OC5a=0.0480*epsilon;
   limit.OC5a=0.0480*epsilon; %ecc-B32OS-2-len-5-ecc-0.16467-loadfac-1-eps0.1
  else
-  limit.OC5a=2.7e-5;
+  limit.OC5a=0.0005;
  end
  limit.OC5=max(limit.OC5,limit.OC5a);
 end
@@ -60,7 +60,9 @@ if ~isfield(limit,'OC7')
  if epsilon<0.1
   %8.3e-9 old
   %-0.1482e-6 %ecc-B32OS-100-len-5-ecc-0.040447-loadfac-1-eps0.01-KNL2-KNL2-1
-  limit.OC7=max(abs(-0.1482e-6),5.1600e-06*epsilon); %-5.1600e-06*epsilon from 
+  %tmp=5.1600e-06;
+  tmp=1.459e-05; %AnalysisResults/ecc-B32OS-5-l5-e0.5-f1-eps0.05-KNL2-1.mat
+  limit.OC7=max(abs(-0.1482e-6),tmp*epsilon); %-5.1600e-06*epsilon from 
  else
   limit.OC7=abs(-0.59e-4);% ecc-B32OS-2-len-5-ecc-0.16467-loadfac-1-KNL2 epsil =0.1
  end
@@ -130,7 +132,7 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
  model.check=true;
 end
 %model.filename
-if strcmp(main.whichEV,'bungle')
+if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr')
  eigvecTMP = model.eigenvectors;
  realistic=false;
  evmiddle=5;
@@ -199,7 +201,7 @@ if DimsEVtmp>3
     warning('MyProgram:Input','no relevant data found')
     res=[];
     return
-    %forcedeig=[];
+    %forcedeig=[];norm(r0)
     %error('MyProgram:Input','no relevant data found')
    end
    eigvec{i}=eigvecTMP{i}(:,relDofs,relNodes,:);
@@ -263,6 +265,7 @@ OC4  = NaN(f,1);
 OC5  = NaN(f,1);
 OC6  = NaN(f,1);
 OC7  = NaN(f,1);
+OC8  = NaN(f,1);
 OCeig  = NaN(f,1);          %OCeig(k) = 1;
 LAM  = NaN(f,1);            %LAM(k) = lams;
 EWd2l= NaN(f,1);
@@ -286,6 +289,12 @@ Rconst=NaN(f,1);
 EBENE=NaN(f,1);
 PHIR=NaN(f,1);
 %DetKt=NaN(f,1);
+cosPhiMangA=NaN(f,1);
+cosPhiMangB=NaN(f,1);
+ZaelerB=NaN(f,1);
+NormB1=NaN(f,1);
+NormB2=NaN(f,1);
+NormR=NaN(f,1);
 
 
 
@@ -328,7 +337,8 @@ kl=min([round(kl),numel(lambda0),numel(eigvec)]);
 if ~strcmpi(sortType, 'none')
  %r0try = eigvec{k}(5,:,poslam);  %r0try = reshape(r0try,length(r0try),1);
  r1 = eigvec{1}(evmiddle,:,:,poslam);  r1 = reshape(r1,numel(r1),1);
- rs = eigvec{kl}(evmiddle,:,:,poslam);  rs = reshape(rs,numel(rs),1);
+ rs = eigvec{kl}(evmiddle,:,:,poslam);
+ rs = reshape(rs,numel(rs),1);
 else
  %r0try = zeros(size(eigvec{1},2),1);
  if ~isempty(forcedeig)
@@ -376,6 +386,7 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
+Kt0_0=model.stiffnessMatrices{1,1};
 
 for i = 1:f %f = length(eigval)
  %disp(i)
@@ -419,21 +430,34 @@ for i = 1:f %f = length(eigval)
  r01 = eigvec{i}(evmiddle-1,:,:,is0(isi)); r01 = reshape(r01,numel(r01),1);
  r01 = r01/norm(r01);
  if r02'*r01<0;  r01 = -r01;  end
- r0 = eigvec{i}(evmiddle,:,:,is0(isi));
- r0 = reshape(r0,numel(r0),1);
- r0 = r0/norm(r0);
- if r01'*r0<0;  r0 = -r0;  end
+ rm = eigvec{i}(evmiddle,:,:,is0(isi));
+ rm = reshape(rm,numel(rm),1);
+ rm = rm/norm(rm);
+ if r01'*rm<0;  rm = -rm;  end
  r11 = eigvec{i}(evmiddle+1,:,:,is0(isi)); r11 = reshape(r11,numel(r11),1);
  r11 = r11/norm(r11);
- if r0'*r11<0;  r11 = -r11;  end
+ if rm'*r11<0;  r11 = -r11;  end
  r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- %r13 = eigvec{i}(8,:,is0(isi)); r13 = reshape(r13,length(r13),1);
- %if r12'*r13<0;  r13 = -r13;  end
- %r14 = eigvec{i}(9,:,is0(isi)); r14 = reshape(r14,length(r14),1);
- %if r13'*r14<0;  r14 = -r14;  end
- 
+ if strcmp(main.whichEV,'bungle_rKr')
+  Nenner02=sqrt(r02'*Kt0_0*r02);
+  Nenner01=sqrt(r01'*Kt0_0*r01);
+  Nenner0=sqrt(rm'*Kt0_0*rm);
+  Nenner11=sqrt(r11'*Kt0_0*r11);
+  Nenner12=sqrt(r12'*Kt0_0*r12);
+ else
+  Nenner02=norm(r02);
+  Nenner01=norm(r01);
+  Nenner0=norm(rm);
+  Nenner11=norm(r11);
+  Nenner12=norm(r12);
+ end
+ r02 = r02/Nenner02;
+ r01 = r01/Nenner01;
+ rm = rm/Nenner0;
+ r11 = r11/Nenner11;
+ r12 = r12/Nenner12;
 
  
  
@@ -444,7 +468,7 @@ for i = 1:f %f = length(eigval)
 %  elseif lambda0(i)<2*epsilon
 %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
 %  end
- RS = [r02, r01, r0, r11, r12];%RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
+ RS = [r02, r01, rm, r11, r12];%RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
  if ~all(isnan(RS(:)))
   dksi = arclengths{i};
   %            dksi = ones(size(dksi,1),size(dksi,2))*(lambda(2)-lambda(1));
@@ -452,11 +476,11 @@ for i = 1:f %f = length(eigval)
  if any(isnan(r0atl0))
   if any(~isnan(r02)) && lambda0(i)~=0  && norm(dot(r02,r01))>rstabil
    r0atl0=r02;
-  elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,r0))>rstabil
+  elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,rm))>rstabil
    r0atl0=r01;
-  elseif any(~isnan(r0))  && norm(dot(r0,r11))>rstabil
+  elseif any(~isnan(rm))  && norm(dot(rm,r11))>rstabil
    warning('MyProgram:strange','r0 at lambda0 must be NaN')
-   r0atl0=r0;
+   r0atl0=rm;
   elseif any(~isnan(r11))
    if norm(dot(r11,r12))>rstabil
     r0atl0=r11;
@@ -474,7 +498,7 @@ for i = 1:f %f = length(eigval)
  end
 
   [v,a,speed,accel,at,an,rho,tau,ortCond1,rho2,drddr_,cosmu_,sinpsi_,ortCond2,ortCond3,ortCond4, t, ~, B, ~,...
-   ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR] ...
+   ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
    = getQuantities(RS,dksi,epsilon,r0atl0,rho2atl0,tatl0,main); % %DT=epsilon
   %EWd1l= ( eigval{i}(4,is0(isi)) - eigval{i}(6,is0(isi)) ) / (2*epsilon);
   %x1=eigvec{i}(5,:,1)*(model.stiffnessMatrices{i,2}-EWd1l*model.stiffnessMatrices{1,1})*r0;
@@ -485,6 +509,17 @@ for i = 1:f %f = length(eigval)
   end
   if any(isnan(tatl0(:))) && i>2
    tatl0=t;
+  end
+  ZaelerB(i)=(d2rds2'*Kt0_0*rm);
+  NormB1(i)=norm(d2rds2);
+  NormB2(i)=norm(Kt0_0*rm);
+  NormR(i)=norm(rm);
+  if any(isnan(t))
+   cosPhiMangA(i)=NaN;
+   cosPhiMangB(i)=NaN;
+  else
+   cosPhiMangA(i)=-(t'*Kt0_0*t)/(norm(d2rds2)*norm(Kt0_0*rm));
+   cosPhiMangB(i)=(d2rds2'*Kt0_0*rm)/(norm(d2rds2)*norm(Kt0_0*rm));
   end
 
   
@@ -506,7 +541,7 @@ for i = 1:f %f = length(eigval)
   end
   RHO2(i) = rho2;
   TAU(i) = tau;
-  OC0(i) = abs((v'*v)+(r0'*a));
+  OC0(i) = abs((v'*v)+(rm'*a));
   OC1(i) = ortCond1;
   OC2(i) = ortCond2;
   OC3(i) = ortCond3;
@@ -514,17 +549,18 @@ for i = 1:f %f = length(eigval)
   OC5(i) = ortCond5;
   OC6(i) = ortCond6;
   OC7(i) = ortCond7;
-  OCeig(i) = abs(r0'*v)/norm(v);
+  OC8(i) = ortCond8;
+  OCeig(i) = abs(rm'*v)/norm(v);
   %lami = ;
   LAM(i) = eigval{i}(5,is0(isi));
   EWd2l(i)= ( eigval{i}(4,is0(isi)) - 2*eigval{i}(5,is0(isi)) +eigval{i}(6,is0(isi)) ) / (epsilon^2);
   oneEWd2l(i)=1./EWd2l(i);
   %        disp(indi);
-  R(:,i) = indi*r0;
+  R(:,i) = indi*rm;
   POS(i) = is0(1);
   
-  r1ri(i) = abs(r1(:)'*r0);
-  rsri(i) = abs(rs(:)'*r0);
+  r1ri(i) = abs(r1(:)'*rm);
+  rsri(i) = abs(rs(:)'*rm);
   drddr(i) = drddr_;
   cosmu(i) = cosmu_;
   sinpsi(i) = sinpsi_;
@@ -601,6 +637,7 @@ OC4(isnan(OC4))=0;
 OC5(isnan(OC5))=0;
 OC6(isnan(OC6))=0;
 OC7(isnan(OC7))=0;
+OC8(isnan(OC8))=0;
 
 Orth1 = abs(OC1)<=limit.OC1; %0.0004;
 Orth2 = abs(OC2)<=1e-12;%0.000001;
@@ -613,6 +650,7 @@ Orth6a = (OC6)<=limit.OC6a;
 %Orth6a=Orth6;
 Orth7 = abs(OC7)<=limit.OC7;
 Orth7a = (OC7)<=eps(8);
+Orth8 = abs(OC8)<.00561; %just to filter one result
 
 
 if ~all(Orth5)
@@ -632,6 +670,9 @@ if ~all(Orth7)
 end
 if ~all(Orth7a)
  warning('MyProgam:Limits','OC7 is positive: %f',max((OC7)))
+end
+if ~all(Orth8)
+ warning('MyProgam:Limits','OC8 is large: %f (%d)',max(abs(OC8)),sum(~Orth8))
 end
 
 S(isnan(S))=0;
@@ -688,7 +729,7 @@ if ~all(Cond9)
  warning('MyProgam:Limits','tau changes by a factor of: %f (%d)',max(max(tch),1/min(tch)),sum(~Cond9))
 end
  
-OrthNaN=logical(Orth1.*Orth2.*Orth3.*Orth4.*Orth5.*Orth5a.*Orth6.*Orth6a.*Orth7.*Orth7a.*Cond2.*Cond3.*Cond4.*Cond4Atdiff.*Cond5An.*Cond5Andiff.*Cond6.*Cond7.*Cond8.*Cond9);
+OrthNaN=logical(Orth1.*Orth2.*Orth3.*Orth4.*Orth5.*Orth5a.*Orth6.*Orth6a.*Orth7.*Orth7a.*Orth8.*Cond2.*Cond3.*Cond4.*Cond4Atdiff.*Cond5An.*Cond5Andiff.*Cond6.*Cond7.*Cond8.*Cond9);
 if ~all(OrthNaN)
  disp(strcat(num2str(numel(OrthNaN)),' values'))
 end
@@ -706,6 +747,18 @@ Orth = true(length(Orth1),1);
 res.lambdaorg = lambda;   
 lambda(~OrthNaN)=NaN;
 res.lambda = lambda(Orth)';
+ZaelerB(~OrthNaN)=NaN;
+res.ZaelerB=ZaelerB(Orth);
+NormB1(~OrthNaN)=NaN;
+res.NormB1=NormB1(Orth);
+NormB2(~OrthNaN)=NaN;
+res.NormB2=NormB2(Orth);
+NormR(~OrthNaN)=NaN;
+res.NormR=NormR(Orth);
+cosPhiMangA(~OrthNaN)=NaN;
+res.cosPhiMangA=cosPhiMangA(Orth);
+cosPhiMangB(~OrthNaN)=NaN;
+res.cosPhiMangB=cosPhiMangB(Orth);
 V = V(:,Orth);
 res.V = V;
 A = A(:,Orth);            res.A = A;

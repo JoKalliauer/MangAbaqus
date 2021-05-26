@@ -65,8 +65,19 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = detKt2D(L0,numofel
    Elements(Elements(:,2)==midnode1,2) = midnode2;
  
  %% Boundary conditions
- if strcmp(eltype,'B21') || strcmp(eltype,'B23') || strcmp(eltype,'B22')
-  dofpNode=6;
+ if strcmp(eltype(1:2),'B2')
+  if strcmp(eltype,'B21') || strcmp(eltype,'B23') || strcmp(eltype,'B22')
+   dofpNode=6;
+  elseif strcmp(eltype(end),'H')
+   warning('MyPrgm:unknown','Element not tested')
+   dofpNode=6;
+  elseif strcmp(eltype(4),'O')
+   error('MyProgram:Element','Open Section not available in 2D')
+   dofpNode=7;
+  else
+   warning('MyPrgm:unknown','Element not tested')
+   dofpNode=6;
+  end
  elseif strcmp(eltype(1:2),'B3')
   error('MyProgram:Element','3D Element "%s" not allowed, use 2Delement "%s"',eltype,[eltype(1) '2' eltype(3:end)])
  else
