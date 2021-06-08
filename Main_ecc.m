@@ -68,7 +68,7 @@
   sortType = 'forwardJK';
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
-  plotfig=[0,14,36,21,211,22,18,902,2147483646]
+  plotfig=[0,14,36,21,211,22,18,902,2147483646,900:916]
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
@@ -87,7 +87,7 @@
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=2;
+  main.savefigures=1;
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;

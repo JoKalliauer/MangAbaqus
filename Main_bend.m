@@ -1,22 +1,19 @@
 %#!
 %university:TU Wien
  %#ok<*NOPTS>
+ clear
  close all
 %format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
  set(0, 'DefaultFigureWindowState', 'normal');
  %  set(0, 'DefaultFigureWindowState', 'minimized');
+ %set(0, 'DefaultFigureWindowStyle', 'docked');
 
   % there are following predefined test cases:
-  %modelprops.testcase = 'TL_arch';
-  %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
-  %testcase = 'TL_arch_Hinge';
-  %testcase = 'TL_arch3D_Hinge';
   modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
   %modelprops.testcase = 'pureBendingBeamMalendowski';
-  %modelprops.testcase = 'cantilever';
-  %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.164669;
-  %testcase = 'eccenCompressionBeam2D';
+  %modelprops.testcase = 'pureBendingCantilever';
+  modelprops.orientate=5;
   
   %modelprops.length = [];
   modelprops.length = 5;
@@ -58,7 +55,7 @@
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,7,14,15,21,211,26,28,29]; %#ok<*NBRAK>
   %plotfig=[14,15,16,37,38,211,902];
-  plotfig=[14,38:42];
+  plotfig=[14,15];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
@@ -73,7 +70,7 @@
   %
   
   %modelprops.profil.tw= 8.6e-3;
-  modelprops.forceAbaqus=-1; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
+  modelprops.forceAbaqus=1; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
   %modelprops.forcerun=true; %default=true
   %modelprops.forcerun=0.5; % force run if last lambda smaller than requested
   %modelprops.forcerun=false;
@@ -82,9 +79,8 @@
   modelprops.allowComplex=false;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=true;
-  %main.savefigures=false;
-  main.check=0;
+  main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
+  main.check=1;
   main.colorshift=0;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1;
@@ -127,8 +123,8 @@ end
 % 
 %   end
 
-% % numelem
-% numofelms = {8,16,32,64,128,256};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
+% % % % % % % %numelem
+% numofelms = {8,16,32,64,128,256,512,1024,2048};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
 % for i=1:numel(numofelms)
 %  modelprops.numofelm = cell2mat(numofelms(i));
 %  main.colorshift=i-1;

@@ -73,7 +73,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = detKt2D(L0,numofel
    dofpNode=6;
   elseif strcmp(eltype(4),'O')
    error('MyProgram:Element','Open Section not available in 2D')
-   dofpNode=7;
+   %dofpNode=7;
   else
    warning('MyPrgm:unknown','Element not tested')
    dofpNode=6;

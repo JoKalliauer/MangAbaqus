@@ -598,6 +598,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_rho14.png'))
    print('-fillpage',strcat('Output/Figures/PDF/',modelfilename,'_rho14.pdf'),'-dpdf')
    %plotitJK(lambda(2:end),res(k3).RHO2(2:end),'Output/Figures/',xlabelJK,ylabelJK,strcat(modelfilename,'_rho14'),NaN,NaN,cfig) 
+  else
+   title(modelfilename)
   end
   disp(median(res(k3).RHO2(2:lamlast),'omitnan'));
  end
@@ -648,6 +650,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
     cfig('LineStyle')=MyLines{main.colorshift+1};
     plotitJK(x,y4,'Output/Figures/PlotIt/',xlabelload,yLabel,dianame,cfig,8015);
    end
+  else
+   title(modelfilename)
   end
  end
  
@@ -1592,8 +1596,9 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   y=cell2mat(model.arclengths);
   %y4=cell2mat(model.arclengthsJK);
   lambdaplot=model.lambdainput;
+  xPlot=(lambdaplot(2:end)+lambdaplot(1:end-1))/2;
   %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
-  plot(lambdaplot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
+  plot(xPlot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
   %plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
   %plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
   %plot(lambdaplot,y4(:,5),'LineStyle',':','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
@@ -1618,11 +1623,12 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   %y=cell2mat(model.arclengths);
   y4=cell2mat(model.darclengthsJK);
   lambdaplot=model.lambdainput;
+  xPlot=(lambdaplot(2:end)+lambdaplot(1:end-1))/2;
   %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
   %plot(lambdaplot,y(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
   %plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
   %plot(lambdaplot,cell2mat(model.arclengthuHM),'LineStyle','-.','Marker',markJK,'LineWidth',1.5,'Color',MyColours{3});
-  plot(lambdaplot,y4(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
+  plot(xPlot,y4(:,5),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{4});
   %legend('arclengthsurHM','arclengthsuJK')
   %plot([0 0],[0 0],'LineWidth',eps(0));
   xlabel('$\lambda$','Interpreter','latex');

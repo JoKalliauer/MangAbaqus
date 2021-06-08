@@ -510,11 +510,16 @@ for i = 1:f %f = length(eigval)
   if any(isnan(tatl0(:))) && i>2
    tatl0=t;
   end
-  ZaelerB(i)=(d2rds2'*Kt0_0*rm);
   NormB1(i)=norm(d2rds2);
-  NormB2(i)=norm(Kt0_0*rm);
   NormR(i)=norm(rm);
-  if any(isnan(t))
+  if strcmp(main.whichEV,'bungle_rKr')
+   ZaelerB(i)=(d2rds2'*Kt0_0*rm);
+   NormB2(i)=norm(Kt0_0*rm);
+  else
+   ZaelerB(i)=NaN;
+   NormB2(i)=NaN;
+  end
+  if any(isnan(t)) || ~strcmp(main.whichEV,'bungle_rKr')
    cosPhiMangA(i)=NaN;
    cosPhiMangB(i)=NaN;
   else

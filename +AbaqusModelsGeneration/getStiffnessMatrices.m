@@ -150,6 +150,7 @@ for i = 1:steps
   assert(dofs(1)==dofs(3),'insconsistent nr of nodes')
   assert(dofs(1)==size(model.Nodes,1),'nr of nodes do not agree with Abaqus')
  end
+ assert(numel(BCsort)==numel(BCAbaqus),'number of BC does not agree')
  if all(BCsort==BCAbaqus)
   BC=BCMatlab;
  else

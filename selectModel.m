@@ -65,6 +65,9 @@ end
      M = loadFactor*0.5e6; %[N*m ?]
      model.load=lambda*M;
      [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.pureBendingBeam_Malendowski(L,numofelm,lambda,loadFactor,eltype);
+    case 'pureBendingCantilever'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.pureBendingCantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+     model.xlabelloadname='bending moment $M$ [N\,m]';
     case 'cantilever'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.cantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam'
