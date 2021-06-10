@@ -11,7 +11,7 @@ function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
  %Kg = EigRes;
  lambda0=model.lambda0';
 
- displacements = cell(length(lambda0),1);
+ displacements = cell(length(matches),1);
  darclengths = cell(length(lambda0),1);
  arclengthJK = cell(length(lambda0),1);
  lengthMaxJK = cell(length(lambda0),1);
@@ -23,6 +23,7 @@ function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
  dUdl = cell(length(lambda0),1);
  dwdl = cell(length(lambda0),1);
  dvdl = cell(length(lambda0),1);
+ dudl = cell(length(lambda0),1);
  
  NrNo=size(model.Nodes,1);
  xtmp=NaN(NrNo,1);
@@ -80,17 +81,7 @@ function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
     dUdli=max(abs(dksiMat(:)))/dl;
     dwdli=max(abs(dksiMat(end,:)))/dl;
     dvdli=max(abs(dksiMat(2,:)))/dl;
-%    else
-%     if matches(i)==1
-%      displacements_(:,:) = zeros(3,1);
-%     else
-%      displacements_(:,:) = NaN(3,1);
-%     end
-%     dksi11 = NaN;
-%     dxidli=NaN;
-%     dUdli=NaN;
-%     dwdli=NaN;
-%     dvdli=NaN;
+    dudli=max(abs(dksiMat(1,:)))/dl;
    end
 
    % 2.
@@ -100,44 +91,29 @@ function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
    else
     dksi12 = NaN;
    end
-
-   % 4.
-%    if displacementsenable
-% %    displacements_(:,:,6) = Displ{matches(i)-0};
-% %    displacements_(:,:,7) = Displ{matches(i)+1};
-% %     displacements_(:,:,8) = Displ{matches(i)+2};
-%    end
-   
-
-
-
    end
-   
-%    if strcmp(modelprops.typeofanalysis,'KNL2') || mintest<matches(i)+4
-% %     if displacementsenable; displacements_(:,:,9)=NaN*displacements_(:,:,8);end
-%    else
-%     %displacements_(:,:,9) = Displ{matches(i)+3};
-%    end
    
    darclengths{i} = [dksi11,dksi12];
    dxidl{i+1}=dxidli;
    dUdl{i}=dUdli;
    dwdl{i}=dwdli;
    dvdl{i}=dvdli;
+   dudl{i}=dudli;
    
    displacements{i} = displacements_;
    arclengthJK{i+1}=mean(sqrt(sum(displacements_.*displacements_,1)));
    lengthMaxJK{i}=max(abs(displacements_(:)));
    wMaxJK{i}=max(abs(displacements_(end,:)));
-   vMaxJK{i}=max(abs(displacements_(2,:)));
+   vMaxJK{i+1}=max(abs(displacements_(2,:)));
    uMaxJK{i+1}=max(abs(displacements_(1,:)));
    arclengthHM{i}=sqrt(sum(sum(displacements_.*displacements_)));
 
 
  end%for i = 1:length(matches)
  arclengthJK{1}=0*arclengthJK{2};
+ vMaxJK{1}=0*vMaxJK{2};
  uMaxJK{1}=0*uMaxJK{2};
- dxidl{1}=0*dxidl{2};
+ dxidl{1}=NaN*dxidl{2};
  
  model.darclengthsJK = darclengths;
  model.arclengthuJK = arclengthJK;
@@ -148,6 +124,7 @@ function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
  model.dUdl=dUdl;
  model.dwdl=dwdl;
  model.dvdl=dvdl;
+ model.dudl=dudl;
  model.arclengthuHM = arclengthHM;
  model.displacementsJK = displacements;
  model.dxidl=dxidl;

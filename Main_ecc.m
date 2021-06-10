@@ -17,7 +17,9 @@
   %modelprops.ecc=(81*sqrt(64373/403390))/800;
   %modelprops.ecc=0;
   %modelprops.ecc=0.02;
-  modelprops.ecc=.5;
+  modelprops.ecc=50; %.5
+  modelprops.ecc=.005; %.5
+  modelprops.ecc=5;
   %[~,modelprops.ecc]=eccfromU(0.5);
   modelprops.testcase = 'eccenCompressionBeam'; 
   %testcase = 'eccenCompressionBeam2D';
@@ -61,14 +63,15 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 20; %20
+  modelprops.numofelm = 4; %20
   
-  epsil = .05; %epsil = 0.02;  % finite difference step %epsil = 0.005;
+  epsil = .02; %epsil = 0.02;  % finite difference step %epsil = 0.005;
   %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   sortType = 'forwardJK';
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
-  plotfig=[0,14,36,21,211,22,18,902,2147483646,900:916]
+  %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917]
+  plotfig=[902,908,916,918:920];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
@@ -79,10 +82,8 @@
   %int
   
   modelprops.profil.tw= 8.6e-3;
-  %modelprops.forceAbaqus=true; modelprops.forcerun=true;
-  modelprops.forceAbaqus=false; %default: false
-  %modelprops.forceAbaqus=int8(-1); % throw an error if calculation does not exist
-  modelprops.forcerun=0;
+  modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
+  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.numofeigs=0;
   modelprops.allowComplex=true;
   %main.closall=true;
@@ -93,12 +94,13 @@
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
+  main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   modelprops.sigma=0;
   
  %main.check=false;
 % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-%  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+ [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
   
 set(0, 'DefaultFigureWindowState', 'normal');
 %   for i=1:numel(eltypes)
@@ -109,29 +111,31 @@ set(0, 'DefaultFigureWindowState', 'normal');
 % [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,modelprops.ecc,elementtype);
 % 
 %   end
-%   
-%     modelprops.elementtype = 'B31OS'; 
+%    
 %   %eltypes={'B33','B31','B31OS','B32','B32OS'}
 %   list=[2,5,10,20]
-% for i=1:numel(list)
-%  numofelm=list(i);
-%    [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm);
-% end
-
-%% epsilon
-epsils={1,.5,.2,.1,.05,.02,.01,.005,.002}%,.01,.005,.002
-  for i=1:numel(epsils)
-   %modelprops.numofelm = cell2mat(i)
-   modelprops.epsilon = cell2mat(epsils(i));
-   modelprops.lambda = 0:modelprops.epsilon:max(5);
-   main.colorshift=i-1;
-   %    plotfig=[];
-
-% modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
-
-  end
-
+% % for i=1:numel(list)
+% %  numofelm=list(i);
+% %    [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm);
+% % end
+% 
+% %% epsilon
+% epsils={1,.5,.2,.1,.05,.02,.01,.005,.002}%,.01,.005,.002
+%   for i=1:numel(epsils)
+%    %modelprops.numofelm = cell2mat(i)
+%    modelprops.epsilon = cell2mat(epsils(i));
+%    modelprops.lambda = 0:modelprops.epsilon:max(5);
+%    main.colorshift=i-1;
+%    %    plotfig=[];
+% 
+% % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+% [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+% 
+%   end
+% modelprops.epsilon = 0.02;
+% modelprops.lambda = 0:modelprops.epsilon:max(5);
+% 
+% 
 % numofelms = {4,8,16,32,64,128,256};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
 % for i=1:numel(numofelms)
 %  modelprops.numofelm = cell2mat(numofelms(i));

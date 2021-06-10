@@ -90,7 +90,8 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
    %cleanup useless staff
    % ls([filename,'_X*.sim'])
    system(['rm ',filename,'_X*.sim'])
-   %system(['rm ',filename,'.mdl'])
+   system(['rm ',filename,'.mdl'])
+   system(['rm ',filename,'.odb'])
   end
  else
   %   if~(exist([filename,'.odb_f'], 'file') == 2)

@@ -12,7 +12,7 @@
   % there are following predefined test cases:
   modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
   %modelprops.testcase = 'pureBendingBeamMalendowski';
-  %modelprops.testcase = 'pureBendingCantilever';
+  modelprops.testcase = 'pureBendingCantilever';
   modelprops.orientate=5;
   
   %modelprops.length = [];
@@ -54,17 +54,17 @@
   modelprops.numofelm = 20;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,7,14,15,21,211,26,28,29]; %#ok<*NBRAK>
-  %plotfig=[14,15,16,37,38,211,902];
-  plotfig=[14,15];
+  plotfig=[14,15,16,37,38,211,902];
+  %plotfig=[14,15];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
 %   modelprops.elementtype = eltype;
   
-  modelprops.epsilon = .02;  % .02;
+  modelprops.epsilon = .01;  % .02;
   epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
-  modelprops.lambda = 0:modelprops.epsilon:max(1,40*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:modelprops.epsilon:max(.7,40*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.loadfactor = 1;
   %
@@ -84,7 +84,7 @@
   main.colorshift=0;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   %modelprops.sigma=-10;
   modelprops.followsigma=false;

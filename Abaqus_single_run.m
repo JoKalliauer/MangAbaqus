@@ -110,7 +110,7 @@ for i=1:numel(model.eigenvalues)
    warning('MyProgram:Empty','some eigenvalues are empty, please rerun using modelprops.forceAbaqus=true')
   end
   model.eigenvalues=model.eigenvalues(1:i-1);
-  model.lambda0=model.lambda0(1:i-1);
+  %model.lambda0=model.lambda0(1:i-1);
   break
  end
  if ~isreal(model.eigenvalues{i}(5,:))
