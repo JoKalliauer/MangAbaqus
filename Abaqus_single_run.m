@@ -243,10 +243,10 @@ if usejava('desktop')
   warning('MyProgram:Input','lamdalengh differs, try modelprops.forceAbaqus=true')
   model.fullEV=model.fullEV(:,1:lengthInput);
  end
- if any(all(isnan(real(model.fullEV)))) %wenn es Spalten gibt die in jeder Zeile immer NaN sind
-  model.fulllambda(all(isnan(real(model.fullEV)), 1)) = [];
-  %model.fullEV(:,all(isnan(real(model.fullEV)), 1)) = [];
- end
+%  if any(all(isnan(real(model.fullEV)))) %wenn es Spalten gibt die in jeder Zeile immer NaN sind
+%   model.fulllambda(all(isnan(real(model.fullEV)), 1)) = [];
+%   %model.fullEV(:,all(isnan(real(model.fullEV)), 1)) = [];
+%  end
  tooLarge= (model.fulllambda>lastLambda+eps(lastLambda));
  if any(tooLarge)
   model.fulllambda(tooLarge)=NaN;

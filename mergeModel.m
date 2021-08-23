@@ -23,6 +23,8 @@ else
  model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
 end
 model.arclengths=[modelP1.arclengths;NaN*modelP1.arclengths{1};modelM1.arclengths];
+model.arclengthurHM=[modelP1.arclengthurHM;NaN*modelP1.arclengthurHM{1};modelM1.arclengthurHM];
+model.arclengthuHM=[modelP1.arclengthuHM;NaN*modelP1.arclengthuHM{1};modelM1.arclengthuHM];
 model.uMaxJK=[modelP1.uMaxJK;NaN*modelP1.uMaxJK{1};modelM1.uMaxJK];
 end
 

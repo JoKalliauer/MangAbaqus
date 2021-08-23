@@ -18,7 +18,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  arclengthHM = cell(length(lambda0),1);
  StiffMtxs = cell(length(lambda0),3);
  DetKtx = NaN(length(lambda0),1);
- load0 = NaN(length(lambda0),1);
+ %load0 = NaN(length(lambda0),1);
  eigvecDRH = cell(length(lambda0),1);% DRH...Displacement,Rotation,Hybrid(splitted)
  
 %  matches = NaN(0);
@@ -92,7 +92,9 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  ReducedHybridDofb=model.inDOF(4)+1:R_DRHsizeIn(1);
  nA=false(R_DRHsizeIn(1:2));
  nA(ReducedHybridDofa,model.inDOF(1):2:model.inDOF(2))=true;
- nA(ReducedHybridDofb,model.inDOF(1)+1:2:model.inDOF(2))=true;
+ if ~isnan(ReducedHybridDofb)
+  nA(ReducedHybridDofb,model.inDOF(1)+1:2:model.inDOF(2))=true;
+ end
  if sum(strcmp(fieldnames(model), 'JC')) == 0
   model.JC=[];
  else
@@ -100,7 +102,9 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    nA(model.JC(i1,2),model.JC(i1,1))=true;%only works if model.JC(i,2) is smaller than model.RestrictedDOFs
   end
  end
-
+ if sum(strcmp(fieldnames(modelprops), 'sigma')) == 0
+  modelprops.sigma=0;
+ end
  
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
 
@@ -174,13 +178,13 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    end
    Kt01(ru,:) = []; Kt01(:,ru) = [];
    % 0.
-   Kt0 = Kts{matches(i),2}; Kt0(ru,:) = []; Kt0(:,ru) = [];
+   KT = Kts{matches(i),2}; KT(ru,:) = []; KT(:,ru) = [];
    % 1.
    Kt11 = Kts{matches(i)+1,2};
    if numel(Kt11)>0
     Kt11(ru,:) = []; Kt11(:,ru) = [];
    else
-    Kt11=0*Kt0;
+    Kt11=0*KT;
    end
    % 2.
    if displacementsenable
@@ -206,7 +210,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    
    %Ktprim03 = 1/(2*epsil)*(Kt02 - Kt04);
    Ktprim02 = 1/(2*modelprops.epsilon)*(Kt01 - Kt03);
-   Ktprim01 = 1/(2*modelprops.epsilon)*(Kt0 - Kt02);
+   Ktprim01 = 1/(2*modelprops.epsilon)*(KT - Kt02);
    Ktprim0 = 1/(2*modelprops.epsilon)*(Kt11 - Kt01);
 
 
@@ -220,7 +224,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
     else
      Kt12=0*Kt11;
     end
-    Ktprim11 = 1/(2*modelprops.epsilon)*(Kt12 - Kt0);
+    Ktprim11 = 1/(2*modelprops.epsilon)*(Kt12 - KT);
    end
    
    if size(Kts,1)<matches(i)+3
@@ -271,7 +275,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    
    %dKtprim0 = 1/epsil*(Kt01 -2*Kt0 +Kt11);
    if strcmp(modelprops.typeofanalysis,'Kg')
-    [r0t ,eigval0_ ] = solveCLEforMinEigNew(Kt0 ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops);
+    [r0t ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops);
     R = NaN(7,size(r0t,1),size(r0t,2));
     R(5,:,:) = r0t;
     EV = NaN(7,length(eigval0_));
@@ -291,7 +295,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
      %[r03_,eigval03_] = solveCLEforMinEigNew(Kt03,Ktprim03,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-3,NaN,modelprops);
      [r02_,eigval02_] = solveCLEforMinEigNew(Kt02,Ktprim02,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-2,model,modelprops,Ktprim0_0);
      [r01_,eigval01_] = solveCLEforMinEigNew(Kt01,Ktprim01,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-1,model,modelprops,Ktprim0_0);
-     [r0_ ,eigval0_ ] = solveCLEforMinEigNew(Kt0 ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0; iter=matches(i); typeofanal=modelprops.typeofanalysis
+     [r0_ ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0; iter=matches(i); typeofanal=modelprops.typeofanalysis
      [r11_,eigval11_] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
     end
     [r12_,eigval12_] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
@@ -401,10 +405,65 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   eigval{i} = EV;
   eigvec{i} = R;
   eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
-  StiffMtxs{i,1} = Kt0;
+  StiffMtxs{i,1} = KT;
   StiffMtxs{i,2} = Ktprim0;
-  Kt0rel=Kt0*5*10^-11;
-  DetKtx(i)=det(Kt0rel);
+  if i==1
+   %    KTmult0=5*10^-11;
+   KTmult0=1.1e-11;
+   KTrel=KT*KTmult0;
+   res=det(KTrel);
+   relative=false;
+   if (res==0 && ~strcmp(modelprops.elementtype(end),'H')) || isinf(res)
+    Kt0=KT;
+    Kt0inv=inv(Kt0);
+    relative=true;
+%     n=87;
+%     passt=false;
+%     while passt==false
+%      res=1;
+%      %n=1;
+%      while res>0 && ~isinf(res)
+%       n=n+1;
+%       res=det(Kt0(1:n,1:n)*KTmult0);
+%      end
+%      m=n-1
+%      res=det(Kt0(1:m,1:m)*KTmult0)
+%      if isinf(res)
+%       warning('MyPrgm:Nan','res is inf')
+%       %res=det(Kt0(1:m,1:m)*KTmultAlt);
+%      end
+%      if res<1e10
+%       res=res*1e50 %1e100->2813
+% %1e50: 1931->2189->2486
+%      end
+%      Nenner=nthroot(res,m);
+%      %KTmultAlt=KTmult0;
+%      KTmultNeu=(KTmult0/Nenner+KTmult0)/2
+%      KTmult=KTmultNeu;
+%      KTmult0=KTmult;
+%      detKtmult=det(Kt0*KTmult);
+%      if detKtmult~=0 && ~isinf(detKtmult)
+%       passt=true;
+%      end
+%     end
+   else
+    KTmult=KTmult0;
+   end
+ end %i=1
+ if relative==true
+  if numel(KT)<=1E5
+   DetKtx(i)=det(Kt0inv*KT); %#ok<MINV>
+  else
+   DetKtx(i)=NaN;
+  end
+ else
+  KTrel=KT*KTmult;
+  if isinf(res) || res==0
+   DetKtx(i)=res;
+  else
+   DetKtx(i)=det(KTrel);
+  end
+ end
   %load(i)=model.fullload(matches(i));
   
   %StiffMtxs{i,3} = dKtprim0;
@@ -432,7 +491,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  model.stiffnessMatrices = StiffMtxs;
  model.DetKtx=DetKtx;
  %model.N0=size(Kt0_0,1);
- model.N=size(Kt0,2);
+ model.N=size(KT,2);
  assert(model.N0==model.N,'size of Kt0 changes or is not symmetric')
  %model.fullLAMDA=fullLAMDA;
  model.fullEV=fullEV;

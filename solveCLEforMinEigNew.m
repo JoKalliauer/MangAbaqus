@@ -75,7 +75,8 @@ switch typeofanal
   %EWgesucht=-1;
  case 'KNL2' % [ Kt - EW * Kt0 ]
   if iter>1
-   B =  -Kt0_0;
+   %B =  -Kt0_0;
+   RM = Kt0_0;
   else
    evec0 = NaN(DOFKt,numofeigs);
    eval0=ones(numofeigs,1);

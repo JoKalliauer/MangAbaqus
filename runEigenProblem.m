@@ -170,6 +170,7 @@ function [model] = runEigenProblem(modelprops)
  end
  
 
+disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs)]);
   if (modelprops.forcerun>=0.499 && modelprops.forceAbaqus==true) || ~usejava('desktop') || noresults==true % wenn (a) es erzwungen wird (b) es im Terminal läuft oder (c) wenn es keine Ergebnisse gibt
    if usejava('desktop')
     %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))

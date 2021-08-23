@@ -31,6 +31,10 @@ function printresMulti(res,model,plotfig,~,~,resEWs,~)
  m34=m14;
  loadlen=min(lengthlam-1,numel(model.load));
  m30=NaN(loadlen+1,1+numel(resEWs));
+ [tmp1,tmp2]=size(model.load);
+ if tmp1==1 && tmp2>1
+  model.load=transpose(model.load);
+ end
  m30(:,1)=[0;model.load(1:loadlen)];
  m32=m30;
  for k3=resEWs

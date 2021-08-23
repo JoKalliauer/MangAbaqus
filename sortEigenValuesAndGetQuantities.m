@@ -272,7 +272,7 @@ EWd2l= NaN(f,1);
 oneEWd2l=NaN(f,1);
 R    = NaN(EVdofs,f); %R(:,k) = r0s;
 r1ri = NaN(f,1);
-rsri = NaN(f,1);
+% rsri = NaN(f,1);
 drddr = NaN(f,1);
 cosmu = NaN(f,1);
 sinpsi = NaN(f,1);
@@ -333,26 +333,26 @@ switch sortType
  otherwise
    poslam=forcedeig;
 end
-kl=min([round(kl),numel(lambda0),numel(eigvec)]);
+% kl=min([round(kl),numel(lambda0),numel(eigvec)]);
 if ~strcmpi(sortType, 'none')
  %r0try = eigvec{k}(5,:,poslam);  %r0try = reshape(r0try,length(r0try),1);
  r1 = eigvec{1}(evmiddle,:,:,poslam);  r1 = reshape(r1,numel(r1),1);
- rs = eigvec{kl}(evmiddle,:,:,poslam);
- rs = reshape(rs,numel(rs),1);
+%  rs = eigvec{kl}(evmiddle,:,:,poslam);
+%  rs = reshape(rs,numel(rs),1);
 else
  %r0try = zeros(size(eigvec{1},2),1);
  if ~isempty(forcedeig)
   r1 = eigvec{1}(evmiddle,:,:,forcedeig);
   r1 = reshape(r1,numel(r1),size(forcedeig,1));
-  rs = eigvec{kl}(evmiddle,:,:,forcedeig);
-  rs = reshape(rs,numel(rs),size(forcedeig,1));
+%   rs = eigvec{kl}(evmiddle,:,:,forcedeig);
+%   rs = reshape(rs,numel(rs),size(forcedeig,1));
  else
   r1 = eigvec{1}(evmiddle,:,:,1);  r1 = reshape(r1,numel(r1),1);
-  rs = eigvec{kl}(evmiddle,:,:,1);  rs = reshape(rs,numel(rs),1);
+%   rs = eigvec{kl}(evmiddle,:,:,1);  rs = reshape(rs,numel(rs),1);
  end
 end
 r1=r1/norm(r1);
-rs=rs/norm(rs);
+% rs=rs/norm(rs);
 
 rho2atl0=NaN;
 if ~isempty(forcedeig)
@@ -565,7 +565,7 @@ for i = 1:f %f = length(eigval)
   POS(i) = is0(1);
   
   r1ri(i) = abs(r1(:)'*rm);
-  rsri(i) = abs(rs(:)'*rm);
+%   rsri(i) = abs(rs(:)'*rm);
   drddr(i) = drddr_;
   cosmu(i) = cosmu_;
   sinpsi(i) = sinpsi_;
@@ -794,7 +794,7 @@ R = R(:,Orth);
 res.R = R;
 POS = POS(Orth);          res.POS = POS;
 r1ri = r1ri(Orth);        res.r1ri = r1ri;
-rsri = rsri(Orth);        res.rsri = rsri;
+% rsri = rsri(Orth);        res.rsri = rsri;
 drddr = drddr(Orth);      res.drddr = drddr;
 res.cosmu = cosmu(Orth);
 Orthcosmu=[false;(res.cosmu(2:end)-res.cosmu(1:end-1))>0.6];

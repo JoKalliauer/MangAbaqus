@@ -2,7 +2,7 @@ function [idxs,obergrenze] = markMins(lambdaplot,y4)
 %   [miny4,idx]=min(y4);
   idxs=islocalmin(y4,'FlatSelection', 'all');
   plot([0 0],[0 0],'LineWidth',eps(0));
-  plot(lambdaplot(idxs),y4(idxs),'o','Color',[0 0 0],'MarkerSize',12,'LineWidth',3,'MarkerFaceColor',[1 1 1])
+  plot(lambdaplot(idxs),y4(idxs),'o','Color',[0 0 0],'MarkerSize',12,'LineWidth',1.5,'MarkerFaceColor',[1 1 1])
   lambdaplot(idxs)
   y4s=y4(idxs);
   maxy4=max(y4);

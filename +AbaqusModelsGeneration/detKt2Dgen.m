@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = detKt2D(L0,numofelm,lambda,loadFactor,eltype,~,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = detKt2Dgen(L0,numofelm,lambda,loadFactor,eltype,~,modelprops,AbaqusRunsFolder)
  if nargin<1
   L0 = 5.0;
  end
@@ -158,12 +158,22 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = detKt2D(L0,numofel
    fprintf(u1,'\n');
   end
   
-  fprintf(u1,'** Section: Section-1  Profile: Profile-1\n');
-  fprintf(u1,'*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I\n');
-  profile = [h/2, h, b, b, tf, tf, tw];
-  fprintf(u1,'%f, %f, %f, %f, %f, %f, %f \n',profile);
-  fprintf(u1,CSOrient);%fprintf(u1,'0.,-1.,0.\n');
-  fprintf(u1,'*End Part\n');
+  
+  if 1==0
+   fprintf(u1,'** Section: Section-1  Profile: Profile-1\n');
+   fprintf(u1,'*Beam Section, elset=AllElements, material=Material-1, temperature=VALUES, section=I\n');
+   profile = [h/2, h, b, b, tf, tf, tw];
+   fprintf(u1,'%f, %f, %f, %f, %f, %f, %f \n',profile);
+   fprintf(u1,CSOrient);%fprintf(u1,'0.,-1.,0.\n');
+   fprintf(u1,'*End Part\n');
+  else
+   fprintf(u1,'** Section: Section-1-ALLELEMENTS  Profile: Profile-2\n');
+   fprintf(u1,'*Beam General Section, elset=ALLELEMENTS, section=GENERAL\n');
+   assert(MV==1,'please use meter as unit')
+   fprintf(u1,'0.0080678, 0.000218765, 0., 1.3198e-05, 0.\n');
+   fprintf(u1,'0.,0.,-1.\n');
+   fprintf(u1,'2.1e+11, 8.07692e+10\n');
+  end
   
   fprintf(u1,'*Assembly, name=Assembly\n');
   fprintf(u1,'*Instance, name=Part-1-1, part=Part-1\n');

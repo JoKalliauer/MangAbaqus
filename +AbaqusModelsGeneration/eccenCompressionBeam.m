@@ -1,6 +1,6 @@
-function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L0,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
-  L = 5.0;
+  L0 = 5.0;
  end
  if nargin<2
   numofelm = 20;
@@ -14,30 +14,41 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  if nargin<5
   elType = 'B32OSH';
  end
+ 
+  MV=modelprops.MeterValue;
+ 
  if lambda(1) == 0
   lambda(1) = [];
  end
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
- 
+%  if MV==1
+%   filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+%  else
+  filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+%  end
+
+ L=L0*MV;
  %% IPE400
- h = (400)*10^(-3); %[m]
- b = 180e-3; %[m]
- tw = 8.6e-3; %[m]
- tf = 13.5e-3; %[m]
+ h = (400)*10^(-3)*MV; %[m]
+ b = 180e-3*MV; %[m]
+ tw = 8.6e-3*MV; %[m]
+ tf = 13.5e-3*MV; %[m]
  
  if nargin<6
   ecc = 0.05; % eccectricity
  else
   assert(numel(ecc)==1,'dimension of ecc must be one');
  end
+ ecc=ecc*MV;
  
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
+
  %% Load
- P = loadFactor*500e3; %[N?]
+ P = loadFactor*500e3*MV; %[N?]
  load=lambda*P;
+ Emodul=2.1e+11/MV;
  
  %% Finite Element Model
  
@@ -46,16 +57,11 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
  
-% <<<<<<< HEAD
  if ecc~=0
-% =======
-%  %if ecc~=0
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  % add eccentric rods:
  xcoords = [xcoords(1); xcoords; xcoords(end)];
  ycoords = [ecc; ycoords; ecc];
  zcoords = [0; zcoords; 0];
-% <<<<<<< HEAD
  end
  
  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
@@ -199,23 +205,17 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  fprintf(u1,'*Material, name=Material-1\n');
  fprintf(u1,'*Elastic\n');
-% <<<<<<< HEAD
- fprintf(u1,'2.1e+11, 0.3\n'); %[N/m² , -]?
+ fprintf(u1,[num2str(Emodul),', 0.3\n']); %[N/m² , -]?
  
  %% Boundary conditions
  %dofpNode=7;
  if strcmp(elType,'B32') || strcmp(elType,'B32H') || strcmp(elType,'B31') || strcmp(elType,'B33') ||  strcmp(elType,'B31H') || strcmp(elType,'B33H')
   dofpNode=6;
-% =======
-%  fprintf(u1,'2.1e+11, 0.3\n');
-%  
-%  %% Boundary conditions
-%  dofpNode=7;
-%  if strcmp(elType,'B32OS')
-%   %dofpNode=6;
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
- else
+ elseif strcmp(elType,'B32OS') || strcmp(elType,'B32OSH') || strcmp(elType,'B31OS') || strcmp(elType,'B31OSH')
   dofpNode=7;
+ else
+  %dofpNode=7;
+  error('MyPrgm:Element','unknown element')
  end
  BC = [dofpNode*(rpLeft1 - 1) + 1, 0
        dofpNode*(rpLeft1 - 1) + 2, 0;

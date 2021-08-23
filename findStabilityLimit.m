@@ -19,7 +19,7 @@ function [k,lami] = findStabilityLimit(fullEV,lambda0)
     y2=fullEV(1,Nr2);
    end
    x2=lambda0(Nr2);
-   Nr1=Nr2-1;
+   Nr1=max(Nr2-1,1);
    x1=lambda0(Nr1);
    y1=fullEV(1,Nr1);
    dk=(y1)/(y1-y2);

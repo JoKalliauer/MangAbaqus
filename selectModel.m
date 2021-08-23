@@ -58,6 +58,11 @@ end
      assert(~(strcmp(eltype,'B32OS') || strcmp(eltype,'B32OSH')),'TL_arch3D_Hinge uses rect-section not open section')
      [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch3D_Hinge([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
     case 'pureBendingBeamJK'
+     if modelprops.numofelm==1
+      if strcmp(modelprops.elementtype,'B31OSH')
+       warning('MyPrgm:Input','B31OSH need at least 2 elements to calculate a stiffnessmatrix')
+      end
+     end
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.pureBendingBeam(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
      model.xlabelloadname='bending moment $M$ [N\,m]';
 %      model.xValload=model.load;
@@ -78,6 +83,12 @@ end
     case 'twoBeams'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.twoBeams(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'detKt2D'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.detKt2D(L,numofelm,lambda,loadFactor,eltype,[],modelprops,AbaqusRunsFolder);
+     model.xlabelloadname='axial load $N$ [N]';
+    case 'detKt2Dneu'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.detKt2Dneu(L,numofelm,lambda,loadFactor,eltype,[],modelprops,AbaqusRunsFolder);
+     model.xlabelloadname='axial load $N$ [N]';
+    case 'detKt2Dgen'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.detKt2D(L,numofelm,lambda,loadFactor,eltype,[],modelprops,AbaqusRunsFolder);
      model.xlabelloadname='axial load $N$ [N]';
     case 'd2bock'

@@ -41,7 +41,7 @@
   %modelprops.typeofanalysis = 'I';modelprops.sigma=eps(1e-292); %identity matrix
   %modelprops.typeofanalysis = 'CLE';modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
-  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+  %modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'Kg';
@@ -62,7 +62,7 @@
   %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  plotfig=38;
+  plotfig=[7,14,15,30];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -78,7 +78,7 @@
   %
   
   modelprops.profil.tw= 8.6e-3;
-  modelprops.forceAbaqus=-1; 
+  modelprops.forceAbaqus=0; 
   modelprops.forcerun=.5; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
   modelprops.numofeigs=1;
@@ -93,24 +93,24 @@
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   modelprops.MeterValue=1;
-  main.whichEV='bungle_rKr'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   modelprops.followsigma=false;
 
   % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-%[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
 close all
 % % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
-eltypes={'B32','B31','B33'}
-for i=1:numel(eltypes)
- modelprops.elementtype = char(eltypes(i))
- main.colorshift=i-1;
- % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
- [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
- 
-end
+% eltypes={'B32','B32H','B31','B33'}
+% for i=1:numel(eltypes)
+%  modelprops.elementtype = char(eltypes(i))
+%  main.colorshift=i-1;
+%  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+%  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+%  
+% end
 
 % eltype = 'B32'
 % %plotfig=902;

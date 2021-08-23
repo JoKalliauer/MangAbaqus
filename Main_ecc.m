@@ -5,7 +5,9 @@
  close all
  format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
- 
+  %#ok<*NBRAK>
+  
+  
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
   %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
@@ -17,9 +19,9 @@
   %modelprops.ecc=(81*sqrt(64373/403390))/800;
   %modelprops.ecc=0;
   %modelprops.ecc=0.02;
-  modelprops.ecc=50; %.5
-  modelprops.ecc=.005; %.5
-  modelprops.ecc=5;
+  %modelprops.ecc=50; %.5
+  %modelprops.ecc=.005; %.5
+  modelprops.ecc=.5;
   %[~,modelprops.ecc]=eccfromU(0.5);
   modelprops.testcase = 'eccenCompressionBeam'; 
   %testcase = 'eccenCompressionBeam2D';
@@ -44,10 +46,11 @@
   %eltype = 'B31OSH'; %Timoshenko 
   %eltype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
-  modelprops.elementtype = 'B32OS'; %Timoshenko 
-  %eltype = 'B32OSH'; %Timoshenko 
+  modelprops.elementtype = 'B31'; %Timoshenko 
+  %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   eltypes={'B33','B31OS','B32','B32OS'};
+  %eltypes={'B32OS'};
  
   
   
@@ -63,20 +66,22 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 4; %20
+  modelprops.numofelm = 10; %20
   
   epsil = .02; %epsil = 0.02;  % finite difference step %epsil = 0.005;
   %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   sortType = 'forwardJK';
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
-  %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917]
-  plotfig=[902,908,916,918:920];
+  %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917] %#ok<NASGU>
+  plotfig=[36,913,908,916,906,902]; %#ok<NASGU>
+  plotfig=[913];
+  %plotfig=[902,908,916,9021,9022,913,900];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:max([5,20*epsil]);%3.07999
+  modelprops.lambda = 0:epsil:max([5.6,20*epsil]);%3.07999
   modelprops.epsilon = epsil;
   modelprops.loadfactor = 1.0;
   %int
@@ -84,33 +89,42 @@
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=0;
+  modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=1;
+  main.savefigures=2;
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
   main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  modelprops.MeterValue=1; %1000mm=1m=0.001km
   
   modelprops.sigma=0;
   
  %main.check=false;
 % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
- [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+%  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
   
-set(0, 'DefaultFigureWindowState', 'normal');
-%   for i=1:numel(eltypes)
-%   %plotfig=[];
-%    elementtype = char(eltypes(i))
-%     main.colorshift=i-1;
-%   % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-% [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,modelprops.ecc,elementtype);
-% 
+% set(0, 'DefaultFigureWindowState', 'normal');
+
+  for i=1:numel(eltypes)
+  %plotfig=[];
+   elementtype = char(eltypes(i))
+    main.colorshift=i-1;
+  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,modelprops.ecc,elementtype);
+
+  end
+  
+%     list=[1,.1,.01,10,0.001,1000,100]
+%   for i=1:numel(list)
+%    modelprops.MeterValue=list(i);
+%      [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 %   end
+  
 %    
 %   %eltypes={'B33','B31','B31OS','B32','B32OS'}
 %   list=[2,5,10,20]
