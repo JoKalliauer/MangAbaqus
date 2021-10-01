@@ -57,7 +57,10 @@ else
 end
 steps=min(length(num),length(lambda)+1);
 if steps~=length(num)
- warning('MyProgram:Inputchange','Abaqus calculated more Loadsteps than requested, try using modelprops.forceAbaqus=true')
+ assert(length(num)>=steps,'Maybe wrong')
+ if steps+3<length(num)
+  warning('MyProgram:Inputchange','Abaqus calculated more Loadsteps than requested, try using modelprops.forceAbaqus=true')
+ end
  num0 = num(1:steps);
 else
  num0 = num;

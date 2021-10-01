@@ -211,7 +211,11 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    %Ktprim03 = 1/(2*epsil)*(Kt02 - Kt04);
    Ktprim02 = 1/(2*modelprops.epsilon)*(Kt01 - Kt03);
    Ktprim01 = 1/(2*modelprops.epsilon)*(KT - Kt02);
-   Ktprim0 = 1/(2*modelprops.epsilon)*(Kt11 - Kt01);
+   if any(Kt01(:))
+    Ktprim0 = 1/(2*modelprops.epsilon)*(Kt11 - Kt01);
+   else
+    Ktprim0 = 1/(modelprops.epsilon)*(Kt11 - KT);
+   end
 
 
 
@@ -298,7 +302,12 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
      [r0_ ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0; iter=matches(i); typeofanal=modelprops.typeofanalysis
      [r11_,eigval11_] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
     end
-    [r12_,eigval12_] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+    if ~any(Ktprim12(:)) && strcmp(modelprops.typeofanalysis,'CLE')
+     r12_=NaN*r11_;
+     eigval12_=NaN*eigval11_;
+    else
+     [r12_,eigval12_] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+    end
 
 %    if numel(Kt13)>0
 %     [r13_,eigval13_] = solveCLEforMinEigNew(Kt13,Ktprim13,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+3,NaN,modelprops);
@@ -407,63 +416,67 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
   StiffMtxs{i,1} = KT;
   StiffMtxs{i,2} = Ktprim0;
-  if i==1
-   %    KTmult0=5*10^-11;
-   KTmult0=1.1e-11;
-   KTrel=KT*KTmult0;
-   res=det(KTrel);
-   relative=false;
-   if (res==0 && ~strcmp(modelprops.elementtype(end),'H')) || isinf(res)
-    Kt0=KT;
-    Kt0inv=inv(Kt0);
-    relative=true;
-%     n=87;
-%     passt=false;
-%     while passt==false
-%      res=1;
-%      %n=1;
-%      while res>0 && ~isinf(res)
-%       n=n+1;
-%       res=det(Kt0(1:n,1:n)*KTmult0);
-%      end
-%      m=n-1
-%      res=det(Kt0(1:m,1:m)*KTmult0)
-%      if isinf(res)
-%       warning('MyPrgm:Nan','res is inf')
-%       %res=det(Kt0(1:m,1:m)*KTmultAlt);
-%      end
-%      if res<1e10
-%       res=res*1e50 %1e100->2813
-% %1e50: 1931->2189->2486
-%      end
-%      Nenner=nthroot(res,m);
-%      %KTmultAlt=KTmult0;
-%      KTmultNeu=(KTmult0/Nenner+KTmult0)/2
-%      KTmult=KTmultNeu;
-%      KTmult0=KTmult;
-%      detKtmult=det(Kt0*KTmult);
-%      if detKtmult~=0 && ~isinf(detKtmult)
-%       passt=true;
-%      end
-%     end
+  if 0==1 % skip DetKt
+   if i==1
+    %    KTmult0=5*10^-11;
+    KTmult0=1.1e-11;
+    KTrel=KT*KTmult0;
+    res=det(KTrel);
+    relative=false;
+    if (res==0 && ~strcmp(modelprops.elementtype(end),'H')) || isinf(res)
+     Kt0=KT;
+     Kt0inv=inv(Kt0);
+     relative=true;
+     %     n=87;
+     %     passt=false;
+     %     while passt==false
+     %      res=1;
+     %      %n=1;
+     %      while res>0 && ~isinf(res)
+     %       n=n+1;
+     %       res=det(Kt0(1:n,1:n)*KTmult0);
+     %      end
+     %      m=n-1
+     %      res=det(Kt0(1:m,1:m)*KTmult0)
+     %      if isinf(res)
+     %       warning('MyPrgm:Nan','res is inf')
+     %       %res=det(Kt0(1:m,1:m)*KTmultAlt);
+     %      end
+     %      if res<1e10
+     %       res=res*1e50 %1e100->2813
+     % %1e50: 1931->2189->2486
+     %      end
+     %      Nenner=nthroot(res,m);
+     %      %KTmultAlt=KTmult0;
+     %      KTmultNeu=(KTmult0/Nenner+KTmult0)/2
+     %      KTmult=KTmultNeu;
+     %      KTmult0=KTmult;
+     %      detKtmult=det(Kt0*KTmult);
+     %      if detKtmult~=0 && ~isinf(detKtmult)
+     %       passt=true;
+     %      end
+     %     end
+    else
+     KTmult=KTmult0;
+    end
+   end %i=1
+   if relative==true
+    if numel(KT)<=1E5
+     DetKtx(i)=det(Kt0inv*KT); %#ok<MINV>
+    else
+     DetKtx(i)=NaN;
+    end
    else
-    KTmult=KTmult0;
+    KTrel=KT*KTmult;
+    if isinf(res) || res==0
+     DetKtx(i)=res;
+    else
+     DetKtx(i)=det(KTrel);
+    end
    end
- end %i=1
- if relative==true
-  if numel(KT)<=1E5
-   DetKtx(i)=det(Kt0inv*KT); %#ok<MINV>
   else
    DetKtx(i)=NaN;
   end
- else
-  KTrel=KT*KTmult;
-  if isinf(res) || res==0
-   DetKtx(i)=res;
-  else
-   DetKtx(i)=det(KTrel);
-  end
- end
   %load(i)=model.fullload(matches(i));
   
   %StiffMtxs{i,3} = dKtprim0;

@@ -12,6 +12,20 @@ epsilon = model.lambda(2) - model.lambda(1);
 if ~exist('limit','var')
  limit.new=true;
 end
+if ~exist('main','var')
+%  if sum(strcmp(fieldnames(main), 'whichEV')) == 0
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+%  end
+end
+if sum(strcmp(fieldnames(model), 'numofeigs')) == 0
+ sizeNumEigs=size(model.eigenvalues);
+ model.numofeigs=sizeNumEigs(2);
+end
+if sum(strcmp(fieldnames(model), 'fulllambda')) == 0
+ model.fulllambda=model.lambda;
+end
+
+
 if ~isfield(limit,'OC1')
  if epsilon<0.1
   %limit.OC1=0.0004;
@@ -196,13 +210,17 @@ end
 if DimsEVtmp>3
 %  eigvec=cell(size(eigvecTMP));
  for i=1:numel(eigvecTMP)
-  if ~isempty(eigvecTMP{i})
-   if isempty(relNodes)
-    warning('MyProgram:Input','no relevant data found')
-    res=[];
-    return
-    %forcedeig=[];norm(r0)
-    %error('MyProgram:Input','no relevant data found')
+  if ~isempty(eigvecTMP{i}) && exist('relDofs','var')
+   if exist('relNodes','var')
+    if isempty(relNodes)
+     warning('MyProgram:Input','no relevant data found')
+     res=[];
+     return
+     %forcedeig=[];norm(r0)
+     %error('MyProgram:Input','no relevant data found')
+    end
+   else
+    warning('MyPrgm:Input','relNodes undefined')
    end
    eigvec{i}=eigvecTMP{i}(:,relDofs,relNodes,:);
   else
@@ -304,7 +322,7 @@ POS = NaN(f,1);             %POS(k) = poslam;
 
 lambda = lambda0(1:f);
 
-[kl,lami] = findStabilityLimit(model.fullEV,model.fulllambda);
+[kl,lami] = InterpolateJK(model.fullEV,model.fulllambda);%[kl,lami] = findStabilityLimit(model.fullEV,model.fulllambda);
 % if lami<0
 %  kstability = kl;% kl - 1;
 % else
@@ -386,7 +404,9 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-Kt0_0=model.stiffnessMatrices{1,1};
+if strcmp(main.whichEV,'bungle_rKr')
+ Kt0_0=model.stiffnessMatrices{1,1};
+end
 
 for i = 1:f %f = length(eigval)
  %disp(i)

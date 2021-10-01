@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L0,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam64(L0,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L0 = 5.0;
  end
@@ -25,7 +25,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
 %  if MV==1
 %   filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
 %  else
-  filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+  filename =  ['ecc64-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 %  end
 
  L=L0*MV;
@@ -52,7 +52,8 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  %% Finite Element Model
  
- xcoords = linspace(-L/2,L/2,numofelm(end)+1)';
+ %xcoords = linspace(-L/2,L/2,numofelm(end)+1)';
+ xcoords = [linspace(-L/2,0,numofelm(end)+1)';linspace(L/128,L/2,64)'];
  ycoords = 0*xcoords;
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
@@ -217,7 +218,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
   %dofpNode=7;
   error('MyPrgm:Element','unknown element')
  end
- BC = [dofpNode*(rpLeft1 - 1) + 1, 0,rpLeft1;
+ BC = [dofpNode*(rpLeft1 - 1) + 1, 0,rpLeft1
        dofpNode*(rpLeft1 - 1) + 2, 0,rpLeft1;
        dofpNode*(rpLeft1 - 1) + 3, 0,rpLeft1;
        dofpNode*(rpLeft1 - 1) + 4, 0,rpLeft1;

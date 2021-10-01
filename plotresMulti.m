@@ -130,6 +130,14 @@
  if sum(strcmp(fieldnames(model), 'xlabelloadname')) ~= 0
    xlabelload=model.xlabelloadname;
  end
+ if ~exist('xlabelload','var')
+  xlabelload='xlabelload';
+ end
+ if ~exist('xValload','var')
+  warning('MyPrgm:Input','xValload not defined')
+  xValload=model.fulllambda(2:end);
+ end
+ 
  if isempty(model.fulllambda)
   model.fulllambda=model.lambda0;
  end
@@ -463,6 +471,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   %line(xlim(), [1,1], 'LineWidth', eps(0), 'Color', 'k');
   xl = xlim; % Get current limits.
   xlim([0, xl(2)]); % Replace lower limit only with a y of 0.
+  %   yl= ylim;
+  ylim([0,10]);
   if model.savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_torque.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_torque.png'))
@@ -616,7 +626,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   bbb.YAxisLocation = 'origin';
   %plot(lambda(3:end),res(k3).RHO2(3:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
 %   plot(lambda(2:end),(res(k3).RHO2(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
-  plot(xValload,(res(k3).RHO2(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xValload,res(k3).RHO2(2:end),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   %yticks(0:.05:1)
   %bbb.XLim = [0 inf];
   if model.savefigures==true
@@ -686,11 +696,18 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
     h8015=figure(8015);
     plotitJK(x,y4,'Output/Figures/PlotIt/',lambdaLabel,yLabel,dianame,cfig,h8015);
     if k3==resEWs(1) && main.colorshift==0
-     xline(0,'k','LineWidth',1)
-     plot(x,zeros(size(x)),'Color',[0 0 0],'LineWidth',1)
-     legend('a','b','c','d')
-     plotitJK(x,y4,'Output/Figures/PlotIt/',lambdaLabel,yLabel,dianame,cfig,h8015);
+     %xline(0,'k','LineWidth',1)
+     %plot(x,zeros(size(x)),'Color',[0 0 0],'LineWidth',1)
+     %plotitJK(x,y4,'Output/Figures/PlotIt/',lambdaLabel,yLabel,dianame,cfig,h8015);
+    elseif k3==resEWs(1) && main.colorshift==1
+     legend('B32OS','B32OSH')
+     %xline(0,'k','LineWidth',1)
+     %plot(x,zeros(size(x)),'Color',[0 0 0],'LineWidth',1)
+     %plotitJK(x,y4,'Output/Figures/PlotIt/',lambdaLabel,yLabel,dianame,cfig,h8015);
+     dianame=strcat(modelfilename,figname);
+     print ('-depsc',strcat('Output/Figures/PlotIt/',dianame,'.eps'))%
     end
+    %plotitJK(x,y4,'Output/Figures/PlotIt/',lambdaLabel,yLabel,dianame,cfig,h8015);
   else
    title(modelfilename)
   end
@@ -931,9 +948,9 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    grid minor
   end
   xlabel('lambda');
-  ylabel('$Hypothese=rho^2 sqrt(1+tau^2)$','Interpreter','latex');
+  ylabel('$Hypothese=rho (1+tau)$','Interpreter','latex');
   bbb = gca();
-  %bbb.YLim = [0.0,1];
+  bbb.YLim = [0.0,10];
   title(modelfilename)
   bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
@@ -1133,7 +1150,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
     %cfig('yMin')=0.0001;
     %cfig('yMax')=1;
     %close all
-    plotitJK(xValload,res(k3).RHO2(2:end),'Output/',xlabelload,ylabelJK,strcat(modelfilename,'_rho30'),cfig)% %#ok<UNRCH>
+    h8030=figure(8030);
+    plotitJK(xValload,res(k3).RHO2(2:end),'Output/',xlabelload,ylabelJK,strcat(modelfilename,'_rho30'),cfig,h8030)% %#ok<UNRCH>
    end
   end
   %disp(median(res(k3).RHO2(2:end),'omitnan'));
@@ -1309,7 +1327,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    if model.savefigures==true
     %print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
     %print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
-    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
+    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')%dianame=strcat(modelfilename,figname);
    end
   end
   if main.savefigures==2
@@ -1333,7 +1351,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    %gca().YLim = [0,obergrenze];
    markMins(xPlot,y4);
    %xlabel(xlabelload);
-   print ('-depsc',strcat('Output/Figures/PlotIt/',dianame,'.eps'))
+   print ('-depsc',strcat('Output/Figures/PlotIt/',dianame,'.eps'))%dianame=strcat(modelfilename,figname);
   end
  end
 
@@ -1655,6 +1673,9 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
     print ('-depsc',strcat('Output/Figures/PlotIt/',dianame,'.eps'))
    end
   end
+  %disp([xPlot,yPlot])
+  format longG
+  [~,lami]=InterpolateJK(1-xPlot,yPlot)%fullEV=1-xPlot,lambda0=yPlot
  end
 
  if ismember(9021,plotfig)

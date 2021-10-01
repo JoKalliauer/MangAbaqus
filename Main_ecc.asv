@@ -52,7 +52,7 @@
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B31OS','B32'};
   %eltypes={'B31OS'};
-  eltypes={'B31OSH','B32'};
+  eltypes={'B32OS','B32OSH','B31OSH','B33'};
   %eltypes={'B32OS'};
  
   
@@ -92,7 +92,7 @@
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=0;
+  modelprops.numofeigs=308;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
@@ -115,7 +115,7 @@
 
 %numofelms = {1,2,4,8,16,20,32,64,128,256,512,1024};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
 %numofelms = {3,5,6,7,9,10};
-numofelms = {100};
+numofelms = {1,4,20};
 % for i=1:numel(numofelms)
 %  modelprops.numofelm = cell2mat(numofelms(i));
 %  main.colorshift=i-1;

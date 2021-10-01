@@ -52,7 +52,7 @@
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %sortType = 'forwardJK';
   %plotfig= [15,900,913,914,908,902,916,211,7,9021,9022,906]; %#ok<*NBRAK>
-  plotfig=[914]; 
+  plotfig=[902]; 
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -62,7 +62,7 @@
   modelprops.lambda = 0:epsil:100; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor = 0;
+  modelprops.loadfactor = 1;%0 if both sides
   modelprops.MeterValue=1;
   %
   
@@ -75,22 +75,22 @@
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=uint8(2);
+  main.savefigures=uint8(1);
   main.check=true;
   %main.check=false;
   main.colorshift=0;
   modelprops.ask_delete=1;
   
   %modelprops.sigma=-5;
-  modelprops.numelFac=[1 2];
+  modelprops.numelFac=[1 1];
   
     %modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
- [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,7);
+ %[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,1);
 %      modelprops.ask_delete=true; modelprops.forceAbaqus=false; modelprops.forcerun=false;
   
   
 % list=[1,2,3,4,5,6,10,20,50];
-list=[4,16,64,256];
+list=[1:16,32,64,128,256,512,1024,2048];
 %list=[4,8,16];
 %list=[8];
 %list=[5,50]
@@ -98,11 +98,11 @@ list=[4,16,64,256];
 
 % % %plotfig=[];
 % 
-% for i=1:numel(list)
-%  numofelm=list(i);
-%  main.colorshift=i-1;
-%    [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm);
-% end
+for i=1:numel(list)
+ numofelm=list(i);
+ main.colorshift=i-1;
+   [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm);
+end
 
 
 % eltypes={'B22','B21','B23','B22H','B21H','B23H'}

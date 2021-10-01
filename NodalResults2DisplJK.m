@@ -11,17 +11,17 @@ if numel(NreskeysIn)>0
    if strcmp(key(1:2),'UR')
     remove(NresDisp, key);
    elseif strcmp(key(1:2),'U1') ||  strcmp(key(1:2),'U2') ||  strcmp(key(1:2),'U3')
-    remove(NresRot, key)
+    remove(NresRot, key);
    else
     error('MyProg:Strange','key not recogniced')
    end
   elseif  strcmp(key(1:2),'WA')
-   remove(NresDisp, key)
-   remove(NresRot, key)
+   remove(NresDisp, key);
+   remove(NresRot, key);
   elseif  strcmp(key,'NODE')
-   remove(Nres, key)
-   remove(NresDisp, key)
-   remove(NresRot, key)
+   remove(Nres, key);
+   remove(NresDisp, key);
+   remove(NresRot, key);
   else
    error('MyProg:Strange','key not recogniced')
   end
@@ -40,8 +40,10 @@ if numel(NreskeysIn)>0
  RES(abs(RES)<=8.78e-30)=0;%remove numeric issues close to zero
  smallnr= (abs(RES)<=2.25e-12);
  if any(smallnr(:))
-  warning('MyPrgm:Numeric','remove numeric issues close to zero')
-  RES(smallnr)=0;%remove numeric issues close to zero
+  if any(RES(smallnr))
+   warning('MyPrgm:Numeric','remove numeric issues close to zero')
+   RES(smallnr)=0;%remove numeric issues close to zero
+  end
  end
  lam=size(RES,3);
  Displ=cell(lam,1);

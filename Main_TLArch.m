@@ -62,7 +62,7 @@
   %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  plotfig=[7,14,15,30];
+  plotfig=[7,14,15,30,211];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -101,16 +101,17 @@
 [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
 close all
-% % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
-% % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
-% eltypes={'B32','B32H','B31','B33'}
-% for i=1:numel(eltypes)
-%  modelprops.elementtype = char(eltypes(i))
-%  main.colorshift=i-1;
-%  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-%  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
-%  
-% end
+% %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
+% % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
+%eltypes={'B32','B32H','B31','B33'}
+eltypes={'B32','B31','B33'}
+for i=1:numel(eltypes)
+ modelprops.elementtype = char(eltypes(i))
+ main.colorshift=i-1;
+ % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+ [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
+ 
+end
 
 % eltype = 'B32'
 % %plotfig=902;

@@ -1,4 +1,4 @@
-function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
+function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  
  % [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
  
@@ -99,14 +99,88 @@ function model = runEigenProblemDispJK(~,model,Displ,~,~,matches,wbrEP)
    dwdl{i}=dwdli;
    dvdl{i}=dvdli;
    dudl{i}=dudli;
-   
+
    displacements{i} = displacements_;
-   arclengthJK{i+1}=mean(sqrt(sum(displacements_.*displacements_,1)));
    lengthMaxJK{i}=max(abs(displacements_(:)));
    wMaxJK{i}=max(abs(displacements_(end,:)));
    vMaxJK{i+1}=max(abs(displacements_(2,:)));
    uMaxJK{i+1}=max(abs(displacements_(1,:)));
    arclengthHM{i}=sqrt(sum(sum(displacements_.*displacements_)));
+   
+   if strcmp(model.filename(1:4),'ecc-')
+    if strcmp(model.filename(1:7),'ecc-B32')
+     tmp=size(displacements_,2);
+     LastNode=(tmp+1)/2;
+     %del=[1,LastNode,LastNode+1,tmp];
+     %keep=[2:LastNode-1,LastNode+2:tmp-1];
+     EndDisp=displacements_(:,2:LastNode-1);
+     MidDisp=displacements_(:,LastNode+2:tmp-1);
+     BeamDisp=[EndDisp,MidDisp];
+    else
+     BeamDisp=displacements_(:,2:end-1);
+    end
+   else
+    BeamDisp=displacements_;
+   end
+   Verschiebungen=sqrt(sum(BeamDisp.*BeamDisp,1));
+   
+   if strcmp(model.filename(1:3),'ecc')
+    if i==1
+     LagerUnten=model.BCMatlab(1,3);
+     LagerOben=model.BCMatlab(end,3);
+     KnotenGes=size(displacements_,2);
+    end
+    %fa=Verschiebungen(1:LastNode-1);
+    %fb=Verschiebungen(2:LastNode);
+    %fm=Verschiebungen(LastNode+1:end);
+    ga=1;
+    gb=1;%zusätliches Gewicht für Mittelknoten
+    if strcmp(model.filename(1:5),'ecc-B')
+    if i==1 %due to reduction
+     LagerUnten=model.BCMatlab(1,3)-1;
+     LagerOben=model.BCMatlab(end,3)-1;
+     KnotenGes=size(displacements_,2)-2;
+    end
+     if strcmp(modelprops.elementtype(1:3),'B32')
+      % ul UA (x-1)*S OA ol; zul x*ZS zol ->reduziert zu-> UA (x-1)*S OA
+      tmp=size(BeamDisp,2);
+      OberesAuflager=(tmp+1)/2;
+      assert(LagerOben==OberesAuflager,'Auflager nicht erkannt')
+     end
+     %BeamDisp(:,1)
+     %BeamDisp(:,OberesAuflager)
+     arclengthJK{i+1}=(ga*sum(Verschiebungen)+gb*sum(Verschiebungen([2:LagerOben-1,LagerOben+1:end])))/((ga+gb)*size(Verschiebungen,2)-2*gb);
+     if i+1==221
+      disp(arclengthJK{i+1});
+     end
+     %arclengthJK{i+1}=mean(Verschiebungen);
+    elseif  strcmp(model.filename(1:7),'ecc64-B')
+     if i==1
+      KnotenMitte=LagerOben-64;
+      if strcmp(modelprops.elementtype(1:3),'B32')
+       % ul UA (x-1)*US M 63*OS OA ol; zul x*ZUS 64*ZOS zol
+       StabUnten=[LagerUnten:KnotenMitte,LagerOben+3:KnotenGes-65];
+       StabOben=[KnotenMitte:LagerOben,KnotenGes-64:KnotenGes-1];
+      else
+       StabUnten=LagerUnten:KnotenMitte;
+       StabOben=KnotenMitte:LagerOben;
+      end
+     end
+     arcUnten=(sum(Verschiebungen(StabUnten))-sum(Verschiebungen([KnotenMitte,LagerUnten]))/2)/(numel(StabUnten)-1);
+     arcOben=(sum(Verschiebungen(StabOben))-sum(Verschiebungen([KnotenMitte,LagerOben]))/2)/(numel(StabOben)-1);
+     arclengthJK{i+1}=(arcOben+arcUnten)/2;
+     if i+1==221
+      disp(arclengthJK{i+1});
+     end
+     %arclengthJK{i+1}=mean(Verschiebungen);
+    end
+   else
+    arclengthJK{i+1}=(sum(Verschiebungen)+2*sum(Verschiebungen(2:end-1)))/(3*size(Verschiebungen,2)-4);
+    %arclengthJK{i+1}=mean(Verschiebungen);
+   end
+   
+   
+
 
 
  end%for i = 1:length(matches)

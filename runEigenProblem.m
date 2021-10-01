@@ -288,7 +288,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  %[Kts3]  = AbaqusModelsGeneration.getStiffnessMatrices3(model,[],modelprops.typeofanalysis);
 %  [~, Nres3] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
  [Displ3,Rot3] = NodalResults2DisplJK(Nres);
- model=runEigenProblemDispJK([],model,Displ3,[],[],matches,wbrEP);
+ model=runEigenProblemDispJK(modelprops,model,Displ3,[],[],matches,wbrEP);
  model=runEigenProblemRotJK([],model,Rot3,[],[],matches,wbrEP);
  
  if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end

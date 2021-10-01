@@ -38,11 +38,13 @@ if iter<1
 end
 switch typeofanal
  case 'I'
-  B = speye(size(Kt,1),size(Kt,1));
+  %B = speye(size(Kt,1),size(Kt,1));
+  RM = speye(size(Kt,1),size(Kt,1));
   %EWgesucht=0;
   sortJK=0;
  case 'CLE'
-  B = Ktprim;
+  %B = Ktprim;
+  RM = -Ktprim;
   %EWgesucht=0;
  case 'I-CLE'
   B = -speye(size(Kt,1),size(Kt,1)) + Ktprim;
@@ -160,7 +162,9 @@ switch typeofanal
 end %switch typeofanal
 
 if full(sum(LM(:)))==0
- warning('MyProgram:Empty','LM is zero')
+ if iter<numel(modelprops.lambda)-2
+  warning('MyProgram:Empty','LM is zero')
+ end
  evec0 = NaN(DOFKt,numofeigs);
  eval0=ones(numofeigs,1);
  return
@@ -185,7 +189,12 @@ end
 
 
 % <<<<<<< HEAD
-if any(any(~isnan(RM))) && any(any(Kt))
+%check1Part1=isnan(RM(:));
+%check1Part2=~check1Part1;%slow
+%check1=any(check1Part2);
+check1=1;%check1=any(~isnan(RM(:))); % check is slow
+check2=any(any(Kt));
+if check1 && check2
  % =======
  %   if ~isnan(RM)
  % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
@@ -219,11 +228,13 @@ if any(any(~isnan(RM))) && any(any(Kt))
  %     else
  %     end
  assert(any(any(LM~=RM)),'LM and RM must be different')
+ assert(any(RM(:)),'RM must not be zero')
  % <<<<<<< HEAD
  %     if fast==true
  %      [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma);
  %     else
- [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
+ %[evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
+ [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma);
  %     end
  % =======
  %     [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);

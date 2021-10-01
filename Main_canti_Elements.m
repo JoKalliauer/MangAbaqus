@@ -1,7 +1,7 @@
 %#!
 %university:TU Wien
  %#ok<*NOPTS>
- % close all
+  close all
 
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
@@ -43,11 +43,11 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  modelprops.numofelm = 10;
+  %modelprops.numofelm = 256;
   
   epsil = 0.005;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig= [11,15]; %#ok<*NBRAK>
+  plotfig= [11,15,16]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -79,7 +79,7 @@
 %[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 modelprops=rmfield(modelprops,'forceAbaqus');
 
-eltypes={'B32OS','B32OSH'}%,'B31OS','B31OSH'
+eltypes={'B32OS','B32OSH','B31OS','B31OSH'}%
 %plotfig=[];
 for i=1:numel(eltypes)
  elementtype = char(eltypes(i))

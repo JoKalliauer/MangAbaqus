@@ -2,6 +2,24 @@
 %university:TU Wien
 
 function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc,elementtype)
+%%Explantation
+%Outermost function that calls all programs, but Input must be provieded by a skript
+% modelprops.* enter runEigenProblem, hoever main.* does not enter runEigenProblem and is for postprocess, model.* is created by Matlabfunctions, not by the user.
+% e.g. [model] = runEigenProblem(modelprops)
+
+%Input
+% modelpros.* Input for runEigenProblem
+%  modelpros.numofelm numer of elements, might get overwritten by "numofelm"
+% sortType ... How the eigenvalues/-vectors are sorted
+% plotfig  ... which figues to plot
+% forcedeig... Evaluate thos eigenvalues
+% main.* Inputvariabels for postprocess
+% numofelem ... Number of Elements
+% ecc       ... Eccentricity
+% elementtype...Type of element
+%Output
+% res  ... resulst of postprocess
+% model... results of runEigenProblem
 
 %% Inputkontrolle
 if exist('ecc','var')
@@ -36,7 +54,7 @@ end
 %   modelprops.lambda=sort(modelprops.lambda(modelprops.lambda>=3*modelprops.epsilon));
 %  end
 %assert(all(modelprops.lambda>=4*modelprops.epsilon),'first lamdavalue must be four times epsilon or larger')
-if numel(modelprops.lambda)>251
+if numel(modelprops.lambda)>301
  warning('MyProgram:Input','using %f>201 lambda-values takes much resources',numel(modelprops.lambda))
  %assert(numel(modelprops.lambda)<=1001,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
  %  assert(numel(modelprops.lambda)<=2195,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
@@ -68,8 +86,15 @@ end
 if sum(strcmp(fieldnames(main), 'rstabil')) == 0
  main.rstabil=0.9999;
 end
+if modelprops.numofelm>1024
 %assert(modelprops.numofelm<=1024,'more than 1000 Elements need more than 24GB RAM')
-assert(sum(modelprops.numofelm)<=2000,'more than 1000 Elements need more than 24GB RAM')
+%assert(sum(modelprops.numofelm)<=2000,'more than 1000 Elements need more than 24GB RAM')
+%assert(sum(modelprops.numofelm)<=2048,'more than 1000 Elements need more than 24GB RAM')
+assert(sum(modelprops.numofelm)<=2*2048,'more than 1000 Elements need more than 24GB RAM')
+ if strcmp(modelprops.elementtype(end),'H')
+  assert(sum(modelprops.numofelm)<2000,'MATLAB-Problem with eigs: Maximum number of attempts to perform numeric factorization of symmetric indefinite matrix exceeded.')%BB5-B31OSH2000-l5-f1-eps0.001-u1
+ end
+end
 if sum(strcmp(fieldnames(main), 'whichEV')) == 0
  main.whichEV='split';
 end
@@ -102,7 +127,7 @@ end
 %% post process
 %  main.numofeigs=modelprops.numofeigs;
 model.check=main.check;
-model.filename=[model.filename,'-',modelprops.typeofanalysis];
+model.filename=strcat(model.filename,'-',modelprops.typeofanalysis,'-',char(main.whichEV));
 model.lambdainput=model.lambda0;
 for i=1:numel(model.eigenvalues)
  if numel(model.eigenvalues{i})==0
