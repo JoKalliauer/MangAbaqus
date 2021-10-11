@@ -41,10 +41,10 @@
   
   
   % possible types of analysis
-  %modelprops.typeofanalysis = 'I';%modelprops.sigma=eps(1e-292); %identity matrix
+  modelprops.typeofanalysis = 'I';%modelprops.sigma=eps(1e-292); %identity matrix
   %modelprops.typeofanalysis = 'CLE';%modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
-  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+  %modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'Kg';
@@ -58,8 +58,7 @@
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,3,7,14,15,16,21,211,23,26,28,29]; %#ok<*NBRAK>
   %plotfig=[14,15,16,37,38,211,902];
-  plotfig=[14,15,16,900,32,7,3,43,211]; %#ok<NASGU>
-  plotfig=15;main.savefigures=1;
+  plotfig=[14,15,16,900,32,7,3,43,211];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
@@ -76,12 +75,12 @@
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
-  %main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=1;
+  main.savefigures=0; % false.. dont safe figures(faster), true safe figures (slow)
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
   %modelprops.MeterValue=1000; %1000mm=1m=0.001km
-  main.whichEV='bungle_rKr'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   %modelprops.sigma=-10;
   modelprops.followsigma=false;

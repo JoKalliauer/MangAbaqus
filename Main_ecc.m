@@ -4,6 +4,7 @@
  %clear
  close all
 % format shortG
+format longG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
   %#ok<*NBRAK>
   
@@ -22,7 +23,7 @@
   %modelprops.ecc=50; %.5
   %modelprops.ecc=.005; %.5
   modelprops.ecc=.5;
-  [~,modelprops.ecc]=eccfromU(0.5);
+  %[~,modelprops.ecc]=eccfromU(0.5);
   modelprops.testcase = 'eccenCompressionBeam'; 
   %modelprops.testcase = 'eccenCompressionBeam64';
   %testcase = 'eccenCompressionBeam2D';
@@ -47,21 +48,21 @@
   %eltype = 'B31OSH'; %Timoshenko 
   %eltype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
-  modelprops.elementtype = 'B32OS'; %Timoshenko 
+  %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
-  %eltypes={'B31OS','B32'};
+  %eltypes={'B32OS','B32OSH','B31OS','B33'};
   %eltypes={'B31OS'};
-  eltypes={'B31OSH','B32'};
+  eltypes={'B32','B32OS','B32OSH','B31OS','B31OSH','B33'};
   %eltypes={'B32OS'};
  
   
   
   % possible types of analysis
-  modelprops.typeofanalysis = 'I'; modelprops.sigma=eps(1e-292); %identity matrix
+  %modelprops.typeofanalysis = 'I'; modelprops.sigma=eps(1e-292); %identity matrix
   %modelprops.typeofanalysis = 'CLE';modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
-  %modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   %modelprops.typeofanalysisB = 'Kt0';
@@ -78,7 +79,8 @@
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
   %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917] %#ok<NASGU>
   plotfig=[7,14,15,23,30,211,36,913,908,916,906,902]; %#ok<NASGU>
-  plotfig=[15];
+  plotfig=[902,211]; %#ok<NASGU>
+  plotfig=15;main.savefigures=1
   %plotfig=[902,908,916,9021,9022,913,900];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
@@ -91,18 +93,18 @@
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=0;
+  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
+  modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=0;
-  main.check=0;
+  %main.savefigures=0;
+  main.check=1;
   main.colorshift=0;
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle_rKr'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   
   modelprops.sigma=0;
@@ -115,7 +117,7 @@
 
 %numofelms = {1,2,4,8,16,20,32,64,128,256,512,1024};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
 %numofelms = {3,5,6,7,9,10};
-numofelms = {100};
+numofelms = {4};
 % for i=1:numel(numofelms)
 %  modelprops.numofelm = cell2mat(numofelms(i));
 %  main.colorshift=i-1;

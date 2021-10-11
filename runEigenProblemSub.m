@@ -20,6 +20,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  DetKtx = NaN(length(lambda0),1);
  %load0 = NaN(length(lambda0),1);
  eigvecDRH = cell(length(lambda0),1);% DRH...Displacement,Rotation,Hybrid(splitted)
+ rKt2r = NaN(length(lambda0),1,'single');
  
 %  matches = NaN(0);
 %  n = 0;
@@ -117,10 +118,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   %     Energy(i,2) = membrane(matches(i));
   %     Energy(i,3) = nonmembrane(matches(i));
  %for i
-  if i==0
-
-   
-  else % if i~= 1
+  %if i>0
    % -4.
    Zeile=matches(i)-4;
    if Zeile>0
@@ -216,6 +214,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    else
     Ktprim0 = 1/(modelprops.epsilon)*(Kt11 - KT);
    end
+   Kt2prim0 = 1/(modelprops.epsilon^2)*(Kt11+Kt01-2*KT);
 
 
 
@@ -388,7 +387,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
 
    
   
-  end
+  %end %if i>0
   
   if exist('eigval11_','var')
    if matches(i)<4
@@ -416,7 +415,13 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
   StiffMtxs{i,1} = KT;
   StiffMtxs{i,2} = Ktprim0;
-  if 0==1 % skip DetKt
+  rKt2ri=single(transpose(r0t)*Kt2prim0*r0t);
+  if isempty(rKt2ri)
+   rKt2r(i)=NaN;
+  else
+   rKt2r(i)=rKt2ri;
+  end
+  if modelprops.numofelm<=20 % skip DetKt for large, because it is slow
    if i==1
     %    KTmult0=5*10^-11;
     KTmult0=1.1e-11;
@@ -509,6 +514,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  %model.fullLAMDA=fullLAMDA;
  model.fullEV=fullEV;
  model.numofeigs=numofeigs;
+ model.rKt2r=rKt2r;
  
 
  

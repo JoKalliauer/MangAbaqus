@@ -20,7 +20,7 @@ function [model] = runEigenProblem(modelprops)
  end
  
  
- if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start','name','runEigenProblem','WindowState','minimized'); else; wbrEP=[]; end
+ if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start','name','runEigenProblem'); else; wbrEP=[]; end %,'WindowState','minimized'
  lambda =   modelprops.lambda;
  if sum(strcmp(fieldnames(modelprops), 'forcerun')) == 0
   modelprops.forcerun=true;

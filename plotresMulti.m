@@ -471,8 +471,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   %line(xlim(), [1,1], 'LineWidth', eps(0), 'Color', 'k');
   xl = xlim; % Get current limits.
   xlim([0, xl(2)]); % Replace lower limit only with a y of 0.
-  %   yl= ylim;
-  ylim([0,10]);
+  yl= ylim;
+  if yl(2)>10
+   ylim([0,min(10,yl(2))]);
+  end
   if model.savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_torque.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_torque.png'))
@@ -664,6 +666,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if main.closall==true
    title(modelfilename,'Interpreter','none')
   end
+  %title(modelfilename,'Interpreter','none')
   if strcmp(main.typeofanalysis,'KNL2')
    maxy4=max(y4);
     bbb = gca();
@@ -1514,6 +1517,36 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
+ fignr=43;% (43)
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(xlabelload,'Interpreter','latex');
+  ylabelJK='$\mathbf{r} \cdot \mathbf{\ddot{K}}_T \cdot \mathbf{r}$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  %bbb.YLim = [0,1];
+  %if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  %end
+  %bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  %xPlot=xValload;
+  Xlength=numel(xValload);
+  y4=model.rKt2r(1:Xlength);
+  plot(xValload,y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'rKt2r_',fignr);
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+ 
  end %for k3
  
   if all(isnan(lambda))
@@ -1674,8 +1707,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    end
   end
   %disp([xPlot,yPlot])
-  format longG
-  [~,lami]=InterpolateJK(1-xPlot,yPlot)%fullEV=1-xPlot,lambda0=yPlot
+  %format longG
+  %[~,lami]=InterpolateJK(1-xPlot,yPlot)%#ok<NOPRT,ASGLU> %fullEV=1-xPlot,lambda0=yPlot
  end
 
  if ismember(9021,plotfig)

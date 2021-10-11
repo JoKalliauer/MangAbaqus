@@ -700,8 +700,9 @@ if ~all(Orth8)
  warning('MyProgam:Limits','OC8 is large: %f (%d)',max(abs(OC8)),sum(~Orth8))
 end
 
-S(isnan(S))=0;
-Cond2 = S<limit.C2;
+Stmp=S;
+Stmp(isnan(S))=0;
+Cond2 = Stmp<limit.C2;
 if ~all(Cond2)
  warning('MyProgam:Limits','speed is large: %f',max(S))
 end
