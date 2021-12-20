@@ -104,7 +104,17 @@ end
 if strcmp(main.whichEV,'Hyb') && modelprops.numofeigs>0
  assert(strcmp(modelprops.elementtype(end),'H'),'modelprops.elementtype does not have hybrid dofs')
 end
-
+modelprops.whichEV=main.whichEV;
+if ismember(943,plotfig)
+ if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r')
+  %
+ else
+  assert(0,'plot943 is proposed to work with bungle_rKr')
+ end
+end
+if sum(strcmp(fieldnames(main), 'savefigures')) == 0
+ main.savefigures=false;
+end
 
 %%% Setting default values
 

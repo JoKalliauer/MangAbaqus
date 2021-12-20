@@ -10,17 +10,26 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  end
  %Kg = EigRes;
  lambda0=model.lambda0';
- eigval = cell(length(lambda0),1);
- eigvec = cell(length(lambda0),1);
- displacements = cell(length(lambda0),1);
- darclengths = cell(length(lambda0),1);
- arclengthJK = cell(length(lambda0),1);
- arclengthHM = cell(length(lambda0),1);
- StiffMtxs = cell(length(lambda0),3);
- DetKtx = NaN(length(lambda0),1);
- %load0 = NaN(length(lambda0),1);
- eigvecDRH = cell(length(lambda0),1);% DRH...Displacement,Rotation,Hybrid(splitted)
- rKt2r = NaN(length(lambda0),1,'single');
+ lenLam0=length(lambda0);
+ lenMatch=length(matches);
+ eigval = cell(lenLam0,1);
+ eigvec = cell(lenLam0,1);
+ displacements = cell(lenLam0,1);
+ darclengths = cell(lenLam0,1);
+ arclengthJK = cell(lenLam0,1);
+ arclengthHM = cell(lenLam0,1);
+ StiffMtxs = cell(lenLam0,3);
+ DetKtx = NaN(lenLam0,1);
+ %load0 = NaN(lenLam0,1);
+ eigvecDRH = cell(lenLam0,1);% DRH...Displacement,Rotation,Hybrid(splitted)
+ rddotKtr = NaN(lenMatch,1);
+ ZweirKtt = NaN(lenMatch,1);
+ rdotKtr = NaN(lenMatch,1);
+ rdotKtt = NaN(lenMatch,1);
+ rKtr = NaN(lenMatch,1);
+ rKt0r = NaN(lenMatch,1);
+ KB1Klammer = cell(lenMatch,1);
+ t_KB1_t = NaN(lenMatch,1);
  
 %  matches = NaN(0);
 %  n = 0;
@@ -36,7 +45,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
 %   matches = [1,matches] %#ok<NOPRT>
 %  end
  
- %Energy = zeros(length(lambda0),3);
+ %Energy = zeros(lenLam0,3);
  %Energy(:,1) = lambda0;
  mintest=max(min(size(Kts,1),size(Displ,1)),3);
 %  if max(matches)+2>mintest
@@ -298,14 +307,14 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
      %[r03_,eigval03_] = solveCLEforMinEigNew(Kt03,Ktprim03,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-3,NaN,modelprops);
      [r02_,eigval02_] = solveCLEforMinEigNew(Kt02,Ktprim02,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-2,model,modelprops,Ktprim0_0);
      [r01_,eigval01_] = solveCLEforMinEigNew(Kt01,Ktprim01,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-1,model,modelprops,Ktprim0_0);
-     [r0_ ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0; iter=matches(i); typeofanal=modelprops.typeofanalysis
-     [r11_,eigval11_] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
+     [r0_ ,eigval0_,~,KB1Klammer{i} ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0; iter=matches(i); typeofanal=modelprops.typeofanalysis
+     [r11_,eigval11_,~,KB1Klammer{i+1}] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
     end
     if ~any(Ktprim12(:)) && strcmp(modelprops.typeofanalysis,'CLE')
      r12_=NaN*r11_;
      eigval12_=NaN*eigval11_;
     else
-     [r12_,eigval12_] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+     [r12_,eigval12_,~,KB1Klammer{i+2}] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
     end
 
 %    if numel(Kt13)>0
@@ -415,12 +424,6 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
   StiffMtxs{i,1} = KT;
   StiffMtxs{i,2} = Ktprim0;
-  rKt2ri=single(transpose(r0t)*Kt2prim0*r0t);
-  if isempty(rKt2ri)
-   rKt2r(i)=NaN;
-  else
-   rKt2r(i)=rKt2ri;
-  end
   if modelprops.numofelm<=20 % skip DetKt for large, because it is slow
    if i==1
     %    KTmult0=5*10^-11;
@@ -493,6 +496,46 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   %         L = EV(5,p);
   %         disp(norm((Kt0 + L*Ktprim0)*r));
   %     end
+  if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r')
+   r01=r01t(:,1);
+   rm=r0t(:,1);
+   r11=r11t(:,1);
+   
+   if strcmp(modelprops.whichEV,'bungle_rKr')
+   Nenner01=sqrt(r01'*Kt01*r01);
+   Nenner0=sqrt(rm'*KT*rm);
+   Nenner11=sqrt(r11'*Kt11*r11);
+   elseif strcmp(modelprops.whichEV,'bungle_rK0r')
+   Nenner01=sqrt(r01'*Kt0_0*r01);
+   Nenner0=sqrt(rm'*Kt0_0*rm);
+   Nenner11=sqrt(r11'*Kt0_0*r11);
+   else
+    assert(0,'not implemented')
+   end
+   
+   r01 = r01/Nenner01;
+   rm = rm/Nenner0;
+   r11 = r11/Nenner11;
+   
+   rKt2ri=transpose(rm)*Kt2prim0*rm;
+   if isempty(rKt2ri)
+    rddotKtr(i)=NaN;
+   else
+    rddotKtr(i)=rKt2ri;
+   end
+   v = (r11 - r01)/(2*modelprops.epsilon);
+   ZweirKtt(i)=transpose(rm)*KT*v+transpose(v)*KT*rm;
+   %norm(rm)
+   assert(norm(rm)~=1,'Norm should not be one')
+   rdotKtr(i)=transpose(rm)*Ktprim0*rm;
+   rdotKtt(i)=(transpose(rm)*Ktprim0*v+transpose(v)*Ktprim0*rm)/2;
+   rKtri=transpose(rm)*KT*rm;
+   rKtr(i)=rKtri;
+   rKt0ri=single(transpose(rm)*Kt0_0*rm);
+   rKt0r(i)=rKt0ri;
+   t_KB1_t(i)=transpose(v)*KB1Klammer{i}*v;
+  end
+  
  end%for i = 1:length(matches)
  if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
  
@@ -514,7 +557,14 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  %model.fullLAMDA=fullLAMDA;
  model.fullEV=fullEV;
  model.numofeigs=numofeigs;
- model.rKt2r=rKt2r;
+ model.rddotKtr=rddotKtr;
+ model.ZweirKtt=ZweirKtt;
+ model.rdotKtr=rdotKtr;
+ model.rdotKtt=rdotKtt;
+ model.rKtr=rKtr;
+ model.rKt0r=rKt0r;
+ model.KB1=KB1Klammer;
+ model.t_KB1_t=t_KB1_t;
  
 
  

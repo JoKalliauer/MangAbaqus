@@ -36,7 +36,7 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %modelprops.elementtype = 'xx'; %current
-  eltypes={'B32OS','B32OSH','B31OS','B31OSH'}
+  eltypes={'B31OSH','B32OSH'}
  
   
   
@@ -59,11 +59,12 @@
   %plotfig= [2,3,7,14,15,16,21,211,23,26,28,29]; %#ok<*NBRAK>
   %plotfig=[14,15,16,37,38,211,902];
   plotfig=[14,15,16,900,32,7,3,43,211]; %#ok<NASGU>
-  plotfig=15;main.savefigures=1;
+  plotfig=[15,943:945,948:954];main.savefigures=1; %#ok<NASGU>
+  plotfig=[15,16,952,955,956];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
-  modelprops.epsilon = .02;  % .02;
+  modelprops.epsilon = .05;  % .02;
   %epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
   modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
@@ -77,11 +78,11 @@
   modelprops.allowComplex=false;
   main.closall=0;
   %main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=1;
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
   %modelprops.MeterValue=1000; %1000mm=1m=0.001km
-  main.whichEV='bungle_rKr'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   %modelprops.sigma=-10;
   modelprops.followsigma=false;

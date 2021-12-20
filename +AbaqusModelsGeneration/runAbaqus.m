@@ -26,8 +26,12 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
        disp(AbaqusRunsFolder)
        %mesJK=strcat('imwsrun abaqus:2020 cpus=1 interactive job=',filename);disp(mesJK)
     reply0=system(['exec abq2020hf5 cpus=1 interactive job=',filename]) %#ok<NOPRT>
-    if reply0~=127
-     reply=reply0;
+    reply21=system(['exec abq2021hf5 cpus=1 interactive job=',filename]) %#ok<NOPRT>
+    %reply is 127 if abq2020hf5: not found, otherwise use the reply
+    if reply0~=127 
+     reply=reply0;  
+    elseif reply21~=127
+     reply=reply21;
     else
      %/home/jkalliau/ownCloud/Linux/bin/imwsrun
      if modelprops.ask_delete==false || ~usejava('desktop')

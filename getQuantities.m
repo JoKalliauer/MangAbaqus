@@ -129,7 +129,8 @@ dkappa = (d3rds3'*d2rds2)/kappa;
 tau = norm(1/kappa^2*(kappa*d3rds3 - dkappa*d2rds2) + t*kappa);
 cosGamma=tau/norm(d3rds3);
 if cosGamma>1
- warning('MyProgramm:NaN','cosGamma=%f is larger than one',cosGamma)
+ warning('MyProgramm:cosGammaNaN','cosGamma=%f is larger than one',cosGamma)
+ warning('off','MyProgramm:cosGammaNaN')
  cosGamma=NaN;
 end
 
@@ -148,7 +149,8 @@ B = ((d3rds3*kappa - d2rds2*dkappa)/kappa^2 + t*kappa)/tau; %B = B/norm(B);
 rho = norm(v)^3/sqrt((norm(v)*norm(a))^2 - (v'*a)^2);
 differences=abs(rho-1/kappa);
 if differences>2.2088e-06
- warning('MyProgramm:lowPrecission','rho differs from 1/kappa by %s',differences)
+ warning('MyProgramm:lowPrecissionKappa','rho differs from 1/kappa by %s',differences)
+ warning('off','MyProgramm:lowPrecissionKappa')
 end
 if rho<0
  rho=NaN;
@@ -180,7 +182,8 @@ normd3rds3=norm(d3rds3);
   if rho2<-.1
    rho2=NaN;
   else
-   warning('MyProgram:Output','rho2 is slighly negativ')
+   warning('MyProgram:OutputRHONegative','rho2 is slighly negativ')
+   warning('off','MyProgram:OutputRHONegative')
   end
  end
  differences=abs(rho-rho2);
@@ -189,12 +192,15 @@ normd3rds3=norm(d3rds3);
   if differences>.1 && main.check==true
    rho=NaN;
    rho2=NaN;
-   warning('MyProgramm:lowPrecission','rho differs from rho2 by %s (to NaN)',differences)
+   warning('MyProgramm:lowPrecissionRHONaN','rho differs from rho2 by %s (to NaN)',differences)
+   warning('off','MyProgramm:lowPrecissionRHONaN')
   elseif main.check==true
-   warning('MyProgramm:lowPrecission','rho differs from rho2 by %s (kept)',differences)
+   warning('MyProgramm:lowPrecissionRHOKept','rho differs from rho2 by %s (kept)',differences)
+   warning('off','MyProgramm:lowPrecissionRHOKept')
   end
  elseif isnan(differences) && main.check==true
-  warning('MyProgramm:lowPrecission','rho or rho2 are NaN')
+  warning('MyProgramm:lowPrecissionRHO2','rho or rho2 are NaN')
+  warning('off','MyProgramm:lowPrecissionRHO2')
   rho=NaN;
   rho2=NaN;
  end

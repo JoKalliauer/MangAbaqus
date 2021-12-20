@@ -6,6 +6,7 @@
 % format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
   %#ok<*NBRAK>
+   %#ok<*NASGU>
   
   
   % there are following predefined test cases:
@@ -50,18 +51,17 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
-  eltypes={'B32OS','B32OSH','B31OSH','B33'};
-  %eltypes={'B31OS'};
-  %eltypes={'B31OS','B32'};
-  %eltypes={'B32OS'};
+  %eltypes={'B32OS','B32OSH','B31OSH','B33','B32','B31OS'}; 
+  %eltypes={'B31'}%,'B32','B32OS','B31OS','B33'};
+  eltypes={'B32OSH'}
  
   
   
   % possible types of analysis
-  modelprops.typeofanalysis = 'I'; modelprops.sigma=eps(1e-292); %identity matrix
+  %modelprops.typeofanalysis = 'I'; modelprops.sigma=eps(1e-292); %identity matrix
   %modelprops.typeofanalysis = 'CLE';modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
-  %modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=-1; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   %modelprops.typeofanalysisB = 'Kt0';
@@ -71,33 +71,36 @@
   
   %modelprops.numofelm = 4; %20
   
-  epsil = .01; %epsil = 0.02;  % finite difference step %epsil = 0.005;
-  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  sortType = 'forwardJK';
+  epsil = 0.005;%.01; %epsil = 0.02;  % finite difference step %epsil = 0.005;
+  %sortType = 'forwardJK'; % eigenvectors sorting type: 'none', 'forwards', 'backwards', 'forwardJK'
+  sortType = 'none';
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
   %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917] %#ok<NASGU>
-  plotfig=[7,14,15,23,30,211,36,913,908,916,906,902]; %#ok<NASGU>
-  plotfig=[15];
+  %plotfig=[7,14,15,23,30,211,36,913,908,916,906,902]; %#ok<NASGU>
+  plotfigProb=[947,949,944:945,948]
+  plotfig=[11,14,15,19,43,952,955:956];  
+  plotfig=[11,12,15,19,35,36,37,45];
+  plotfig=[15,19,45,46]
   %plotfig=[902,908,916,9021,9022,913,900];
-  forcedeig = [1]; %1; % forced eigenvector number 'none' sorting
+  forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:max([3,20*epsil]);%3.07999
+  modelprops.lambda = 0*epsil:epsil:max([3.4749,20*epsil]);%3.07999
   modelprops.epsilon = epsil;
   modelprops.loadfactor = 1.0;
   %int
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=1;
-  modelprops.allowComplex=true;
+  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
+  modelprops.numofeigs=6;
+  modelprops.allowComplex=1;
   %main.closall=true;
   main.closall=false;
   main.savefigures=1;
-  main.check=1;
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
   main.rsame=0.8;
@@ -105,7 +108,6 @@
   main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   
-  modelprops.sigma=0;
   
  %main.check=false;
 % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
@@ -115,7 +117,7 @@
 
 %numofelms = {1,2,4,8,16,20,32,64,128,256,512,1024};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
 %numofelms = {3,5,6,7,9,10};
-numofelms = {20};
+numofelms = {2};
 % for i=1:numel(numofelms)
 %  modelprops.numofelm = cell2mat(numofelms(i));
 %  main.colorshift=i-1;

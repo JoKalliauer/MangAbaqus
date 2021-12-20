@@ -30,7 +30,7 @@
   %eltype = 'B33H' %Euler-Bernoulli
   %eltype = 'B31' %Timoshenko 
   %eltype = 'B31H' %Timoshenko 
-  %eltype = 'B32' %Timoshenko 
+  %modelprops.elementtype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
   %eltype = 'B32OS'; %Timoshenko 
   %eltype = 'B32OSH'; %Timoshenko 
@@ -63,11 +63,9 @@
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
   plotfig=[7,14,15,30,211,43]; %#ok<NASGU>
-  plotfig=15;main.savefigures=1
+  plotfig=[15,943:945,948:949];main.savefigures=1
+  plotfig=[15,947,949,952,955:956];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
- 
- 
-  modelprops.elementtype = eltype;
   
   maxload=30
   maxlambda=maxload/83.3;
@@ -94,7 +92,7 @@
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   modelprops.MeterValue=1;
-  main.whichEV='bungle_rKr'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   
   modelprops.followsigma=false;
 
@@ -105,7 +103,7 @@
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32','B31','B33','B32H'}
+eltypes={'B31H','B32H','B33H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i))
  main.colorshift=i-1;

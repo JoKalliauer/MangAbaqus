@@ -146,7 +146,8 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
  model.check=true;
 end
 %model.filename
-if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr')
+eigvalTMP=model.eigenvalues;
+if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr') ||  strcmp(main.whichEV,'bungle_rK0r')
  eigvecTMP = model.eigenvectors;
  realistic=false;
  evmiddle=5;
@@ -286,9 +287,11 @@ OC7  = NaN(f,1);
 OC8  = NaN(f,1);
 OCeig  = NaN(f,1);          %OCeig(k) = 1;
 LAM  = NaN(f,1);            %LAM(k) = lams;
+EWd1l= NaN(f,1);
 EWd2l= NaN(f,1);
 oneEWd2l=NaN(f,1);
 R    = NaN(EVdofs,f); %R(:,k) = r0s;
+EVal= NaN(1,f);
 r1ri = NaN(f,1);
 % rsri = NaN(f,1);
 drddr = NaN(f,1);
@@ -298,6 +301,7 @@ coplanar = NaN(f,1);
 %CosPhi = NaN(f,1);
 X1 = NaN(f,1);X2 = NaN(f,1);X3 = NaN(f,1);X4 = NaN(f,1);
 HYPO=NaN(f,1);
+HypoB2110Zaeler=NaN(f,1);
 CosGamma=NaN(f,1);
 Normd3rds3=NaN(f,1);
 SinGamma=NaN(f,1);
@@ -404,11 +408,11 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-if strcmp(main.whichEV,'bungle_rKr')
+if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.whichEV,'bungle_rK0r')
  Kt0_0=model.stiffnessMatrices{1,1};
 end
 
-for i = 1:f %f = length(eigval)
+for i = 10:f %f = length(eigval)
  %disp(i)
 %  C0 = eigvec{i}(5,:,:); C0 = reshape(C0,size(C0,2),size(C0,3));
 %  
@@ -453,6 +457,7 @@ for i = 1:f %f = length(eigval)
  rm = eigvec{i}(evmiddle,:,:,is0(isi));
  rm = reshape(rm,numel(rm),1);
  rm = rm/norm(rm);
+ eigvalSort=eigvalTMP{i}(evmiddle,is0(isi));
  if r01'*rm<0;  rm = -rm;  end
  r11 = eigvec{i}(evmiddle+1,:,:,is0(isi)); r11 = reshape(r11,numel(r11),1);
  r11 = r11/norm(r11);
@@ -460,12 +465,17 @@ for i = 1:f %f = length(eigval)
  r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- if strcmp(main.whichEV,'bungle_rKr')
+ if strcmp(main.whichEV,'bungle_rK0r')
   Nenner02=sqrt(r02'*Kt0_0*r02);
   Nenner01=sqrt(r01'*Kt0_0*r01);
   Nenner0=sqrt(rm'*Kt0_0*rm);
   Nenner11=sqrt(r11'*Kt0_0*r11);
   Nenner12=sqrt(r12'*Kt0_0*r12);
+ elseif strcmp(main.whichEV,'bungle_rKr')
+  assert(0,'not implemented')
+   Nenner01=sqrt(r01'*Kt01*r01);
+   Nenner0=sqrt(rm'*KT*rm);
+   Nenner11=sqrt(r11'*Kt11*r11);
  else
   Nenner02=norm(r02);
   Nenner01=norm(r01);
@@ -552,7 +562,7 @@ for i = 1:f %f = length(eigval)
   coplanar_ = B'*a/norm(a);
   %            %if rho>rhotry
   %rhotry = rho;
-  indi = 1;
+  %indi = 1;
   
   V(:,i) = v;
   A(:,i) = a;
@@ -578,10 +588,12 @@ for i = 1:f %f = length(eigval)
   OCeig(i) = abs(rm'*v)/norm(v);
   %lami = ;
   LAM(i) = eigval{i}(5,is0(isi));
+  EWd1l(i)= ( eigval{i}(6,is0(isi)) - eigval{i}(4,is0(isi)) ) / (2*epsilon);
   EWd2l(i)= ( eigval{i}(4,is0(isi)) - 2*eigval{i}(5,is0(isi)) +eigval{i}(6,is0(isi)) ) / (epsilon^2);
   oneEWd2l(i)=1./EWd2l(i);
   %        disp(indi);
-  R(:,i) = indi*rm;
+  R(:,i) = rm;%indi*rm;
+  EVal(:,i)=eigvalSort;
   POS(i) = is0(1);
   
   r1ri(i) = abs(r1(:)'*rm);
@@ -596,6 +608,7 @@ for i = 1:f %f = length(eigval)
   X3(i)=x3;
   X4(i)=x4;
   HYPO(i)=Hypo;
+  HypoB2110Zaeler(i)=NaN;%2*transpose(rm)*model.KB1{i}*rm;
   CosGamma(i)=cosGamma;
   Normd3rds3(i)=normd3rds3;
   SinGamma(i)=singamma;
@@ -806,6 +819,8 @@ res.TAU = TAU(Orth);
 %       OC1 = OC1(Orth);
 OCeig = OCeig(Orth);      res.OCeig = OCeig;
 LAM = LAM(Orth);          res.LAM = LAM;
+EWd1l(~OrthNaN)=NaN;
+res.EWd1l=real(EWd1l(Orth));
 EWd2l(~OrthNaN)=NaN;
 res.EWd2l=real(EWd2l(Orth));
 oneEWd2l(abs(oneEWd2l)>1e2)=NaN;%filter out 1/zero
@@ -813,6 +828,8 @@ oneEWd2l(~OrthNaN)=NaN;
 res.oneEWd2l=real(oneEWd2l(Orth));
 R = R(:,Orth);
 res.R = R;
+EVal = EVal(:,Orth);
+res.EVal = EVal;
 POS = POS(Orth);          res.POS = POS;
 r1ri = r1ri(Orth);        res.r1ri = r1ri;
 % rsri = rsri(Orth);        res.rsri = rsri;
@@ -836,6 +853,10 @@ res.eigposition = eigposition;
 res.X1=X1(Orth);res.X2=X2(Orth);res.X3=X3(Orth);res.X4=X4(Orth);
 
 res.HYPO=HYPO(Orth);
+
+res.HypoM2110=EWd2l./model.rddotKtr;
+res.HypoB2110=HypoB2110Zaeler./model.rddotKtr;
+%tmp1=[res.HypoM2110,res.HypoB2110]
 res.CosGamma=CosGamma(Orth);
 res.Normd3rds3=Normd3rds3(Orth);
 res.SinGamma=SinGamma(Orth);

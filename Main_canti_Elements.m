@@ -1,7 +1,11 @@
 %#!
 %university:TU Wien
  %#ok<*NOPTS>
-  close all
+ clear model
+ close all
+ format longG
+ delete(findall(0,'type','figure','tag','TMWWaitbar'))
+ set(0, 'DefaultFigureWindowState', 'normal');
 
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
@@ -43,12 +47,15 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  %modelprops.numofelm = 256;
+  modelprops.numofelm = 20;
   
   epsil = 0.005;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig= [11,15,16]; %#ok<*NBRAK>
+  plotfig= [11,15,16]; %#ok<*NBRAK> #ok<NASGU>
+  plotfig=[15,16,44,943:945,947:954];
+  plotfig=[15,952,955:956];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
+  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r';
  
  
   modelprops.elementtype = eltype;
@@ -61,14 +68,12 @@
   %
   
   modelprops.profil.tw= 8.6e-3;
-  %modelprops.forceAbaqus=true;
   modelprops.forceAbaqus=false; %default: false
-  %modelprops.forcerun=true; %default=true
-  modelprops.forcerun=false;
+  modelprops.forcerun=0; %default=true
   modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   main.closall=0;
-  main.savefigures=2;
+  main.savefigures=1;
   %main.savefigures=false;
   %main.check=true;
   main.check=false;
@@ -79,7 +84,7 @@
 %[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 modelprops=rmfield(modelprops,'forceAbaqus');
 
-eltypes={'B32OS','B32OSH','B31OS','B31OSH'}%
+eltypes={'B31OSH','B32OSH'}%
 %plotfig=[];
 for i=1:numel(eltypes)
  elementtype = char(eltypes(i))
