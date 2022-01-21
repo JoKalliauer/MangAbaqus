@@ -26,6 +26,7 @@ if exist('ecc','var')
  modelprops.ecc=ecc;
 end
 if sum(strcmp(fieldnames(modelprops), 'numelFac')) == 0
+ modelprops.numelFac=1;
  numelFac=1;
 else
  numelFac=modelprops.numelFac;
@@ -42,11 +43,14 @@ assert(min(modelprops.numofelm)>0,'numberOfElements must be greater zero')
 mustBeInteger(modelprops.numofelm)
 modelprops.numofelm=uint16(modelprops.numofelm);
 %modelprops.numofeigs=min(modelprops.numofeigs,uint8(14));
+if sum(strcmp(fieldnames(modelprops), 'numofeigs')) == 0
+ modelprops.numofeigs=0;
+end
 if modelprops.numofeigs>14
  warning('MyProgramm:Input','For higher precission reduce the number of requested eigenvalues')
  if modelprops.numofeigs>2500
-  warning('MyProgramm:Input','The eigenvalues are reduced to 2500, otherwise it will need more than 30GB RAM')
-  modelprops.numofeigs=2500;
+  modelprops.numofeigs=min(2500,20*(modelprops.numofelm+2));
+  warning('MyProgramm:Input','The eigenvalues are reduced to modelprops.numofeigs, otherwise it will need more than 30GB RAM')
  end
 end
 %  if any(modelprops.lambda<4*modelprops.epsilon)
@@ -59,7 +63,7 @@ if numel(modelprops.lambda)>301
  %assert(numel(modelprops.lambda)<=1001,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
  %  assert(numel(modelprops.lambda)<=2195,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
 end
-assert(max([forcedeig 0])<=modelprops.numofeigs,'forceeig must be smaler or equal that number of calculated ones')
+assert(max([forcedeig 0])<=min(modelprops.numofeigs),'forceeig must be smaler or equal that number of calculated ones')
 [sl1, sl2]=size(modelprops.lambda);
 if sl1>1 && sl2==1; modelprops.lambda=transpose(modelprops.lambda); end
 modelprops.lambda=unique(sort([0 modelprops.lambda]));
@@ -98,6 +102,7 @@ end
 if sum(strcmp(fieldnames(main), 'whichEV')) == 0
  main.whichEV='split';
 end
+ modelprops.whichEV=main.whichEV;
 if strcmp(main.whichEV,'split')
  main.whichEV={'Disp'};
 end
@@ -116,18 +121,25 @@ if sum(strcmp(fieldnames(main), 'savefigures')) == 0
  main.savefigures=false;
 end
 
+
 %%% Setting default values
 
 
 %% Programm
 
-if modelprops.loadfactor==0 && numel(modelprops.numelFac)>1
+if modelprops.loadfactor==0 %&& numel(modelprops.numelFac)>1
  modelpropsNEW=modelprops;
  modelpropsNEW.loadfactor=1;
  [modelP1] = runEigenProblem(modelpropsNEW);
- %modelpropsNEW.numelFac=fliplr(modelpropsNEW.numelFac);
- modelpropsNEW.numofelm=fliplr(modelpropsNEW.numofelm);
+ if numel(modelprops.numelFac)>1
+  %modelpropsNEW.numelFac=fliplr(modelpropsNEW.numelFac);
+  modelpropsNEW.numofelm=fliplr(modelpropsNEW.numofelm);
+ else
+  modelpropsNEW.loadfactor=-1;
+ end
  [modelM1] = runEigenProblem(modelpropsNEW);
+ modelpropsNEW.loadfactor=NaN;
+ modelpropsNEW.numofelm=NaN;
  model=mergeModel(modelP1,modelM1);
 else
  [model] = runEigenProblem(modelprops);
@@ -148,7 +160,7 @@ for i=1:numel(model.eigenvalues)
   %model.lambda0=model.lambda0(1:i-1);
   break
  end
- if ~isreal(model.eigenvalues{i}(5,:))
+ if ~isreal(model.eigenvalues{i}(5,:)) && ~strcmp(modelprops.whichEV,'skip')
   %warning('MyProgram:Komplex','Some values are komplex %f',i)
   %model.eigenvalues{i}=real(model.eigenvalues{i});
   EW=model.eigenvalues{i}(5,:);
@@ -191,9 +203,7 @@ else
  end
 end %if (strcmpi(sortType,'none'))&&isempty(forcedeig)
 
-if numel(resEWs)==0
- res=NaN;
-end
+
 
 lastLambda=max(modelprops.lambda);
 minLambda=min([modelprops.lambda,-lastLambda,0]);
@@ -209,18 +219,25 @@ for k3 = resEWs
  if strcmp(modelprops.testcase,'pureBendingBeam') && strcmp(modelprops.elementtype,'B32OSH') && strcmp(modelprops.typeofanalysis,'KNL2')
   limit.C8minrho=.991;
  end
- res(k3) = sortEigenValuesAndGetQuantities(model,sortType,plotfig,k3,limit,lastLambda,main);  % forcedeig=k3;
- toolarge=res(k3).lambda>max(modelprops.lambda);
- if any(toolarge)
-  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
-  res(k3).lambda(toolarge)=NaN;
- end
- toostart = abs(res(k3).lambda(2:end))<min(modelprops.lambda(2:end));
- if any(toostart)
-  warning('MyProgram:Input','first lambdas ignored try using modelprops.forcerun=true')
-  res(k3).lambda(toostart)=NaN;
+ if strcmp(modelprops.whichEV,'skip')
+  res=NaN;
+ else
+  res(k3) = sortEigenValuesAndGetQuantities(model,sortType,[],k3,limit,lastLambda,main);  % forcedeig=k3;
+  toolarge=res(k3).lambda>max(modelprops.lambda);
+  if any(toolarge)
+   warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
+   res(k3).lambda(toolarge)=NaN;
+  end
+  toostart = abs(res(k3).lambda(2:end))<min(modelprops.lambda(2:end));
+  if any(toostart)
+   warning('MyProgram:Input','first lambdas ignored try using modelprops.forcerun=true')
+   res(k3).lambda(toostart)=NaN;
+  end
  end
 end % for k3 = resEWs
+if numel(resEWs)==0
+ res=NaN;
+end
 %assert(numel(model.load0)==numel(model.lambda0),'different number of results try using modelprops.forcerun=true');
 toolarge = abs(model.lambda0)>max(abs(modelprops.lambda))+eps(1);
 if any(toolarge)
@@ -267,9 +284,11 @@ if usejava('desktop')
  
  MyColours={[0, 0.4470, 0.7410],	[0.8500, 0.3250, 0.0980],[0.9290, 0.6940, 0.1250],[0.4940, 0.1840, 0.5560] 	,	[0.4660, 0.6740, 0.1880], 	[0.3010, 0.7450, 0.9330],[0.6350, 0.0780, 0.1840],	[0, 0, 1],[0, 0.5, 0],	[1, 0, 0],	[0, 0.75, 0.75],[0.75, 0, 0.75],[0.75, 0.75, 0],[0.25, 0.25, 0.25],'y','m','c','g','k'};
  MyMarker=['o' 'x'];
- %colJK=MyColours{mod(k3-1,19)+1};
- %markJK=MyMarker(mod(k3-1,2)+1);
- lengthAbaqus=size(model.fullEV,2);
+ if strcmp(main.whichEV,'skip')
+  lengthAbaqus=size(model.eigenvalues,1)+4;
+ else
+  lengthAbaqus=size(model.fullEV,2);
+ end
  lengthInput=size(model.fulllambda,1);
  if lengthInput>lengthAbaqus
   warning('MyProgram:Input','lamdalengh differs, try modelprops.forcerun=true')
@@ -290,8 +309,8 @@ if usejava('desktop')
  end
  plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main);
 end%if usejava('desktop')
-if main.savefigures==true
- printresMulti(res,model,plotfig,[],[],resEWs)
+if main.savefigures==true %&& ~strcmp(main.whichEV,'skip')
+ printresMulti(res,model,plotfig,[],[],resEWs,main.whichEV)
 end
 disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),'.mat']);
 beep

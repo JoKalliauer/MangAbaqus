@@ -73,6 +73,8 @@ end
     case 'pureBendingCantilever'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.pureBendingCantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
      model.xlabelloadname='bending moment $M$ [N\,m]';
+    case 'mixedCantilever'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.mixedCantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'cantilever'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.cantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam'
@@ -100,7 +102,7 @@ end
      warning('MyProgram:unknown','testcase "%s" unknown',testcase)
    end
    
-   model.filename = filename;
+   model.filename = filename;% model.filename = replace(filename, ' ', '_');
    model.fulllambda = lambda;
    model.lambda = lambda(1:end-3);
    model.BCMatlab = BC;

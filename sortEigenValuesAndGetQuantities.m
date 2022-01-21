@@ -24,6 +24,9 @@ end
 if sum(strcmp(fieldnames(model), 'fulllambda')) == 0
  model.fulllambda=model.lambda;
 end
+if sum(strcmp(fieldnames(main), 'rho')) == 0
+ main.rho='R1';
+end
 
 
 if ~isfield(limit,'OC1')
@@ -151,7 +154,7 @@ if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr') ||  strcm
  eigvecTMP = model.eigenvectors;
  realistic=false;
  evmiddle=5;
-elseif strcmp(main.whichEV,'Disp')
+elseif strcmp(main.whichEV,'Disp') ||  strcmp(main.whichEV,'Disp_rK0r')
  eigvecTMP = model.eigvecDRH;
  realistic=true;
  evmiddle=3;
@@ -343,7 +346,9 @@ if isempty(kl)
  kl=numel(lambda0);
 end
 % stability_limit = lambda0(kl) + lami;
-res.stability_limit = [kl,lami];
+res.stability_limit = [kl,lami]
+SchrittBefor=max(min(floor(res.stability_limit(1)),f),1);
+EVatStability=eigvec{SchrittBefor}(evmiddle,:,:,1);
 switch sortType
  case 'none'
   %disp('No sorting of eigenvectors');
@@ -408,11 +413,11 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.whichEV,'bungle_rK0r')
+if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.rho,'KtR1') || strcmp(main.whichEV,'Disp_rK0r')
  Kt0_0=model.stiffnessMatrices{1,1};
 end
 
-for i = 10:f %f = length(eigval)
+for i = 4:f %f = length(eigval)
  %disp(i)
 %  C0 = eigvec{i}(5,:,:); C0 = reshape(C0,size(C0,2),size(C0,3));
 %  
@@ -440,6 +445,7 @@ for i = 10:f %f = length(eigval)
    rj = reshape(rj,numel(rj),1);
    rj=rj/norm(rj);
    %rj = reshape(rj,length(rj),1);
+   %disp(['L443_forcedeig=',num2str(forcedeig),'; is0(isi)=',num2str(is0(isi)),'; k=',num2str(k),'; i=',num2str(i),'; norm(r0atl0-rj)=',num2str(norm(r0atl0-rj))])
    if norm(r0atl0-rj)<1 || norm(r0atl0+rj)<1 || norm(dot(r0atl0,rj))>0.33
     if is0(isi)~=k
      %warning('MyProgram:OderChange','The oder of %d eV %d changed to %d',forcedeig,is0(isi),k)
@@ -465,7 +471,7 @@ for i = 10:f %f = length(eigval)
  r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- if strcmp(main.whichEV,'bungle_rK0r')
+ if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r')
   Nenner02=sqrt(r02'*Kt0_0*r02);
   Nenner01=sqrt(r01'*Kt0_0*r01);
   Nenner0=sqrt(rm'*Kt0_0*rm);
@@ -491,19 +497,29 @@ for i = 10:f %f = length(eigval)
 
  
  
-%  if (lambda0(kstability)-2*epsilon)<=lambda0(i) && (lambda0(i)<lambda0(kstability))
-%   r11 = NaN*r11; r12 = NaN*r12; r13 = NaN*r13; r14 = NaN*r14;
-%  elseif (lambda0(kstability)<lambda0(i))&&(lambda0(i)<=(lambda0(kstability)+2*epsilon))
-%   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
-%  elseif lambda0(i)<2*epsilon
-%   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
-%  end
- RS = [r02, r01, rm, r11, r12];%RS = [r04, r03, r02, r01, r0, r11, r12, r13, r14];
+ %  if (lambda0(kstability)-2*epsilon)<=lambda0(i) && (lambda0(i)<lambda0(kstability))
+ %   r11 = NaN*r11; r12 = NaN*r12; r13 = NaN*r13; r14 = NaN*r14;
+ %  elseif (lambda0(kstability)<lambda0(i))&&(lambda0(i)<=(lambda0(kstability)+2*epsilon))
+ %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
+ %  elseif lambda0(i)<2*epsilon
+ %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
+ %  end
+ if strcmp(main.rho,'KtR1')
+  Mr02=Kt0_0*r02;
+  Mr01=Kt0_0*r01;
+  Mrm=Kt0_0*rm;
+  Mr11=Kt0_0*r11;
+  Mr12=Kt0_0*r12;
+  RS = [Mr02/norm(Mr02), Mr01/norm(Mr01),Mrm/norm(Mrm),Mr11/norm(Mr11),Mr12/norm(Mr12)];
+ else
+  RS = [r02, r01, rm, r11, r12];
+ end
  if ~all(isnan(RS(:)))
   dksi = arclengths{i};
   %            dksi = ones(size(dksi,1),size(dksi,2))*(lambda(2)-lambda(1));
   
  if any(isnan(r0atl0))
+   %disp(['L508_forcedeig=',num2str(forcedeig),'; is0(isi)=',num2str(is0(isi)),'; i=',num2str(i)])
   if any(~isnan(r02)) && lambda0(i)~=0  && norm(dot(r02,r01))>rstabil
    r0atl0=r02;
   elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,rm))>rstabil
@@ -529,7 +545,7 @@ for i = 10:f %f = length(eigval)
 
   [v,a,speed,accel,at,an,rho,tau,ortCond1,rho2,drddr_,cosmu_,sinpsi_,ortCond2,ortCond3,ortCond4, t, ~, B, ~,...
    ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
-   = getQuantities(RS,dksi,epsilon,r0atl0,rho2atl0,tatl0,main); % %DT=epsilon
+   = getQuantities(RS,dksi,epsilon,r0atl0,rho2atl0,tatl0,main,EVatStability); % %DT=epsilon
   %EWd1l= ( eigval{i}(4,is0(isi)) - eigval{i}(6,is0(isi)) ) / (2*epsilon);
   %x1=eigvec{i}(5,:,1)*(model.stiffnessMatrices{i,2}-EWd1l*model.stiffnessMatrices{1,1})*r0;
   if isnan(rho2atl0) && i>1
@@ -573,6 +589,7 @@ for i = 10:f %f = length(eigval)
   RHO(i) = rho;
   if max(abs(imag(RHO)))>0.5
    warning('MyProgram:Complex','rho is komplex');
+   warning('off','MyProgram:Complex')
   end
   RHO2(i) = rho2;
   TAU(i) = tau;
@@ -624,6 +641,8 @@ for i = 10:f %f = length(eigval)
  %end %isi=1:1
 end %i=1:f schleife ueber alle lambda
 
+
+
 % r1=RHO2.'.*cos(lambda.');
 % r2=RHO2.'.*sin(lambda.');
 % r3=sqrt(1-RHO2.'.^2);
@@ -644,7 +663,8 @@ end %i=1:f schleife ueber alle lambda
 % end
 
 if any(RHO>1)
- warning('MyProgramm:lowPrecission','rho is larger than one: %f',max(RHO))
+ warning('MyProgramm:lowPrecission:RhoOne','rho is larger than one: %f',max(RHO))
+ warning('off','MyProgramm:lowPrecission:RhoOne')
  RHO(RHO>1)=NaN;
 else
  differences2=max(abs(RHO-RHO2));
@@ -653,15 +673,17 @@ else
  end
 end
 if any(RHO2>1)
- warning('MyProgramm:lowPrecission','RHO2 is larger than one: %f',max(RHO2))
+ warning('MyProgramm:lowPrecission:Rho2One','RHO2 is larger than one: %f',max(RHO2))
+ warning('off','MyProgramm:lowPrecission:Rho2One')
  RHO2(RHO2>1)=NaN;
 end
 if any(RHO2<0)
  if any(RHO2<-1)
-  warning('MyProgramm:lowPrecission','RHO2 is smaler than -1: %f',min(RHO2))
+  warning('MyProgramm:lowPrecission:Rho2minusOne','RHO2 is smaler than -1: %f',min(RHO2))
   RHO2(RHO2<-1)=NaN;
  else
-  warning('MyProgramm:lowPrecission','RHO2 is smaler than zero: %f (%d)',min(RHO2),sum(RHO2<0))
+  warning('MyProgramm:lowPrecission:Rho2Zero','RHO2 is smaler than zero: %f (%d)',min(RHO2),sum(RHO2<0))
+ warning('off','MyProgramm:lowPrecission:Rho2Zero')
   %RHO2(RHO2<0)=NaN;
  end
 end
@@ -692,64 +714,78 @@ Orth8 = abs(OC8)<.00561; %just to filter one result
 
 
 if ~all(Orth5)
- warning('MyProgam:Limits','|OC5| is large: %f (%d)',max(abs(OC5)),sum(~Orth5))
+ warning('MyProgam:Limits:OC5abs','|OC5| is large: %f (%d)',max(abs(OC5)),sum(~Orth5))
+  warning('off','MyProgam:Limits:OC5abs')
 end
 if ~all(Orth5a)
- warning('MyProgam:Limits','OC5 is positive: %f (%d)',max((OC5)),sum(~Orth5a))
+ warning('MyProgam:Limits:OC5pos','OC5 is positive: %f (%d)',max((OC5)),sum(~Orth5a))
+  warning('off','MyProgam:Limits:OC5pos')
 end
 if ~all(Orth6)
- warning('MyProgam:Limits','|OC6| is large: %f (%d)',max(abs(OC6)),sum(~Orth6))
+ warning('MyProgam:Limits:OC6abs','|OC6| is large: %f (%d)',max(abs(OC6)),sum(~Orth6))
+  warning('off','MyProgam:Limits:OC6abs')
 end
 if ~all(Orth6a)
- warning('MyProgam:Limits','OC6 is positive: %f (%d)',max((OC6)),sum(~Orth6a))
+ warning('MyProgam:Limits:OC6pos','OC6 is positive: %f (%d)',max((OC6)),sum(~Orth6a))
+  warning('off','MyProgam:Limits:OC6pos')
 end
 if ~all(Orth7)
- warning('MyProgam:Limits','OC7 is large: %f (%d)',max(abs(OC7)),sum(~Orth7))
+ warning('MyProgam:Limits:OC7large','OC7 is large: %f (%d)',max(abs(OC7)),sum(~Orth7))
+  warning('off','MyProgam:Limits:OC7large')
 end
 if ~all(Orth7a)
- warning('MyProgam:Limits','OC7 is positive: %f',max((OC7)))
+ warning('MyProgam:Limits:OC7pos','OC7 is positive: %f',max((OC7)))
+  warning('off','MyProgam:Limits:OC7pos')
 end
 if ~all(Orth8)
- warning('MyProgam:Limits','OC8 is large: %f (%d)',max(abs(OC8)),sum(~Orth8))
+ warning('MyProgam:Limits:OC8','OC8 is large: %f (%d)',max(abs(OC8)),sum(~Orth8))
+  warning('off','MyProgam:Limits:OC8')
 end
 
 Stmp=S;
 Stmp(isnan(S))=0;
 Cond2 = Stmp<limit.C2;
 if ~all(Cond2)
- warning('MyProgam:Limits','speed is large: %f',max(S))
+ warning('MyProgam:Limits:Speed:Large','speed is large: %f',max(S))
+  warning('off','MyProgam:Limits:Speed:Large')
 end
 A0(isnan(A0))=0;
 Cond3 = A0<limit.C3A0; %790 % 1.28;%to be valid for c-KNL2-B32OS
 if ~all(Cond3)
- warning('MyProgam:Limits','total accerlation is large: %f (%d)',max(A0),sum(~Cond3))
+ warning('MyProgam:Limits:totAcc:Large','total accerlation is large: %f (%d)',max(A0),sum(~Cond3))
+  warning('off','MyProgam:Limits:totAcc:Large')
 end
 At(isnan(At))=0;
 Cond4 = abs(At)<limit.C4At; % pureBendingBeam-KNL2-B32OSH %1.09;%to be valid for c-KNL2-B32OS
 if ~all(Cond4)
- warning('MyProgam:Limits','tangential accerlation is large: %f (%d)',max(abs(At)),sum(~Cond4))
+ warning('MyProgam:Limits:TanAcc:Large','tangential accerlation is large: %f (%d)',max(abs(At)),sum(~Cond4))
+  warning('off','MyProgam:Limits:TanAcc:Large')
 end
 diffs=[At(2:end)-At(1:end-1);0];
 Cond4Atdiff= (abs(diffs)<limit.C4Atdiff); % ecc-B32OS-2-len-5-ecc-0.16467-loadfac-1 epsil = 0.01 %%%0.0090 %0.00070%1e-05
 if ~all(Cond4Atdiff)
- warning('MyProgam:Limits','tangential accerlation diffs are changing fast: %f (%d)',max(abs(diffs)),sum(~Cond4Atdiff))
+ warning('MyProgam:Limits:TanAcc:Fast','tangential accerlation diffs are changing fast: %f (%d)',max(abs(diffs)),sum(~Cond4Atdiff))
+  warning('off','MyProgam:Limits:TanAcc:Fast')
 end
 An(isnan(An))=0;
 Cond5An = abs(An)<limit.C5; % pureBendingBeam-KNL2-B32OSH 1.05;%to be valid for c-KNL2-B32OS 10Elements
 if ~all(Cond5An)
- warning('MyProgam:Limits','normal accerlation is large: %f (%d)',max(An),sum(~Cond5An))
+ warning('MyProgam:Limits:NormalAcc:large','normal accerlation is large: %f (%d)',max(An),sum(~Cond5An))
+  warning('off','MyProgam:Limits:NormalAcc:large')
 end
 diffs=[An(2:end)-An(1:end-1);0];
 Cond5Andiff= (diffs>limit.C5diff);%-0.000017
 if ~all(Cond5Andiff)
- warning('MyProgam:Limits','normal accerlation diffs are changing fast: %f (%d)',min(diffs),sum(~Cond5Andiff))
+ warning('MyProgam:Limits:Acceleration:fast','normal accerlation diffs are changing fast: %f (%d)',min(diffs),sum(~Cond5Andiff))
+  warning('off','MyProgam:Limits:Acceleration:fast')
 end
 %TAU(1)=0;
 %TAU(isnan(TAU))=0;
 Cond6 = abs(TAU)<limit.C6Tau;
 %Cond6(3)=true;
 if ~all(Cond6(3:end))
- warning('MyProgam:Limits','TAU is large: %f (%d)',max(TAU),sum(~Cond6(3:end)))
+ warning('MyProgam:Limits:Tau:Large','TAU is large: %f (%d)',max(TAU),sum(~Cond6(3:end)))
+  warning('off','MyProgam:Limits:Tau:Large')
 end
 
 %RHO2(isnan(RHO2))=0;
@@ -759,13 +795,15 @@ if ~all(Cond7)
 end
 Cond8 = ~(RHO2<limit.C8minrho);
 if ~all(Cond8)
- warning('MyProgam:Limits','RHO2 is small: %f (%d)',min(RHO2),sum(~Cond8))
+ warning('MyProgam:Limits:Rho2Small','RHO2 is small: %f (%d)',min(RHO2),sum(~Cond8))
+ warning('off','MyProgam:Limits:Rho2Small')
 end
 tch=TAU(2:end)./TAU(1:end-1);
 Cond9tmp = (tch<limit.C9) & (tch>1./limit.C9);
 Cond9= [true;Cond9tmp] & [Cond9tmp;true];
 if ~all(Cond9)
- warning('MyProgam:Limits','tau changes by a factor of: %f (%d)',max(max(tch),1/min(tch)),sum(~Cond9))
+ warning('MyProgam:Limits:Tau:Change','tau changes by a factor of: %f (%d)',max(max(tch),1/min(tch)),sum(~Cond9))
+  warning('off','MyProgam:Limits:Tau:Change')
 end
  
 OrthNaN=logical(Orth1.*Orth2.*Orth3.*Orth4.*Orth5.*Orth5a.*Orth6.*Orth6a.*Orth7.*Orth7a.*Orth8.*Cond2.*Cond3.*Cond4.*Cond4Atdiff.*Cond5An.*Cond5Andiff.*Cond6.*Cond7.*Cond8.*Cond9);

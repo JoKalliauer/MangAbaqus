@@ -141,7 +141,7 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
      LagerOben=model.BCMatlab(end,3)-1;
      KnotenGes=size(displacements_,2)-2;
     end
-     if strcmp(modelprops.elementtype(1:3),'B32')
+     if strcmp(modelprops.elementtype(1:3),'B32') && modelprops.ecc~=0
       % ul UA (x-1)*S OA ol; zul x*ZS zol ->reduziert zu-> UA (x-1)*S OA
       tmp=size(BeamDisp,2);
       OberesAuflager=(tmp+1)/2;

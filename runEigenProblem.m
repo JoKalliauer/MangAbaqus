@@ -105,14 +105,14 @@ function [model] = runEigenProblem(modelprops)
  %filename = model.filename;
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem check mat-file');end
  files=dir([AnalysisResultsFolder,model.filename,'-*.mat']);
- if exist([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'], 'file') == 2 && modelprops.forcerun<=.501
+ loadFileName=[AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'] %#ok<NOPRT>
+ if     exist(loadFileName, 'file') == 2 && modelprops.forcerun<=.501
   tmp=modelprops.numofeigs;
   mpl=modelprops.lambda;
   if strcmp(modelprops.testcase,'TL_arch3D')
    mpl=min(mpl,.8);
   end
   if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem load mat-file');end
-  loadFileName=[AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'] %#ok<NOPRT>
   FileInfo = dir(loadFileName);
   TimeStamp = FileInfo.date %#ok<NASGU,NOPRT>
   load(loadFileName,'model');
@@ -283,7 +283,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  %modelDisp=model;
  model.BC=sort(BC);
  model.fullload0=[0;model.fullload];
- model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP);
+ model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,AnalysisResultsFolder);
  %modelDisp=model;
  %[Kts3]  = AbaqusModelsGeneration.getStiffnessMatrices3(model,[],modelprops.typeofanalysis);
 %  [~, Nres3] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
@@ -291,7 +291,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  model=runEigenProblemDispJK(modelprops,model,Displ3,[],[],matches,wbrEP);
  model=runEigenProblemRotJK([],model,Rot3,[],[],matches,wbrEP);
  
- if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
+ if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finish');end
  
  %model.eigenvalues = eigval;
  %model.eigenvectors = eigvec;

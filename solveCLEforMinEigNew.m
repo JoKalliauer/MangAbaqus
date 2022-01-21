@@ -1,4 +1,4 @@
-function [evec0,eval0,numofeigs,KB1] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,typeofanal,iter,model,modelprops,Ktprim0_0)
+function [evec0,eval0,numofeigs,KB1,imagValuesi] = solveCLEforMinEigNew(Kt,Ktprim,Eigres,Kt0_0,typeofanal,iter,model,modelprops,Ktprim0_0)
 
 % if ~exist('model','var')
 %  model.filename='';
@@ -29,6 +29,13 @@ end
 
 
 DOFKt=size(Kt,1);
+if numofeigs==0
+ evec0 = NaN(DOFKt,numofeigs);
+ eval0=ones(numofeigs,1);
+ KB1=0*Kt;
+ imagValuesi=NaN;
+ return
+end
 if numofeigs>size(Kt,1)
  numofeigs = size(Kt,1);
 end
@@ -83,6 +90,7 @@ switch typeofanal
    evec0 = NaN(DOFKt,numofeigs);
    eval0=ones(numofeigs,1);
    KB1=0*Kt;
+   imagValuesi=NaN;
    return
    %B = NaN(size(Kt,1),size(Kt,1)); %B = eye(size(Kt,1),size(Kt,1));
   end
@@ -170,20 +178,16 @@ if full(sum(LM(:)))==0
  eval0=ones(numofeigs,1);
  warning('MyProgram:NaN','B is NaN or Kt=0');
  KB1=0*Kt;
+ imagValuesi=NaN;
  return
 end
 
-% <<<<<<< HEAD
+
 if exist('B','var')
  if full(sum(B(:)))==0
   warning('MyProgram:Empty','B is zero')
   B = NaN(size(LM,1),size(LM,1));
  end
- % =======
- %   if full(sum(B(:)))==0
- %    warning('MyProgram:Empty','B is zero')
- %    B = NaN(size(LM,1),size(LM,1));
- % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 end
 
 if ~exist('RM','var')%~strcmpi(typeofanal,'KNL4') && ~strcmpi(typeofanal,'KNL3')
@@ -239,6 +243,7 @@ if check1 && check2
  %[evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
  [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma);
  KB1=LM-eval(1)*RM;
+ %imagValuesi=NaN;
  %     end
  % =======
  %     [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
@@ -256,32 +261,30 @@ if check1 && check2
   evec(:,[false;relevant])=NaN;
  end
  if ~isreal(eval)
-  if iter<6 || any(isnan(diageval))
+  if iter<2 || any(isnan(diageval)) % iter<6
    evec0 = NaN(DOFKt,numofeigs);
    eval0=NaN(numofeigs,1);
+   imagValuesi=NaN;
    return
   end
   relations=abs(imag(diageval(:)))./(real(diageval(:)));
-  relation=max(relations(1));
-  %warning('MyProgram:NaN','komplexer Anteil des Eigenwertes ist %s',relation)
-  %check of first eigenvalue
-  if relation>0.0466%0.00481
-   warning('MyProgram:NaN','komplexer Anteil des 1.Eigenwertes ist %s',relation);
-   if relation>0.686
-    warning('MyProgram:complex','komplex Part too large; des 1.Eigenwertes ist %s',relation);
-    %error('MyProgram:complex','komplex Part too large')
-    %evec0 = NaN(DOFKt,numofeigs);
-    %eval0=NaN(numofeigs,1);
-    %return
+  imagValuesi=sum(relations>0.04);
+  if imagValuesi~=0
+   relation=max(relations(1));
+   %warning('MyProgram:NaN','komplexer Anteil des Eigenwertes ist %s',relation)
+   %check of first eigenvalue
+   if relation>0.0466%0.00481
+    warning('MyProgram:NaN','komplexer Anteil des 1.Eigenwertes ist %s',relation);
+    if relation>0.686
+     warning('MyProgram:complex','komplex Part too large; des 1.Eigenwertes ist %s',relation);
+     %error('MyProgram:complex','komplex Part too large')
+     %evec0 = NaN(DOFKt,numofeigs);
+     %eval0=NaN(numofeigs,1);
+    end
    end
   end
-  
-  %      %check of higher eigenvalues
-  %      komplex = (relations>0.0466);
-  %      if any(komplex)%0.00481
-  %       warning('MyProgram:NaN','komplexer Anteil eines Eigenwertes ist %s',max(relations));
-  %      end
-  
+ else
+  imagValuesi=0;
  end
  
  %         [evec,eval] = eig(full(Kt),-full(Ktprim));

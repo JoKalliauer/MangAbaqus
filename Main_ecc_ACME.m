@@ -5,6 +5,7 @@
  close all
 % format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
+ set(0, 'DefaultFigureWindowStyle', 'docked');
   %#ok<*NBRAK>
    %#ok<*NASGU>
   
@@ -72,16 +73,18 @@
   %modelprops.numofelm = 4; %20
   
   epsil = 0.005;%.01; %epsil = 0.02;  % finite difference step %epsil = 0.005;
-  %sortType = 'forwardJK'; % eigenvectors sorting type: 'none', 'forwards', 'backwards', 'forwardJK'
-  sortType = 'none';
+  sortType = 'forwardJK'; % eigenvectors sorting type: 'none', 'forwards', 'backwards', 'forwardJK'
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
   %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917] %#ok<NASGU>
   %plotfig=[7,14,15,23,30,211,36,913,908,916,906,902]; %#ok<NASGU>
-  plotfigProb=[947,949,944:945,948]
-  plotfig=[11,14,15,19,43,952,955:956];  
-  plotfig=[11,12,15,19,35,36,37,45];
-  plotfig=[15,19,45,46]
+  %plotfigProb=[947,949,944:945,948]
+  %plotfig=[11,14,15,19,43,952,955:956];  
+  %plotfig=[11,12,15,19,35,36,37,45];
+  %plotfig=[15,19,45];
+  %plotfig=[14,15,43];
+  %plotfig=[15,19,43,45];
+  plotfig=[15,16,943,953];
   %plotfig=[902,908,916,9021,9022,913,900];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
@@ -95,7 +98,7 @@
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=6;
+  modelprops.numofeigs=12;
   modelprops.allowComplex=1;
   %main.closall=true;
   main.closall=false;
@@ -105,7 +108,7 @@
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   
   
@@ -117,7 +120,7 @@
 
 %numofelms = {1,2,4,8,16,20,32,64,128,256,512,1024};%numofelms = {2,5,10,20,50,100,200,500,1000,2000}
 %numofelms = {3,5,6,7,9,10};
-numofelms = {2};
+numofelms = {4};
 % for i=1:numel(numofelms)
 %  modelprops.numofelm = cell2mat(numofelms(i));
 %  main.colorshift=i-1;

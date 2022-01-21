@@ -43,7 +43,7 @@
   epsil = .02;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %sortType = 'forwardJK';
-  plotfig= [15,900,902,906,15,900,902,908,911]; %#ok<*NBRAK>
+  plotfig= [14,15,900,902,906,15,900,902,911]; %#ok<*NBRAK>
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -62,7 +62,7 @@
   
   %modelprops.forceAbaqus=true;
   modelprops.forceAbaqus=false; %default: false
-  modelprops.forcerun=true; %default=true
+  modelprops.forcerun=0; %default=true
   %modelprops.forcerun=false;
   modelprops.numofeigs=10;
   modelprops.allowComplex=true;

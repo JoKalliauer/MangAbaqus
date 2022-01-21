@@ -1,6 +1,6 @@
 function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinpsi, ortCond2,ortCond3,ortCond4, t, N, B, r0,...
  ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
- = getQuantities(RS,~,DT,r0atl0,~,tatl0,main) %DT=epsilon
+ = getQuantities(RS,~,DT,r0atl0,~,tatl0,main,EVatStability) %DT=epsilon
 assert(size(RS,2)==5,'size of RS not 5 vectors');
 
 rm2 = RS(:,1);%/norm(RS(:,1));
@@ -85,7 +85,8 @@ diff=abs(sqrt(v'*v)-dsdksi);
 limit=3e-14;
 if ~isnan(diff) && diff>limit
  if dsdksi>124
-  warning('MyProgram:Boundary','Speed is large, returing partially NaN')
+  warning('MyProgram:Boundary:Speed','Speed is large, returing partially NaN')
+  warning('off','MyProgram:Boundary:Speed')
   v=v*NaN;
   a=a*NaN;
   r0=NaN*r0;
@@ -209,8 +210,11 @@ normd3rds3=norm(d3rds3);
 RxB=dot(r0,B);
 %rhodot=-dsdksi*tau*RxB;%-\dot{s}\,\tau\,(\mathrm{r}\cdot\mathrm{b})
 drhopds=-tau*RxB;
-% <<<<<<< HEAD
-rconst=r0atl0(:)'*r0;
+if exist('EVatStability','var')
+ rconst=(EVatStability*r0);
+else
+ rconst=r0atl0(:)'*r0;
+end
 phiR=acos(abs(rconst));
 Ebene=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
 

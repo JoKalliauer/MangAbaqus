@@ -20,13 +20,17 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  if lambda(1) == 0
   lambda(1) = [];
  end
+ if sum(strcmp(fieldnames(modelprops), 'orientate')) == 0
+  modelprops.orientate=5;
+ end
+ assert(ismember(modelprops.orientate,[5 5.99 6 56 566 56666]),'modelprops.orientate must be 5=y or 6=z')
  
  % pure SI units: Newtons, meters, Pascals, etc.
-%  if MV==1
-%   filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
-%  else
+ if modelprops.orientate==5
   filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
-%  end
+ else
+  filename =  ['ecc',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+ end
 
  L=L0*MV;
  %% IPE400
@@ -58,10 +62,40 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  xcoords(abs(xcoords)<1e-12) = 0;
  
  if ecc~=0
- % add eccentric rods:
- xcoords = [xcoords(1); xcoords; xcoords(end)];
- ycoords = [ecc; ycoords; ecc];
- zcoords = [0; zcoords; 0];
+  % add eccentric rods:
+  if  modelprops.orientate==5
+   %schwache Achse
+   xcoords = [xcoords(1); xcoords; xcoords(end)];
+   ycoords = [ecc; ycoords; ecc];
+   zcoords = [0; zcoords; 0];
+  elseif modelprops.orientate==6
+   %starke Achse
+   xcoords = [xcoords(1); xcoords; xcoords(end)];
+   ycoords = [0; ycoords; 0];
+   zcoords = [ecc; zcoords; ecc];
+  elseif modelprops.orientate==56
+   %starke Achse
+   xcoords = [xcoords(1); xcoords; xcoords(end)];
+   ycoords = [ecc; ycoords; ecc];
+   zcoords = [ecc; zcoords; ecc];
+  elseif modelprops.orientate==566
+   %starke Achse
+   xcoords = [xcoords(1); xcoords; xcoords(end)];
+   ycoords = [ecc/2; ycoords; ecc/2];
+   zcoords = [ecc; zcoords; ecc];
+  elseif modelprops.orientate==56666
+   %starke Achse
+   xcoords = [xcoords(1); xcoords; xcoords(end)];
+   ycoords = [ecc/4; ycoords; ecc/4];
+   zcoords = [ecc; zcoords; ecc];
+  elseif modelprops.orientate==5.99
+   %starke Achse
+   xcoords = [xcoords(1); xcoords; xcoords(end)];
+   ycoords = [ecc/100; ycoords; ecc/100];
+   zcoords = [ecc; zcoords; ecc];
+  else
+   error('not implemented')
+  end
  end
  
  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];

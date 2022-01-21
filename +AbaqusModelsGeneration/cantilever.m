@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,P,dofpNode]  = cantilever(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,Pload,dofpNode]  = cantilever(L,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
 if nargin<1
     L = 5.0;
 end
@@ -46,6 +46,7 @@ filename=[filename,'-eps',num2str(modelprops.epsilon)];
 
 %% Load
  P = loadFactor*1.3e5;
+ Pload=lambda*P;
   
 %% Finite Element Model
 

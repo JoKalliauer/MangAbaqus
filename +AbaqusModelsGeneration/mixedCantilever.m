@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantilever(Linp,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = mixedCantilever(Linp,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
  if nargin<1
   Linp = 5.0;
  end
@@ -20,14 +20,16 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
  if sum(strcmp(fieldnames(modelprops), 'orientate')) == 0
   modelprops.orientate=5;%5...bending around strong axis
  end
- assert(ismember(modelprops.orientate,[5 6]),'modelprops.orientate must be 5=y or 6=z')
+ assert(ismember(modelprops.orientate,5),'modelprops.orientate must be 5=y or 6=z')
  
  % pure SI units: Newtons, meters, Pascals, etc.
  
   MV=modelprops.MeterValue;
   
 
- filename = ['BendC',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(1)),'-l',num2str(Linp),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+ %% Boundary
+ BCrpRight=[];%4
+ filename = ['mixedC',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(1)),'-l',num2str(Linp),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-BR',num2str(BCrpRight)];
 
 
 
@@ -41,9 +43,18 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
   
  Emodul=2.1e+11/MV;
  
+ 
  %% Load
- M = loadFactor*0.5e6*MV*MV; %[N*m ?]
- Last=lambda*M;
+ if isempty(BCrpRight)
+  P = loadFactor(1)*MV*56495;
+  M = loadFactor(end)*MV*MV*188088; %[N*m ?]
+ elseif ismember(BCrpRight,4)
+  P = loadFactor(1)*MV*105653;
+  M = loadFactor(end)*MV*MV*286400; %[N*m ?]
+ else
+  error('MyPrgm:NotImplemnted','not implemented')
+ end
+ Last=lambda;
  
  %% Finite Element Model
  
@@ -76,14 +87,18 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
   BC = [dofpNode*(rpLeft - 1) + 1, 0
         dofpNode*(rpLeft - 1) + 2, 0;
         dofpNode*(rpLeft - 1) + 3, 0;
-        dofpNode*(rpLeft - 1) + 4, 0;
-        dofpNode*(rpRight - 1) + 4, 0];
+        dofpNode*(rpLeft - 1) + 4, 0];
  %+1...Nx
  %+2...Ny
  %+5...My
  %+6...Mz
  BCrpLeft=[1,2,3,4,5,6];
- BCrpRight=4;
+for i=1:numel(BCrpLeft)
+  BC=[BC;dofpNode*(rpLeft - 1) + BCrpLeft(i), 0]; %#ok<AGROW>
+ end
+ for i=1:numel(BCrpRight)
+  BC=[BC;dofpNode*(rpRight - 1) + BCrpRight(i), 0]; %#ok<AGROW>
+ end
  for i=1:numel(BCrpLeft)
   BC=[BC;dofpNode*(rpLeft - 1) + BCrpLeft(i), 0]; %#ok<AGROW>
  end
@@ -93,6 +108,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
  [~,idx]=unique(BC(:,1));
  BC=BC(idx,:);
  
+ filename = replace(filename, ' ', '_');
  u1 = fopen([AbaqusRunsFolder,filename,'-model.inp'],'w');
  if u1==-1
   warning('MyProgram:FileNotOpen','kann die Datei nicht oeffnen')
@@ -146,7 +162,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
   fprintf(u1,'leftend,  2, 2\n');
   fprintf(u1,'leftend,  3, 3\n');
   fprintf(u1,'leftend,  4, 4\n');
-  fprintf(u1,'rightend,  4, 4\n');
+  %fprintf(u1,'rightend,  4, 4\n');
  for i=1:numel(BCrpLeft)
   FoN=BCrpLeft(i);
   fprintf(u1,'leftend,  %d, %d\n',FoN,FoN);
@@ -190,8 +206,12 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
    else
     fprintf(u3,'*Cload, OP=MOD\n');
    end
-   fprintf(u3,'leftend, %d, %f\n',modelprops.orientate,lambda(k)*M);
-   fprintf(u3,'rightend, %d, %f\n',modelprops.orientate,-lambda(k)*M);
+   %fprintf(u3,'leftend, 3, %f\n',+lambda(k)*P);
+   fprintf(u3,'rightend, 3, %f\n',-lambda(k)*P);
+   if M~=0
+    fprintf(u3,'leftend, %d, %f\n',modelprops.orientate,lambda(k)*M);
+    fprintf(u3,'rightend, %d, %f\n',modelprops.orientate,-lambda(k)*M);
+   end
    
    fprintf(u3,'** \n');
    fprintf(u3,'** OUTPUT REQUESTS\n');

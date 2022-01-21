@@ -52,7 +52,8 @@
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %sortType = 'forwardJK';
   %plotfig= [15,900,913,914,908,902,916,211,7,9021,9022,906]; %#ok<*NBRAK>
-  plotfig=[902]; 
+  %plotfig=[902]; 
+  plotfig=[14,15];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
  
  
@@ -62,16 +63,17 @@
   modelprops.lambda = 0:epsil:100; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor = 1;%0 if both sides
+  modelprops.loadfactor = 0;%0 if both sides
   modelprops.MeterValue=1;
+  main.whichEV='Disp_rK0r'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'
   %
   
 %   modelprops.a=.15;
   
   
   modelprops.forceAbaqus=0; %-1..don't run simulation even if not existing; 0 run if not existing; 1 force run
-  modelprops.forcerun=0;%0..run if not exist; 0.5 run if too short; 1 force run
-  modelprops.numofeigs=1;
+  modelprops.forcerun=1;%0..run if not exist; 0.5 run if too short; 1 force run
+  modelprops.numofeigs=inf;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
@@ -90,11 +92,12 @@
   
   
 % list=[1,2,3,4,5,6,10,20,50];
-list=[1:16,32,64,128,256,512,1024,2048];
+%list=[1:16,32,64,128,256,512,1024,2048];
 %list=[4,8,16];
 %list=[8];
 %list=[5,50]
 %list=[8,32,128];
+list=4;
 
 % % %plotfig=[];
 % 

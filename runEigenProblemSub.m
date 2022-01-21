@@ -1,4 +1,4 @@
-function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
+function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,AnalysisResultsFolder)
  
  % [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
  
@@ -30,6 +30,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  rKt0r = NaN(lenMatch,1);
  KB1Klammer = cell(lenMatch,1);
  t_KB1_t = NaN(lenMatch,1);
+ imagValues= NaN(lenMatch,1);
  
 %  matches = NaN(0);
 %  n = 0;
@@ -69,6 +70,17 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  Ktprim0_0 = 1/(modelprops.epsilon)*(Kt11 - Kt0_0);
  [r0t0 ,~ ,numofeigs0 ] = solveCLEforMinEigNew(Kt11,Ktprim0_0,Kg,Kt0_0,modelprops.typeofanalysis,matches(1)+1,model,modelprops,Ktprim0_0);
  numofeigs=min([modelprops.numofeigs,newsizeKt0,numofeigs0]);
+ if numofeigs<modelprops.numofeigs
+  warning('MyPrgm:NumEigs','less eigs available')
+  if modelprops.forcerun==0
+   modelprops.numofeigs=numofeigs;
+   loadFileName=[AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(modelprops.numofeigs),'.mat'] %#ok<NOPRT>
+   if     exist(loadFileName, 'file') == 2
+    load(loadFileName,'model');
+    return
+   end
+  end
+ end
  newra = transpose(1:newsizeKt0);
  fullEV=NaN(numofeigs,size(model.fulllambda,1));
  RR0 = NaN(newsizeKt0,numofeigs);
@@ -307,14 +319,14 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
      %[r03_,eigval03_] = solveCLEforMinEigNew(Kt03,Ktprim03,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-3,NaN,modelprops);
      [r02_,eigval02_] = solveCLEforMinEigNew(Kt02,Ktprim02,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-2,model,modelprops,Ktprim0_0);
      [r01_,eigval01_] = solveCLEforMinEigNew(Kt01,Ktprim01,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-1,model,modelprops,Ktprim0_0);
-     [r0_ ,eigval0_,~,KB1Klammer{i} ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0; iter=matches(i); typeofanal=modelprops.typeofanalysis
-     [r11_,eigval11_,~,KB1Klammer{i+1}] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
+     [r0_ ,eigval0_,~,KB1Klammer{i},imagValues(i)] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0_0; iter=matches(i); typeofanal=modelprops.typeofanalysis;     
+     [r11_,eigval11_,~,KB1Klammer{i+1},imagValues(i+1)] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
     end
     if ~any(Ktprim12(:)) && strcmp(modelprops.typeofanalysis,'CLE')
      r12_=NaN*r11_;
      eigval12_=NaN*eigval11_;
     else
-     [r12_,eigval12_,~,KB1Klammer{i+2}] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+     [r12_,eigval12_,~,KB1Klammer{i+2},imagValues(i+2)] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
     end
 
 %    if numel(Kt13)>0
@@ -386,12 +398,17 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
    EV(7,:) = eigval12_;
    %EV(8,:) = eigval13_;
    %EV(9,:) = eigval14_;
+   %EV
    end
-   if strcmp(modelprops.typeofanalysis,'KNL2')
+   if strcmp(modelprops.typeofanalysis,'KNL2') && modelprops.followsigma==true
     modelprops.sigma=min(modelprops.sigma,min(real(EV(:))));
    end
    if modelprops.followsigma==true && modelprops.numofeigs==1
-    modelprops.sigma=eigval0_;
+    if modelprops.numofeigs==1
+     modelprops.sigma=min(modelprops.sigma,min(real(eigval0_)));
+    elseif ~any(isnan(eigval0_))
+     modelprops.sigma=min(real(eigval0_));
+    end
    end
 
    
@@ -420,6 +437,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
   
 
   eigval{i} = EV;
+  %imagValues(i)=imagValuesi;
   eigvec{i} = R;
   eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
   StiffMtxs{i,1} = KT;
@@ -539,22 +557,18 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  end%for i = 1:length(matches)
  if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
  
+ % model=M1;
  model.eigenvalues = eigval;
- model.eigenvectors = eigvec;
- model.eigvecDRH=eigvecDRH;% DRH...Displacement,Rotation,Hybrid(splitted)
- %model.energy = Energy;
+ model.imagValues=imagValues;
  model.arclengths = darclengths;
  model.arclengthurJK = arclengthJK;
  model.arclengthurHM = arclengthHM;
- model.displacements = displacements;
+ %model.displacements = displacements;%much diskspace
  model.lambda0 = lambda0';
  model.load0=[0;model.load];
- model.stiffnessMatrices = StiffMtxs;
  model.DetKtx=DetKtx;
- %model.N0=size(Kt0_0,1);
  model.N=size(KT,2);
  assert(model.N0==model.N,'size of Kt0 changes or is not symmetric')
- %model.fullLAMDA=fullLAMDA;
  model.fullEV=fullEV;
  model.numofeigs=numofeigs;
  model.rddotKtr=rddotKtr;
@@ -563,8 +577,20 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP)
  model.rdotKtt=rdotKtt;
  model.rKtr=rKtr;
  model.rKt0r=rKt0r;
- model.KB1=KB1Klammer;
+ %model.KB1=KB1Klammer;%much diskspace
  model.t_KB1_t=t_KB1_t;
+ if ~strcmp(modelprops.whichEV,'skip')
+  model.eigenvectors = eigvec;%much diskspace
+  if sum(strcmp(fieldnames(modelprops), 'rho')) == 0
+   modelprops.rho=[];
+  end
+  if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.rho,'KtR1')
+   model.stiffnessMatrices = StiffMtxs(1:2,1:2);%much diskspace
+  elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp')
+   model.eigvecDRH=eigvecDRH;% DRH...Displacement,Rotation,Hybrid(splitted)%much diskspace
+  end
+ end
+
  
 
  

@@ -11,10 +11,9 @@
  %set(0, 'DefaultFigureWindowStyle', 'docked');
 
   % there are following predefined test cases:
-  modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
+  %modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
   %modelprops.testcase = 'pureBendingBeamMalendowski';
-  %modelprops.testcase = 'pureBendingCantilever';
-  %modelprops.orientate=5;
+  modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
   
   %modelprops.length = [];
   modelprops.length = 5;
@@ -36,7 +35,7 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %modelprops.elementtype = 'xx'; %current
-  eltypes={'B31OSH','B32OSH'}
+  eltypes={'B32OSH'}
  
   
   
@@ -53,18 +52,19 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 20;
+  modelprops.numofelm = 5;%20
   %BB5-B31OSH2048-l5-f1-eps0.001-u1
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,3,7,14,15,16,21,211,23,26,28,29]; %#ok<*NBRAK>
   %plotfig=[14,15,16,37,38,211,902];
-  plotfig=[14,15,16,900,32,7,3,43,211]; %#ok<NASGU>
-  plotfig=[15,943:945,948:954];main.savefigures=1; %#ok<NASGU>
-  plotfig=[15,16,952,955,956];
+  %plotfig=[14,15,16,900,32,7,3,43,211]; %#ok<NASGU>
+  %plotfig=[15,943:945,948:954];main.savefigures=1; %#ok<NASGU>
+  %plotfig=[14,15,16,952,953];
+  plotfig=[14,15,16];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
-  modelprops.epsilon = .05;  % .02;
+  modelprops.epsilon = .02;  % .02;
   %epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
   modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
@@ -73,17 +73,18 @@
   
   %modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=0; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+  modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
   %main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=0;
+  main.check=1;
   main.colorshift=0;
   modelprops.ask_delete=true;
   %modelprops.MeterValue=1000; %1000mm=1m=0.001km
-  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
-  
+  main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';'bungle_rK0r'
+  main.rho='R1'; % KtR1 R1
+   
   %modelprops.sigma=-10;
   modelprops.followsigma=false;
   

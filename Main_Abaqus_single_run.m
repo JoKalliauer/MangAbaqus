@@ -47,12 +47,13 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=0;-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  modelprops.numofelm = 2;
+  modelprops.numofelm = 2;%
   
-  epsil = 0.05;  % finite difference step %epsil = 0.005;
-  sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig= [14,15,-14,900,902,906,908]; %#ok<*NBRAK>
-  forcedeig = []; %1; % forced eigenvector number 'none' sorting
+  epsil = .2;  % finite difference step %epsil = 0.005;
+  sortType = 'forwardJK'; % eigenvectors sorting type: 'none', 'forwards', 'backwards',  'forwardJK'
+  %plotfig= [14,15,-14,900,902,906,908]; %#ok<*NBRAK>
+  plotfig=[14,15,43];
+  forcedeig = [3,4]; %1; % forced eigenvector number 'none' sorting
  
  
   modelprops.elementtype = eltype;
@@ -65,19 +66,21 @@
   
   modelprops.profil.tw= 8.6e-3;
   %modelprops.forceAbaqus=true;
-  modelprops.forceAbaqus=false; %default: false
+  modelprops.forceAbaqus=0; %default: false
   %modelprops.forcerun=true; %default=true
-  modelprops.forcerun=false;
-  modelprops.numofeigs=2;
+  modelprops.forcerun=0;
+  modelprops.numofeigs=4;
   modelprops.allowComplex=true;
   main.closall=true;
   %main.closall=false;
   main.savefigures=true;
   %main.savefigures=false;
   %main.check=true;
-  main.check=false;
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  %main.rstabil=0.9999998;
   
   %modelprops.sigma=-5;
   

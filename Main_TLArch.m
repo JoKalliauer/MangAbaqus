@@ -50,10 +50,10 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 20;
+  modelprops.numofelm = 2;
   
   
-  epsil = 0.01;%  0.01;
+  epsil = 0.005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [1,2,3,12,14,15,16,19,21,24,22,25]; %#ok<*NBRAK>
   %plotfig= [3,7,14,15,28,33]
@@ -62,9 +62,11 @@
   %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  plotfig=[7,14,15,30,211,43]; %#ok<NASGU>
-  plotfig=[15,943:945,948:949];main.savefigures=1
-  plotfig=[15,947,949,952,955:956];
+  %plotfig=[7,14,15,30,211,43]; %#ok<NASGU>
+  %plotfig=[15,943:945,948:949];main.savefigures=1
+  %plotfig=[15,947,949,952,955:956,16,943,953,943,16];
+  %plotfig=953;
+  plotfig=[14,15];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
   maxload=30
@@ -73,26 +75,26 @@
   modelprops.lambda = 0:epsil:maxlambda; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor = 1;
+  modelprops.loadfactor =0;
   %
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; 
-  modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
+  modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   %main.closall=true;
   main.closall=false;
-  %main.savefigures=0; % false... no figures, true... figures, 2 for TeX
-  %main.savefigures=false;
+  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   modelprops.MeterValue=1;
-  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.rho='R1'; % KtR1 R1
   
   modelprops.followsigma=false;
 
@@ -103,7 +105,8 @@
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B31H','B32H','B33H'}
+eltypes={'B32H'}
+%eltypes={'B32H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i))
  main.colorshift=i-1;

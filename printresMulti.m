@@ -1,4 +1,4 @@
-function printresMulti(res,model,plotfig,~,~,resEWs,~)
+function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
 
 
   if ~exist('Output/Figures/CSV', 'dir')
@@ -12,10 +12,7 @@ function printresMulti(res,model,plotfig,~,~,resEWs,~)
    end
   end
   
-% <<<<<<< HEAD
- %resEWs;
- %lambda = res(1).lambda;
- if numel(resEWs)>0
+ if numel(resEWs)>0 && ~strcmp(mainwhichEV,'skip')
   lambda = res(min(resEWs)).lambda;
  else
   lambda=model.lambda;
@@ -27,16 +24,25 @@ function printresMulti(res,model,plotfig,~,~,resEWs,~)
  m14=NaN(lengthlam,1+numel(resEWs));
  m14(:,1)=lambda;
  m07=m14;
+ %m15=m14;%actually it is fulllenght and not lengthlam
  m20=m14;
  m34=m14;
+ 
  loadlen=min(lengthlam-1,numel(model.load));
  m30=NaN(loadlen+1,1+numel(resEWs));
+ 
+ 
  [tmp1,tmp2]=size(model.load);
  if tmp1==1 && tmp2>1
   model.load=transpose(model.load);
  end
  m30(:,1)=[0;model.load(1:loadlen)];
  m32=m30;
+ 
+   xPlot15=model.fulllambda(1:end);
+   m15=NaN(numel(xPlot15),1+numel(resEWs));
+   m15(:,1)=xPlot15;
+   m19=m15;
  for k3=resEWs
   i=find(resEWs==k3);
   if ismember(7,plotfig)
@@ -45,21 +51,23 @@ function printresMulti(res,model,plotfig,~,~,resEWs,~)
    writematrix(m07,filename,'Delimiter',';')
    %system(['exec sed -i "s/\./,/g" ',filename]);
   end
-% =======
-% 
-%  k3=resEWs;
-%  %lambda = res(1).lambda;
-%  m14=NaN(numel(res(1).lambda),1+numel(k3));
-%  m14(:,1)=res(1).lambda;
-%  m20=m14;
-%  for k3=resEWs
-%   i=find(resEWs==k3);
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
   if ismember(14,plotfig)
    m14(:,1+i)=res(k3).RHO2;
    filename=strcat('Output/Figures/CSV/',model.filename,'_rho14.csv');
    writematrix(m14,filename,'Delimiter',';')
    system(['exec sed -i "s/\./,/g" ',filename]);
+  end
+  if ismember(15,plotfig)
+   y4=real(model.fullEV(k3,1:numel(xPlot15)));
+   m15(:,1+i)=y4;
+   filename=strcat('Output/Figures/CSV/',model.filename,'_Lam15.csv');
+   writematrix(m15,filename,'Delimiter',';')
+  end
+  if ismember(19,plotfig)
+   y4=imag(model.fullEV(k3,1:numel(xPlot15)));
+   m19(:,1+i)=y4;
+   filename=strcat('Output/Figures/CSV/',model.filename,'_Lam19.csv');
+   writematrix(m19,filename,'Delimiter',';')
   end
   if ismember(20,plotfig)
    m20(:,1+i)=res(k3).rhoDach;
@@ -67,7 +75,6 @@ function printresMulti(res,model,plotfig,~,~,resEWs,~)
    writematrix(m20,filename,'Delimiter',';')
    system(['exec sed -i "s/\./,/g" ',filename]);
   end
-% <<<<<<< HEAD
   if ismember(30,plotfig)
    m30(:,1+i)=res(k3).RHO2;
    filename=strcat('Output/Figures/CSV/',model.filename,'_rho30.csv');
@@ -84,8 +91,6 @@ function printresMulti(res,model,plotfig,~,~,resEWs,~)
    filename=strcat('Output/Figures/CSV/',model.filename,'_tRxB34.csv');
    writematrix(m34,filename,'Delimiter',';')
   end
-% =======
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  end
  
 end
