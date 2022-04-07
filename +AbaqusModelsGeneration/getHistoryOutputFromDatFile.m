@@ -33,7 +33,7 @@ while ~feof(u)
   if strcmpi(tline(1:20),' STEP TIME COMPLETED')
    tline = '123456789012345672534868901234567890';
    %                 while ~strcmpi(tline(1:25),' TIME INCREMENT COMPLETED')
-   DispNr=DispNr+1;%needed becaus sometimes a step has multiple results (durchschlagen)
+   DispNr=DispNr+1; %needed becaus sometimes a step has multiple results (durchschlagen)
    while ~strcmpi(tline(1:31),'                        S T E P')
     tline = fgetl(u);
     if length(tline)>=15
@@ -81,11 +81,11 @@ while ~feof(u)
       end
       for i = 2:length(C) %C{1}='NODE'
        if ~Nres.isKey(C{i})
-        Nres(C{i}) = [Val(:,1),Val(:,i)];
+        Nres(C{i}) = NaN(max(Val(:,1)),2); % [Val(:,1),Val(:,i)];
        end
        if Nres.isKey(C{i})
-        toupdate = [Nres(C{i}),NaN(size(Nres(C{i}),1),1)];
-        toupdate(Val(:,1),DispNr) = Val(:,i);
+        toupdate = [Nres(C{i}),NaN(size(Nres(C{i}),1),1)]; %add a new coloum to Nres(C{i})
+        toupdate(Val(:,1),DispNr+1) = Val(:,i); % toupdate(Val(:,1),DispNr) = Val(:,i);
         toupdate(abs(toupdate)<=8.78e-30)=0;%remove numeric issues close to zero
         Nres(C{i}) = toupdate;
        else
@@ -151,9 +151,9 @@ while ~feof(u)
          if length(toupdatelist)<eignum
           toupdatelist{eignum} = [Val(:,1),Val(:,i)];
          else
-          toupdate = [toupdatelist{eignum},zeros(size(toupdatelist{eignum},1),1)];
-          toupdate(Val(:,1),end) = Val(:,i);
-          toupdatelist{eignum} = toupdate;
+          toupdate2 = [toupdatelist{eignum},zeros(size(toupdatelist{eignum},1),1)];
+          toupdate2(Val(:,1),end) = Val(:,i);
+          toupdatelist{eignum} = toupdate2;
          end
          EIGVECres(C{i}) = toupdatelist;
         else

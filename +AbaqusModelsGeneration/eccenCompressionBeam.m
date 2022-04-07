@@ -27,9 +27,9 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  % pure SI units: Newtons, meters, Pascals, etc.
  if modelprops.orientate==5
-  filename =  ['ecc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+  filename =  ['exc-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
  else
-  filename =  ['ecc',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+  filename =  ['exc',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(end)),'-l',num2str(L0),'-e',num2str(ecc),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
  end
 
  L=L0*MV;
@@ -44,13 +44,13 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  else
   assert(numel(ecc)==1,'dimension of ecc must be one');
  end
- ecc=ecc*MV;
+ eccMV=ecc*MV;
  
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
 
  %% Load
- P = loadFactor*500e3*MV; %[N?]
+ P = loadFactor*1100e3*MV; %[N?]
  load=lambda*P;
  Emodul=2.1e+11/MV;
  
@@ -61,79 +61,90 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  zcoords = 0*xcoords;
  xcoords(abs(xcoords)<1e-12) = 0;
  
- if ecc~=0
+ if eccMV~=0
   % add eccentric rods:
   if  modelprops.orientate==5
    %schwache Achse
    xcoords = [xcoords(1); xcoords; xcoords(end)];
-   ycoords = [ecc; ycoords; ecc];
+   ycoords = [eccMV; ycoords; eccMV];
    zcoords = [0; zcoords; 0];
   elseif modelprops.orientate==6
    %starke Achse
    xcoords = [xcoords(1); xcoords; xcoords(end)];
    ycoords = [0; ycoords; 0];
-   zcoords = [ecc; zcoords; ecc];
+   zcoords = [eccMV; zcoords; eccMV];
   elseif modelprops.orientate==56
    %starke Achse
    xcoords = [xcoords(1); xcoords; xcoords(end)];
-   ycoords = [ecc; ycoords; ecc];
-   zcoords = [ecc; zcoords; ecc];
+   ycoords = [eccMV; ycoords; eccMV];
+   zcoords = [eccMV; zcoords; eccMV];
   elseif modelprops.orientate==566
    %starke Achse
    xcoords = [xcoords(1); xcoords; xcoords(end)];
-   ycoords = [ecc/2; ycoords; ecc/2];
-   zcoords = [ecc; zcoords; ecc];
+   ycoords = [eccMV/2; ycoords; eccMV/2];
+   zcoords = [eccMV; zcoords; eccMV];
   elseif modelprops.orientate==56666
    %starke Achse
    xcoords = [xcoords(1); xcoords; xcoords(end)];
-   ycoords = [ecc/4; ycoords; ecc/4];
-   zcoords = [ecc; zcoords; ecc];
+   ycoords = [eccMV/4; ycoords; eccMV/4];
+   zcoords = [eccMV; zcoords; eccMV];
   elseif modelprops.orientate==5.99
    %starke Achse
    xcoords = [xcoords(1); xcoords; xcoords(end)];
-   ycoords = [ecc/100; ycoords; ecc/100];
-   zcoords = [ecc; zcoords; ecc];
+   ycoords = [eccMV/100; ycoords; eccMV/100];
+   zcoords = [eccMV; zcoords; eccMV];
   else
    error('not implemented')
   end
  end
  
- Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
- Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
+ Nodes1 = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
+ Elements = [ctranspose(1:size(Nodes1,1)-1),Nodes1(1:end-1,1),Nodes1(2:end,1)];
  
 
  
- if ecc~=0
-  rpLeft1 = Nodes(2,1);
-  rpRight1 = Nodes(end-1,1);
-  rpLeft2 = Nodes(1,1); %LEFTENDFORCE
-  rpRight2 = Nodes(end,1);
+ if eccMV~=0
+  rpLeft1 = Nodes1(2,1);
+  rpRight1 = Nodes1(end-1,1);
+  rpLeft2 = Nodes1(1,1); %LEFTENDFORCE
+  rpRight2 = Nodes1(end,1);
  else
-  rpLeft1 = Nodes(1,1);
-  rpRight1 = Nodes(end,1);
-% =======
-%  %end
-%  
-%  Nodes = [ctranspose(1:length(xcoords)), xcoords, ycoords, zcoords];
-%  Elements = [ctranspose(1:size(Nodes,1)-1),Nodes(1:end-1,1),Nodes(2:end,1)];
-%  
-%  rpLeft1 = Nodes(2,1);
-%  rpRight1 = Nodes(end-1,1);
-%  
-%  if ecc~=0
-%   rpLeft2 = Nodes(1,1); %LEFTENDFORCE
-%   rpRight2 = Nodes(end,1);
-%  else
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+  rpLeft1 = Nodes1(1,1);
+  rpRight1 = Nodes1(end,1);
   rpLeft2 = rpLeft1; %LEFTENDFORCE=leftend
   rpRight2 = rpRight1;
  end
  
  if strcmpi('B32',elType(1:3))
-  Nodes2 = 0.5*(Nodes(1:end-1,2:end) + Nodes(2:end,2:end));
-  Nodes2 = [Nodes(end,1) + ctranspose(1:size(Nodes2,1)),Nodes2];
-  Nodes = [Nodes; Nodes2];
-  Elements = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
+  Nodes2coord = 0.5*(Nodes1(1:end-1,2:end) + Nodes1(2:end,2:end));
+  Nodes2 = [Nodes1(end,1) + ctranspose(1:size(Nodes2coord,1)),Nodes2coord];
+  NodesOLD = [Nodes1; Nodes2];
+  ElementsOLD = [Elements(:,1),Elements(:,2),Nodes2(:,1),Elements(:,3)];
+  if eccMV~=0
+   OrderedBeamNodes(1:2:2*numofelm+1)=Nodes1(2:end-1,1);
+   OrderedBeamNodes(2:2:2*numofelm)=Nodes2(2:end-1,1);
+  else
+   OrderedBeamNodes=Nodes1(1:end,1);
+  end
+  Nodes=NodesOLD;
+  Elements=ElementsOLD;
+  renumber=true;
+  if renumber && eccMV~=0
+   x0Pos= (NodesOLD(:,3)==0);
+   NodesStab=Nodes(x0Pos,1);
+   Nodes(x0Pos,2:4)=sortrows(NodesOLD(x0Pos,2:4),1);
+   rpRight1=NodesStab(end,1);
+   Elements(2:end,2)=NodesStab(1:2:end);
+   Elements(2:end-1,3)=NodesStab(2:2:end-1);
+   Elements(2:end-1,4)=NodesStab(3:2:end);
+  end
+ else
+  Nodes=Nodes1;
+  if eccMV~=0
+   OrderedBeamNodes=Nodes1(2:end-1,1);
+  else
+   OrderedBeamNodes=Nodes1(1:end,1);
+  end
  end
  
  if ~exist(AbaqusRunsFolder, 'dir')
@@ -151,29 +162,19 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  fprintf(u1,'*Part, name=Part-1\n');
  fprintf(u1,'*Node\n');
  fprintf(u1,'%d, %f, %f, %f\n',Nodes');
- fprintf(u1,['*Element, type=',elType,'\n']);
-% <<<<<<< HEAD
- if ecc~=0
+ fprintf(u1,['*Element, type=',elType,'\n']);%Stab-Elemente
+ if eccMV~=0
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
   else
    fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
   end
-% =======
-%  if strcmpi(elType(1:3),'B32')
-%   fprintf(u1,'%d, %d, %d, %d\n',Elements(2:end-1,:)');
-%  else
-%   fprintf(u1,'%d, %d, %d\n',Elements(2:end-1,:)');
-%  end
-%  if ecc~=0
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
-  fprintf(u1,['*Element, type=',elType,'\n']);
+  fprintf(u1,['*Element, type=',elType,'\n']);%belastungselemente
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',[Elements(1,:); Elements(end,:)]');
   else
    fprintf(u1,'%d, %d, %d\n',[Elements(1,:); Elements(end,:)]');
   end
-% <<<<<<< HEAD
  else
   if strcmpi(elType(1:3),'B32')
    fprintf(u1,'%d, %d, %d, %d\n',Elements(1:end,:)');
@@ -183,7 +184,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  end
  
  fprintf(u1,'*Elset, elset=AllElements\n');
- if ecc~=0
+ if eccMV~=0
   fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(2:end-1,1));
  else
   fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',Elements(1:end,1));
@@ -191,7 +192,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  if length(Elements(:,1))/16~=floor(length(Elements(:,1))/16)
   fprintf(u1,'\n');
  end
- if ecc~=0
+ if eccMV~=0
   fprintf(u1,'*Elset, elset=Vert\n');
   fprintf(u1,'%d, %d\n',[Elements(1,1),Elements(end,1)]);
  end
@@ -224,6 +225,10 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  
  fprintf(u1,'*Nset, nset=allnodes, instance=Part-1-1, generate\n');
  fprintf(u1,['1,',num2str(Nodes(end,1)),',1\n']);
+ fprintf(u1,'*Nset, nset=OrderedBeamNodes, instance=Part-1-1\n');
+ fprintf(u1,'%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n',OrderedBeamNodes);%per line only 16 Values read by abaqus
+ %for n=20: 2,25,3,26,4,27,5,28,6,29,7,30,8,31,9,32,10,33,11,34,12,35,13,36,14,37,15,38,16,39,17,40,18,41,19,42,20,43,21,44,22
+ fprintf(u1,'\n');%can lead to two linebreaks but I dont care
  
  fprintf(u1,'*Nset, nset=leftend, instance=Part-1-1\n');
  fprintf(u1,[num2str(rpLeft1),'\n']);
@@ -274,7 +279,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
  fprintf(u3,['*Include, input=',filename,'.inpData\n']);
  
  fprintf(u3,'** ----------------------------------------------------------------\n');
- fprintf(u3,'*STEP, name=Lambda-1\n');
+ fprintf(u3,'*STEP, name=Malendowski-1-or-Kalliauer-0\n');
  fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
  fprintf(u3,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
  fprintf(u3,'*END STEP\n');
@@ -284,9 +289,9 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
   stepnum = stepnum + 1;
   fprintf(u3,'** ----------------------------------------------------------------\n');
   fprintf(u3,'** \n');
-  fprintf(u3,['** STEP: Step-',num2str(stepnum),'\n']);
+  fprintf(u3,['** STEP Kommentar: Step-MMalendwoski',num2str(stepnum),' and step-JKalliauer=',num2str(k),'\n']);
   fprintf(u3,'** \n');
-  fprintf(u3,['*Step, name=Step-',num2str(stepnum),', nlgeom=YES\n']);
+  fprintf(u3,['*Step, name=StepMMM',num2str(stepnum),'-StepJK',num2str(k),'-LambdaJK-',num2str(lambda(k)),', nlgeom=YES\n']);
   fprintf(u3,'*Static\n');
   if k==1
    fprintf(u3,[num2str(lambda(k)),', ',num2str(lambda(k)),', ',num2str(lambda(k)*0.0001),', ',num2str(lambda(k)),'\n']);
@@ -312,7 +317,15 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
   fprintf(u3,'** \n');
   fprintf(u3,'** FIELD OUTPUT: F-Output-1\n');
   fprintf(u3,'** \n');
-  fprintf(u3,'*Output, field, variable=PRESELECT\n');
+  if 1==0
+   fprintf(u3,'*Output, field, variable=PRESELECT\n');
+  else
+   fprintf(u3,'*Output, field\n');
+  end
+  fprintf(u3,'*Node Output\n');
+  fprintf(u3,'U\n');
+  fprintf(u3,'*Element Output, directions=YES\n');
+  fprintf(u3,'NFORC, NFORCSO, SF, S\n');
   fprintf(u3,'** \n');
   fprintf(u3,'** HISTORY OUTPUT: H-Output-1\n');
   fprintf(u3,'** \n');
@@ -329,7 +342,7 @@ function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBe
   
   stepnum = stepnum + 1;
   fprintf(u3,'** ----------------------------------------------------------------\n');
-  fprintf(u3,['*STEP, name=Lambda-',num2str(stepnum),'\n']);
+  fprintf(u3,['*STEP, name=Malendowski-',num2str(stepnum),'-or-Kalliauer-',num2str(k),'\n']);
   fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
   fprintf(u3,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
   fprintf(u3,'*END STEP\n');

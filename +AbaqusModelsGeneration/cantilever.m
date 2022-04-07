@@ -45,7 +45,7 @@ filename=[filename,'-eps',num2str(modelprops.epsilon)];
  
 
 %% Load
- P = loadFactor*1.3e5;
+ P = loadFactor*97955; % 0.7535* 1.3e5;
  Pload=lambda*P;
   
 %% Finite Element Model

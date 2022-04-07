@@ -11,9 +11,9 @@
  %set(0, 'DefaultFigureWindowStyle', 'docked');
 
   % there are following predefined test cases:
-  %modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
+  modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
   %modelprops.testcase = 'pureBendingBeamMalendowski';
-  modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
+  %modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
   
   %modelprops.length = [];
   modelprops.length = 5;
@@ -60,33 +60,36 @@
   %plotfig=[14,15,16,900,32,7,3,43,211]; %#ok<NASGU>
   %plotfig=[15,943:945,948:954];main.savefigures=1; %#ok<NASGU>
   %plotfig=[14,15,16,952,953];
-  plotfig=[14,15,16];
+  %plotfig=[14,15,16];
+  plotfig=[2,14,35,42,47,48,50:51,53];%EV-Normierung
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
   modelprops.epsilon = .02;  % .02;
   %epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
-  modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  %modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.loadfactor = 1;
   %
   
   %modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+  modelprops.forcerun=0; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
   %main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=1;
-  main.colorshift=0;
+  main.check=0;
+  main.colorshift=5;
   modelprops.ask_delete=true;
-  %modelprops.MeterValue=1000; %1000mm=1m=0.001km
-  main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';'bungle_rK0r'
+  %modelprops.MeterValue=1; %1000mm=1m=0.001km
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; 'bungle_rKr';'rNCT_K0_r';'rCT_K0_r'
+  main.Normierung='rCT_K0_r'; % 'R1'; 'rCT_K0_r'
   main.rho='R1'; % KtR1 R1
+  main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
    
   %modelprops.sigma=-10;
-  modelprops.followsigma=false;
+  modelprops.followsigma=true;
   
   % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
 %   modelprops.numofelm = 256; 
@@ -99,27 +102,32 @@
 % % %eltypes={'B32OS','B32OSH'}%,'B31OS','B31OSH'
 % %eltypes={'B31OSH'}
 % % %plotfig=[];
-for i=1:numel(eltypes)
- elementtype = char(eltypes(i))
-%  if strcmp(elementtype,'B32OSH') ||  strcmp(elementtype,'B31OSH')
-%   main.check=true;
-%  else
-%   main.check=false;
-%  end
- % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
- main.colorshift=i-1;
- [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,[],elementtype);
- %ans=res.stability_limit
- %ans(2)*0.5e6
- res.stability_limit
+%epsils={.05,.02,.01}
+epsils={modelprops.epsilon}
+for j=1:numel(epsils)
+    modelprops.epsilon = cell2mat(epsils(j));
+    modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon)
+ for i=1:numel(eltypes)
+  elementtype = char(eltypes(i))
+  %  if strcmp(elementtype,'B32OSH') ||  strcmp(elementtype,'B31OSH')
+  %   main.check=true;
+  %  else
+  %   main.check=false;
+  %  end
+  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
+  main.colorshift=(i-1)+(j-1)*numel(eltypes);
+  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,[],elementtype);
+  %ans=res.stability_limit
+  %ans(2)*0.5e6
+  res.stability_limit
+ end
 end
   
 % %% epsilon
 % epsils={.2,.1,.05,.02,.01,.005,.002}
 %   for i=1:numel(epsils)
 %    %modelprops.numofelm = cell2mat(i)
-%    modelprops.epsilon = cell2mat(epsils(i));
-%    modelprops.lambda = 0:modelprops.epsilon:max(4,20*modelprops.epsilon)
+
 %    %    plotfig=[];
 %    modelprops.ask_delete=true;
 %    main.colorshift=i-1;

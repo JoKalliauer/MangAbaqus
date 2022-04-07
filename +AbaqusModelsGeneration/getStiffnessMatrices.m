@@ -74,7 +74,7 @@ for i = 1:steps
  fname = [model.AbaqusRunsFolder,filename,'_STIF',num2str(num(i)),'.mtx'];
  %disp(fname);
  if usejava('jvm')
-  wb.Children.Title.Interpreter = 'none'; %https://de.mathworks.com/matlabcentral/answers/78895-how-do-i-make-interpreter-none-work-inside-the-waitbar-text#answer_298200
+  %wb.Children.Title.Interpreter = 'none'; %https://de.mathworks.com/matlabcentral/answers/78895-how-do-i-make-interpreter-none-work-inside-the-waitbar-text#answer_298200
   waitbar(i/maxsteps,wb,fname,'interpreter','none');
  end
  mtxSparse = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname);

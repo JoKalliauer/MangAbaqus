@@ -356,15 +356,11 @@ if modelprops.allowComplex==false
   end
  end
  
- % <<<<<<< HEAD
  if ~isempty(evec0)
   if abs(norm(evec0(:,1))-1)>eps(1)
    assert(abs(norm(evec0(:,1))-1)<=eps(1),'norm nicht eins');
   end
  end
- % =======
- %    assert(abs(norm(evec0(:,1))-1)<=eps(1),'norm nicht eins');
- % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  
  numofeigs=find(~isnan(eval0), 1, 'last' );%currently no use of this line
 end

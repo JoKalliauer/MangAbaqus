@@ -24,6 +24,10 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  dwdl = cell(length(lambda0),1);
  dvdl = cell(length(lambda0),1);
  dudl = cell(length(lambda0),1);
+ sDiffJK = NaN(length(lambda0),1);
+ idx1= NaN(length(lambda0),1);
+ idx2= NaN(length(lambda0),1);
+ duEdl= NaN(length(lambda0),1);
  
  NrNo=size(model.Nodes,1);
  xtmp=NaN(NrNo,1);
@@ -38,8 +42,10 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  
  
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
-
- for i = 1:length(matches)
+ lasti=length(matches);
+ DisplAbs=NaN(lasti,1);
+ d2ksi=NaN(1,lasti);
+ for i = 1:lasti %i=0 keine last; i=1 erste Last
   if usejava('jvm'); waitbar(i/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
   %disp('Lambda:');
   %disp(lambda(matches(i)));
@@ -55,18 +61,27 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
 
 
    % -1.
+
    if matches(i)>=1
     if matches(i)==1
+     DisplAbs(i)=mean(sqrt(sum(Displ{matches(i)}.*Displ{matches(i)},1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
+     DisplMatip1=Displ{matches(i+1)};
+     DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
      dksiMat=Displ{matches(i)+1}-Displ{matches(i)};
      dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)));
+     d2ksi(i)=NaN;
     elseif matches(i)==matches(end)
      dksiMat=(Displ{matches(i)}-Displ{matches(i)-1});
      dl=(model.lambda(matches(i))-model.lambda(matches(i)-1));
+     d2ksi(i)=NaN;
     else
-     dksiMat=(Displ{matches(i)+1}-Displ{matches(i)-1})/2;
+     DisplMatip1=Displ{matches(i+1)};
+     DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
+     dksiMat=(Displ{matches(i)}-Displ{matches(i)-1})/2;
      dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)-1))/2;
+     d2ksi(i)=(DisplAbs(i+1)-2*DisplAbs(i)+DisplAbs(i-1))/(dl*dl);
     end
-    dksi11vec = sqrt(sum(dksiMat.*dksiMat,1));
+    dksi11vec = sqrt(sum(dksiMat.*dksiMat,1)); % sqrt(x²+y²+z²) für jeden Knoten
     if numel(dksi11vec)==numel(wNodes)
      %
     else
@@ -82,6 +97,7 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
     dwdli=max(abs(dksiMat(end,:)))/dl;
     dvdli=max(abs(dksiMat(2,:)))/dl;
     dudli=max(abs(dksiMat(1,:)))/dl;
+    duEdli=(max((dksiMat(1,:)))-min((dksiMat(1,:))))/dl;
    end
 
    % 2.
@@ -94,17 +110,21 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
    end
    
    darclengths{i} = [dksi11,dksi12];
-   dxidl{i+1}=dxidli;
+   dxidl{i}=dxidli;
    dUdl{i}=dUdli;
    dwdl{i}=dwdli;
    dvdl{i}=dvdli;
    dudl{i}=dudli;
+   duEdl(i)=duEdli;
 
    displacements{i} = displacements_;
    lengthMaxJK{i}=max(abs(displacements_(:)));
    wMaxJK{i}=max(abs(displacements_(end,:)));
    vMaxJK{i+1}=max(abs(displacements_(2,:)));
    uMaxJK{i+1}=max(abs(displacements_(1,:)));
+   [s1,idx1(i+1)]=max(displacements_(1,:));
+   [s2,idx2(i+1)]=min(displacements_(1,:));
+   sDiffJK(i+1)=s1-s2;
    arclengthHM{i}=sqrt(sum(sum(displacements_.*displacements_)));
    
    if strcmp(model.filename(1:4),'ecc-')
@@ -123,6 +143,10 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
     BeamDisp=displacements_;
    end
    Verschiebungen=sqrt(sum(BeamDisp.*BeamDisp,1));
+   tmpNaNVer=isnan(Verschiebungen);
+   if any(tmpNaNVer) && ~all(tmpNaNVer)
+     Verschiebungen(tmpNaNVer)=0;
+   end
    
    if strcmp(model.filename(1:3),'ecc')
     if i==1
@@ -199,10 +223,15 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  model.dwdl=dwdl;
  model.dvdl=dvdl;
  model.dudl=dudl;
+ model.duEdl=duEdl; 
  model.arclengthuHM = arclengthHM;
  model.displacementsJK = displacements;
  model.dxidl=dxidl;
-
+ model.d2ksi=d2ksi;
+ model.uDiffJK = sDiffJK;%veraltet use model.uDiffJK 
+ model.sDiffJK = sDiffJK;
+ model.idx1 = idx1;
+ model.idx2 = idx2;
  
 
  

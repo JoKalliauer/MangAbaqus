@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bockDisp(L0,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder)
  if nargin<1
   L0 = 5.0;
  end
@@ -23,7 +23,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numof
  Last=lambda;
  
  % pure SI units: Newtons, meters, Pascals, etc.
- filename = ['d2bock-',eltype,'-',num2str(numofelm(1)),'-',num2str(numofelm(end)),'-len-',num2str(L0),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-a',num2str(modelprops.a)];
+ filename = ['d2bockDisp-',eltype,'-',num2str(numofelm(1)),'-',num2str(numofelm(end)),'-len-',num2str(L0),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-a',num2str(modelprops.a)];
  
  L=L0*MV;
  %% IPE400
@@ -32,7 +32,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numof
  tw = 8.6e-3*MV; %[m]
  tf = 13.5e-3*MV; %[m]
  %% Load
- P = loadFactor*1e6*MV; %[N?]
+ Pdisp = -loadFactor*1*MV; %[m]
  Emodul=2.1e+11/MV;
  %M = 0; % [N m?]
  
@@ -71,7 +71,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numof
  rp2a = Nodes2a(1,1);
  rp2b = Nodes2b(1,1);
  
- enableBeams=[-1 2];
+ enableBeams=-1; %-1 links unten, 1 links oben, -2 rechts oben, 2 recht unten
  if numel(enableBeams)==4
   Nodes=[Nodes1a;Nodes1b;Nodes2a;Nodes2b];
   Elements=[Elements1a;Elements1b;Elements2a;Elements2b];
@@ -129,8 +129,8 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numof
 %    Elements(Elements(:,2)==midnode1,2) = midnode2;
  
  %% Boundary conditions
- if strcmp(eltype,'B21') || strcmp(eltype,'B23') || strcmp(eltype,'B22') || strcmp(eltype,'B21H')
-  dofpNode=6; %Geschlossene Profile; 7 für OS
+ if strcmp(eltype,'B21') || strcmp(eltype,'B23') || strcmp(eltype,'B22')
+  dofpNode=6;
  else
   error('MyProgram:Element','unknown Element')
  end
@@ -171,7 +171,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numof
   end
  end
  
- u1 = fopen([AbaqusRunsFolder,filename,'.inpData'],'w');
+ u1 = fopen([AbaqusRunsFolder,filename,'-Elemente.inp'],'w');
  if u1==-1
   error('MyProgram:FileNotOpen','kann die Datei nicht oeffnen')
  else
@@ -250,13 +250,15 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,JC]  = d2bock(L0,numof
 %   fprintf(u1,'*Connector Section, Elset=connector\n');
 %   fprintf(u1,'JOIN\n');
 
-fprintf(u1,'*Surface, type=NODE, name=ALLMITTE_CNS_, internal\n');
-fprintf(u1,'ALLMITTE, 1.\n');
-fprintf(u1,'** Constraint: Constraint-1\n');
-fprintf(u1,'*Coupling, constraint name=Constraint-1, ref node=FORCEMITTE, surface=ALLMITTE_CNS_\n');
-fprintf(u1,'*Kinematic\n');
-fprintf(u1,'1, 1\n');
-fprintf(u1,'2, 2\n');
+if numel(rpMiddle)>1
+ fprintf(u1,'*Surface, type=NODE, name=ALLMITTE_CNS_, internal\n');
+ fprintf(u1,'ALLMITTE, 1.\n');
+ fprintf(u1,'** Constraint: Constraint-1\n');
+ fprintf(u1,'*Coupling, constraint name=Constraint-1, ref node=FORCEMITTE, surface=ALLMITTE_CNS_\n');
+ fprintf(u1,'*Kinematic\n');
+ fprintf(u1,'1, 1\n');
+ fprintf(u1,'2, 2\n');
+end
   fprintf(u1,'*End Assembly\n');
   
   fprintf(u1,'*Material, name=Material-1\n');
@@ -290,7 +292,7 @@ fprintf(u1,'2, 2\n');
   
   u3 = fopen([AbaqusRunsFolder,filename,'.inp'],'w');
   
-  fprintf(u3,['*Include, input=',filename,'.inpData\n']);
+  fprintf(u3,['*Include, input=',filename,'-Elemente.inp\n']);
   
   fprintf(u3,'** ----------------------------------------------------------------\n');
   fprintf(u3,'*STEP, name=Lambda-1\n');
@@ -305,24 +307,16 @@ fprintf(u1,'2, 2\n');
    fprintf(u3,'** \n');
    fprintf(u3,['** STEP: Step-',num2str(stepnum),'\n']);
    fprintf(u3,'** \n');
-   fprintf(u3,['*Step, name=Step-',num2str(stepnum),', nlgeom=YES\n']);
+   fprintf(u3,['*Step, name=Step-',num2str(stepnum),', nlgeom=YES, inc=1000\n']);
    fprintf(u3,'*Static\n');
-   if k==1
-    fprintf(u3,[num2str(lambda(k)),', ',num2str(lambda(k)),', ',num2str(lambda(k)*0.0001),', ',num2str(lambda(k)),'\n']);
-   else
-    fprintf(u3,[num2str(lambda(k)-lambda(k-1)),', ',num2str(lambda(k)-lambda(k-1)),', ',num2str((lambda(k)-lambda(k-1))*0.0001),', ',num2str(lambda(k)-lambda(k-1)),'\n']);
-   end
+   fprintf(u3,'0.01, 1., 1e-07, 0.01\n'); %inital increment, time period, minimum increment, max increment
    fprintf(u3,'** \n');
-   fprintf(u3,'** LOADS\n');
+   fprintf(u3,'** BOUNDARY CONDITIONS\n');
    fprintf(u3,'** \n');
    
-   if k==1
-    fprintf(u3,'*Cload, OP=NEW\n');
-   else
-    fprintf(u3,'*Cload, OP=MOD\n');
-   end
+    fprintf(u3,'*Boundary\n');
    %fprintf(u3,'leftend, 1, %f\n',lambda(k)*P);
-   fprintf(u3,'FORCEMITTE, 2, %f\n',-lambda(k)*P);
+   fprintf(u3,'FORCEMITTE, 2, 2, %f\n',lambda(k)*Pdisp);
    %fprintf(u3,'MomemntMitte, 5, %f\n',lambda(k)*M);
    %fprintf(u3,'rightend, 5, %f\n',-lambda(k)*M);
    
@@ -338,14 +332,14 @@ fprintf(u1,'2, 2\n');
    fprintf(u3,'** HISTORY OUTPUT: H-Output-1\n');
    fprintf(u3,'** \n');
    fprintf(u3,'*Output, history, variable=PRESELECT\n');
-   fprintf(u3,'*NODE PRINT, nset=allnodes\n');
-   fprintf(u3,'U\n');
-   fprintf(u3,'*EL PRINT\n');
-   fprintf(u3,'\n');
-   fprintf(u3,'SE\n');
-   fprintf(u3,'*EL PRINT\n');
-   fprintf(u3,'\n');
-   fprintf(u3,'SF\n');
+%    fprintf(u3,'*NODE PRINT, nset=allnodes\n');
+%    fprintf(u3,'U\n');
+%    fprintf(u3,'*EL PRINT\n');
+%    fprintf(u3,'\n');
+%    fprintf(u3,'SE\n');
+%    fprintf(u3,'*EL PRINT\n');
+%    fprintf(u3,'\n');
+%    fprintf(u3,'SF\n');
    fprintf(u3,'*End Step\n');
    
    stepnum = stepnum + 1;

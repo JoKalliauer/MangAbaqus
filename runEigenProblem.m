@@ -256,8 +256,14 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  %Energy(:,1) = lambda0;
  mintest=max(min(size(Kts,1),size(Displ,1)),3);
  if max(matches)+2>mintest
-  warning('MyProgram:Abaqus','Abaqus might exited with error (step %d, l=%f) befor last lamdba (l=%f)',size(Kts,1),fulllambda(min(size(Kts,1),numel(fulllambda))),max(fulllambda))
-  matches(matches+2>mintest)=[];
+  mintest2=max(size(Kts,1),3);
+  if max(matches)+2>mintest2
+   warning('MyProgram:Abaqus','Abaqus might exited with error (step %d, l=%f) befor last lamdba (l=%f)',size(Kts,1),fulllambda(min(size(Kts,1),numel(fulllambda))),max(fulllambda))
+   matches(matches+2>mintest)=[];
+  else
+   warning('MyProgram:Abaqus','Displ missing (step %d), but Abaqus has (step %d, l=%f)',size(Displ,1),size(Kts,1),fulllambda(min(size(Kts,1),numel(fulllambda))))
+   %matches(matches+2>mintest)=[];
+  end
  end
  
  %% solve EigvalueProblem
@@ -286,10 +292,19 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,AnalysisResultsFolder);
  %modelDisp=model;
  %[Kts3]  = AbaqusModelsGeneration.getStiffnessMatrices3(model,[],modelprops.typeofanalysis);
-%  [~, Nres3] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
- [Displ3,Rot3] = NodalResults2DisplJK(Nres);
- model=runEigenProblemDispJK(modelprops,model,Displ3,[],[],matches,wbrEP);
- model=runEigenProblemRotJK([],model,Rot3,[],[],matches,wbrEP);
+ %  [~, Nres3] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
+ if isempty(Nres.keys)
+  Displ3=[];
+  Rot3=[];
+  warning('No Displ-Results, check *.msg-file')
+  %return
+ else
+  [Displ3,Rot3] = NodalResults2DisplJK(Nres);
+ end
+ if ~isempty(Displ3)
+  model=runEigenProblemDispJK(modelprops,model,Displ3,[],[],matches,wbrEP);
+  model=runEigenProblemRotJK([],model,Rot3,[],[],matches,wbrEP);
+ end
  
  if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finish');end
  

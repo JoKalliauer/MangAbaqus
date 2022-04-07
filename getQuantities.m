@@ -92,7 +92,7 @@ if ~isnan(diff) && diff>limit
   r0=NaN*r0;
   dsdksi=NaN;
  else
-  assert(diff<=limit,'norm(v) not equal sqrt(v*v) by %d',diff)
+  assert(diff<=limit,'norm(v) not equal sqrt(v*v) by %d',diff)%does not work with single precission
  end
 end
 d2sdksi2 = (v'*a)/dsdksi;%sdd(14) or also at (tangential acceration)
@@ -178,10 +178,18 @@ normd3rds3=norm(d3rds3);
 
 %dN = (kappa*d3rds3 - dkappa*d2rds2)/kappa^2;
 
- rho2 = -N'*r0;
+ if strcmp(main.Normierung,'rCT_K0_r')
+  rho2=rho;
+ else
+  rho2 = -N'*r0;
+ end
  if rho2<0
   if rho2<-.1
-   rho2=NaN;
+   if strcmp(main.Normierung,'R1')
+    rho2=NaN;
+   else
+    error('MyPrgm:NotTested','not tested')
+   end
   else
    warning('MyProgram:OutputRHONegative','rho2 is slighly negativ')
    warning('off','MyProgram:OutputRHONegative')
@@ -210,7 +218,7 @@ normd3rds3=norm(d3rds3);
 RxB=dot(r0,B);
 %rhodot=-dsdksi*tau*RxB;%-\dot{s}\,\tau\,(\mathrm{r}\cdot\mathrm{b})
 drhopds=-tau*RxB;
-if exist('EVatStability','var')
+if exist('EVatStability','var') && strcmp(main.whichEV,'bungle')
  rconst=(EVatStability*r0);
 else
  rconst=r0atl0(:)'*r0;

@@ -98,6 +98,8 @@ end
      model.xlabelloadname='axial load $N$ [N]';
     case 'd2bock'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode,model.JC] = AbaqusModelsGeneration.d2bock(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+    case 'd2bockDisp'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode,model.JC] = AbaqusModelsGeneration.d2bockDisp(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     otherwise 
      warning('MyProgram:unknown','testcase "%s" unknown',testcase)
    end

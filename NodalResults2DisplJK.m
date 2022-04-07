@@ -1,6 +1,12 @@
 function [Displ,Rot] = NodalResults2DisplJK(Nres)
 
 NreskeysIn = Nres.keys;
+if isempty(NreskeysIn)
+ %Displ=NaN;
+ %Rot=NaN;
+ error('No Displ-Results, check *.msg-file')
+ %return
+end
 NresDisp=containers.Map(NreskeysIn,Nres.values);
 NresRot=containers.Map(NreskeysIn,Nres.values);
 

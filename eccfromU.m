@@ -1,4 +1,4 @@
-function [sectiondata,yecc,zecc]=eccfromU(UMpUges)
+function [sectiondata,yecc,zecc]=eccfromU(UBpUges)
 
 
  % A=80.678; %cm^2
@@ -11,11 +11,11 @@ function [sectiondata,yecc,zecc]=eccfromU(UMpUges)
  % myratio=.5; %-
  % mye=sqrt(I/(A*(1/myratio-1))); %cm
  
-assert(UMpUges>=0,'Energyratio must be larger than 0')
-assert(UMpUges<=1,'Energyratio must be smaler then 1')
+assert(UBpUges>=0,'Energyratio must be larger than 0')
+assert(UBpUges<=1,'Energyratio must be smaler then 1')
 %1-eps(10000000)=0.999999998137355=1-1-eps(10000000)Izz
 %UMpUges=min(UMpUges,1-eps(10000000));
-UMpUges=min(UMpUges,1-eps(100000000));
+UBpUges=min(UBpUges,1-eps(100000000));
 
  sectiondata.sectionType = 'Idoublysymmetric';
  sectiondata.b = 180e-3; % [m]
@@ -36,7 +36,7 @@ UMpUges=min(UMpUges,1-eps(100000000));
  Izz=(2*sectiondata.tf*sectiondata.b^3+sectiondata.hinside*sectiondata.tf^3)/12;
  assert(Izz>0,'Izz negativ')
  
- BpM=UMpUges/(1-UMpUges);
+ BpM=UBpUges/(1-UBpUges);
  yecc=sqrt(BpM*Izz/Area);
  zecc=sqrt(BpM*Iyy/Area);
  

@@ -21,6 +21,8 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
 % res  ... resulst of postprocess
 % model... results of runEigenProblem
 
+warning('on','MyProgramm:lowPrecission:RhoOne')
+
 %% Inputkontrolle
 if exist('ecc','var')
  modelprops.ecc=ecc;
@@ -42,7 +44,6 @@ end
 assert(min(modelprops.numofelm)>0,'numberOfElements must be greater zero')
 mustBeInteger(modelprops.numofelm)
 modelprops.numofelm=uint16(modelprops.numofelm);
-%modelprops.numofeigs=min(modelprops.numofeigs,uint8(14));
 if sum(strcmp(fieldnames(modelprops), 'numofeigs')) == 0
  modelprops.numofeigs=0;
 end
@@ -60,10 +61,14 @@ end
 %assert(all(modelprops.lambda>=4*modelprops.epsilon),'first lamdavalue must be four times epsilon or larger')
 if numel(modelprops.lambda)>301
  warning('MyProgram:Input','using %f>201 lambda-values takes much resources',numel(modelprops.lambda))
+ if numel(modelprops.lambda)>=331
+  warning('MyProgram:Input','using %f>=331 Abaqus CAE does not load the stucture',numel(modelprops.lambda)) %ecc-B32H-20-l5-e0.040447-f1-eps0.02-u1
+ end
  %assert(numel(modelprops.lambda)<=1001,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
  %  assert(numel(modelprops.lambda)<=2195,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
 end
 assert(max([forcedeig 0])<=min(modelprops.numofeigs),'forceeig must be smaler or equal that number of calculated ones')
+modelprops.forcedeig=forcedeig;
 [sl1, sl2]=size(modelprops.lambda);
 if sl1>1 && sl2==1; modelprops.lambda=transpose(modelprops.lambda); end
 modelprops.lambda=unique(sort([0 modelprops.lambda]));
@@ -103,8 +108,14 @@ if sum(strcmp(fieldnames(main), 'whichEV')) == 0
  main.whichEV='split';
 end
  modelprops.whichEV=main.whichEV;
+ if sum(strcmp(fieldnames(main), 'Normierung')) == 0
+ main.Normierung='rCT_K0_r';
+end
+modelprops.Normierung=main.Normierung;
 if strcmp(main.whichEV,'split')
  main.whichEV={'Disp'};
+elseif modelprops.numofeigs==0
+ main.whichEV='split';
 end
 if strcmp(main.whichEV,'Hyb') && modelprops.numofeigs>0
  assert(strcmp(modelprops.elementtype(end),'H'),'modelprops.elementtype does not have hybrid dofs')
@@ -120,6 +131,13 @@ end
 if sum(strcmp(fieldnames(main), 'savefigures')) == 0
  main.savefigures=false;
 end
+if sum(strcmp(fieldnames(main), 'xBezug')) == 0
+ main.xBezug='n';
+end
+if sum(strcmp(fieldnames(main), 'flipAxis')) == 0
+ main.flipAxis=false;
+end
+
 
 
 %%% Setting default values
@@ -151,12 +169,13 @@ end
 model.check=main.check;
 model.filename=strcat(model.filename,'-',modelprops.typeofanalysis,'-',char(main.whichEV));
 model.lambdainput=model.lambda0;
+main.allowComplex=modelprops.allowComplex;
 for i=1:numel(model.eigenvalues)
  if numel(model.eigenvalues{i})==0
   if modelprops.numofeigs>0
    warning('MyProgram:Empty','some eigenvalues are empty, please rerun using modelprops.forceAbaqus=true')
   end
-  model.eigenvalues=model.eigenvalues(1:i-1);
+  model.eigenvalues=model.eigenvalues(1:i-1);%delete last entry
   %model.lambda0=model.lambda0(1:i-1);
   break
  end
@@ -169,6 +188,9 @@ for i=1:numel(model.eigenvalues)
    [LaststufenJK,DOFsJK,~]=size(model.eigenvectors{i});
    model.eigenvectors{i}(:,:,wo)=NaN(LaststufenJK,DOFsJK,sum(wo)); %(Last,DOF,EW)
   else
+   if sum(strcmp(fieldnames(model), 'eigenvectors')) == 0
+    error('MyPrgm:Rerun','Try reruning with forcerun=1 and maybe with different whichEV')
+   end
    model.eigenvectors{i}=real(model.eigenvectors{i});
   end
  end
@@ -189,9 +211,9 @@ if isempty(forcedeig)
  resEWs=1:NrEWs;
  if NrEWs>7
   if NrEWs>19
-   warning('Myprogram:color','Be aware plotting more than 19 graphs will definitly lead to the repeating colours, you are using %f',NrEWs)
+   warning('Myprogram:color','Be aware plotting more than 19 graphs will definitly lead to the repeating colours, you are using %d',NrEWs)
   else
-   warning('Myprogram:color','Be aware plotting more than 7 graphs might lead to the same/repeating colour')
+   %warning('Myprogram:color','Be aware plotting more than 7 graphs might lead to the same/repeating colour')
   end
  end
 else
@@ -225,10 +247,11 @@ for k3 = resEWs
   res(k3) = sortEigenValuesAndGetQuantities(model,sortType,[],k3,limit,lastLambda,main);  % forcedeig=k3;
   toolarge=res(k3).lambda>max(modelprops.lambda);
   if any(toolarge)
-   warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
+   warning('MyProgram:Input:LamdbaAvail:SingleRun','more lamdas available than requested, extend the lambda-range or try using modelprops.forcerun=true')
+   warning('off','MyProgram:Input:LamdbaAvail:SingleRun')
    res(k3).lambda(toolarge)=NaN;
   end
-  toostart = abs(res(k3).lambda(2:end))<min(modelprops.lambda(2:end));
+  toostart = abs(res(k3).lambda(2:end)) < (min(modelprops.lambda(2:end))-eps(single(10)));
   if any(toostart)
    warning('MyProgram:Input','first lambdas ignored try using modelprops.forcerun=true')
    res(k3).lambda(toostart)=NaN;
@@ -238,7 +261,6 @@ end % for k3 = resEWs
 if numel(resEWs)==0
  res=NaN;
 end
-%assert(numel(model.load0)==numel(model.lambda0),'different number of results try using modelprops.forcerun=true');
 toolarge = abs(model.lambda0)>max(abs(modelprops.lambda))+eps(1);
 if any(toolarge)
  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
@@ -284,7 +306,7 @@ if usejava('desktop')
  
  MyColours={[0, 0.4470, 0.7410],	[0.8500, 0.3250, 0.0980],[0.9290, 0.6940, 0.1250],[0.4940, 0.1840, 0.5560] 	,	[0.4660, 0.6740, 0.1880], 	[0.3010, 0.7450, 0.9330],[0.6350, 0.0780, 0.1840],	[0, 0, 1],[0, 0.5, 0],	[1, 0, 0],	[0, 0.75, 0.75],[0.75, 0, 0.75],[0.75, 0.75, 0],[0.25, 0.25, 0.25],'y','m','c','g','k'};
  MyMarker=['o' 'x'];
- if strcmp(main.whichEV,'skip')
+ if strcmp(main.whichEV,'skip') && size(model.eigenvalues,1)~=0
   lengthAbaqus=size(model.eigenvalues,1)+4;
  else
   lengthAbaqus=size(model.fullEV,2);

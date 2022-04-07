@@ -97,14 +97,26 @@ lenJK=size(PT0,1);
 
    MyColours=[0, 0.4470, 0.7410;0.8500, 0.3250, 0.0980;0.9290, 0.6940, 0.1250;0.4940, 0.1840, 0.5560;0.4660, 0.6740, 0.1880;0.3010, 0.7450, 0.9330;0.6350, 0.0780, 0.1840;0, 0, 1;0, 0.5, 0;1, 0, 0;0, 0.75, 0.75;0.75, 0, 0.75;0.75, 0.75, 0;0.25, 0.25, 0.25;1 1 0;1 0 1;0 1 1; 0 1 0;0 0 0 ];
      
+    tmp=get(0,'defaultfigureposition');
+ FesterPosX =uint16(tmp(1));
+ FesterPosY =uint16(tmp(2));
+ XBreite0=tmp(3);
+ YHohe0=tmp(4);
+Faktor=1;
+ XBreite=XBreite0*Faktor;
+ YHohe=YHohe0*Faktor;
+
  close all
-   h=figure(314159);
+   h314159=figure(314159);
+  %set(gca,'Position',[0.10 0.08 0.90 0.92])%set(gca,'FontSize',FontSize*Faktor,'FontName',FontName,'Position',gcaPosition,'XAxisLocation',XAxisLocation)
+  %set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape', 'PaperType', 'A4')%,'Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
    %set(h,'renderer','Painters')
    hold on
 
-   wEVs=1:7;
+   wEVs=1:7;  
    plot3(xMat2h(:,wEVs),yMat2h(:,wEVs),zMat2h(:,wEVs),'LineWidth',6,'Color','w')
 
+   %wEVs=[1:3,6];
    wEVs=1:6;
    for i=wEVs
     plot3(xMat2(:,i),yMat2(:,i),zMat2(:,i),'LineWidth',3,'Color',MyColours(i,:))
@@ -117,26 +129,72 @@ lenJK=size(PT0,1);
    zlabel('$Im(\chi)$','Interpreter','latex')
    grid on
    %grid minor
+   %set(gcf,'renderer','Painters')
    xlim([0 2.5])
    daspect([1 1 1])
 
    view([1,1,1])
    camroll(120)
-   Exname=strcat(GFolder,'Figures/',name,'_3DIso.eps');
-   exportgraphics(h,Exname,'BackgroundColor','none','ContentType','vector')
-   print('-dpng','Iso.png')
+   Exname=strcat(GFolder,'Figures/',name,'_3DIso');
+   %exportgraphics(h,strcat(Exname,'.eps'),'BackgroundColor','none','ContentType','vector')
+   %print ('-dsvg', '-vector',strcat(Exname,'.svg'))
+   print('-dpng',strcat(Exname,'.png'))
+   print('-dpng','-r300',strcat(Exname,'300.png'))
 
    view([0,0,1])
-   print ('-depsc',strcat(GFolder,'Figures/',name,'_3Dxy.eps'))
+   Exname=strcat(GFolder,'Figures/',name,'_3Dxy');
+   exportgraphics(h314159,strcat(Exname,'.eps'),'BackgroundColor','none','ContentType','vector')
+   print ('-dsvg', '-vector',strcat(Exname,'.svg'))
    print('-dpng','xy.png')
 
    view([0,1,0])
    camroll(180)
-   print -depsc -tiff -r300 -vector 3Dxz.eps
+   Exname=strcat(GFolder,'Figures/',name,'3Dxz');
+   exportgraphics(h314159,strcat(Exname,'.eps'),'BackgroundColor','none','ContentType','vector')
    print('-dpng','xz.png')
 
    view([1,0,0])
    camroll(90)
-exportgraphics(h,'3Dxyz.eps','BackgroundColor','none','ContentType','vector')
+exportgraphics(h314159,'3Dxyz.eps','BackgroundColor','none','ContentType','vector')
    print('-dpng','yz.png')
+
+      %% Fig 6b
+      close all
+   h61=figure(61);
+   hold on
+   grid on
+   xlim([0 2.5])
+   daspect([1 1 1])
+   xlabel('$\lambda$','Interpreter','latex')
+   ylabel('$\Re(\chi)$','Interpreter','latex')
+   %ylabel('$\Im(\chi)$','Interpreter','latex')
+   wEVs=1:6;
+   for i=wEVs
+    plot(xMat2(:,i),yMat2(:,i),'LineWidth',3,'Color',MyColours(i,:))
+   end
+   plot(PT0([1,end],1),[0,0],'Color',[0 0 0],'LineWidth',1)
+   wEVs=7;
+   plot(xMat2(:,wEVs),yMat2(:,wEVs),'LineWidth',3,'Color',MyColours(7,:),'LineStyle',':')
+      Exname=strcat(GFolder,'Figures/',name,'2Dxy');
+   exportgraphics(h61,strcat(Exname,'.eps'),'BackgroundColor','none','ContentType','vector')
+   print ('-dsvg', '-vector',strcat(Exname,'.svg'))
+   
+   %% Fig 6c
+      close all
+   h62=figure(62);
+   hold on
+   grid on
+   xlim([0 2.5])
+   daspect([1 1 1])
+   xlabel('$\lambda$','Interpreter','latex')
+   %ylabel('$Re(\chi)$','Interpreter','latex')
+   ylabel('$\Im(\chi)$','Interpreter','latex')
+   wEVs=1:6;
+   for i=wEVs
+    plot(xMat2(:,i),zMat2(:,i),'LineWidth',3,'Color',MyColours(i,:))
+   end
+   wEVs=7;
+   plot(xMat2(:,wEVs),zMat2(:,wEVs),'LineWidth',3,'Color',MyColours(7,:),'LineStyle',':')
+      Exname=strcat(GFolder,'Figures/',name,'2Dxz');
+   exportgraphics(h62,strcat(Exname,'.eps'),'BackgroundColor','none','ContentType','vector')
 

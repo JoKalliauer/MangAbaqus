@@ -2,15 +2,16 @@
 %university:TU Wien
  %#ok<*NOPTS>
  clear model
- %close all
+ close all
  format longG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
  set(0, 'DefaultFigureWindowState', 'normal');
 
   % there are following predefined test cases:
-  %modelprops.testcase = 'cantilever';  modelprops.loadfactor = 0.7535;
-  %modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
-  modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [1 0]; %LF(1)..P; %LF(end)...M
+  modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
+  modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
+  %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [1 0.9008]; %LF(1)..P; %LF(end)...M
+  modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [0 1]; %LF(1)..P; %LF(end)...M
   
   modelprops.length = 5;
   
@@ -43,19 +44,23 @@
   
   modelprops.numofelm = 50;
   
-  epsil = 0.005;  % finite difference step %epsil = 0.005;
+  epsil = 0.02;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [11,15,16]; %#ok<*NBRAK> #ok<NASGU>
   %plotfig=[15,16,44,943:945,947:954];
   %plotfig=[15,16,943,952,953,955:956];
-  plotfig=[1,15,16,37,33];
+  %plotfig=[15,16,37,33];
+  plotfig=[35,16,916,963,919,969,902,906,917,911];%Verschiebungen
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r';
+  main.whichEV='rCT_K0_r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r';
  
  
   
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:1.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  %lastlam=1.2/.97955;
+  %lastlam=.84;
+  lastlam=1.1;
+  modelprops.lambda = [0:epsil:lastlam-epsil,lastlam]; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
   %
@@ -74,16 +79,18 @@
   
   modelprops.sigma=0;
   modelprops.MeterValue=1; %1000mm=1m=0.001km
+  main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
+  main.flipAxis=false;
   
 %[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
-eltypes={'B32OS','B32OSH'}%
+eltypes={'B32OSH'}%
 %plotfig=[];
 for i=1:numel(eltypes)
  elementtype = char(eltypes(i))
  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
- main.colorshift=i+1;%i-1;
+ main.colorshift=i-1;%i-1;
  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,[],elementtype);
- res.stability_limit
- res.stability_limit
+ %res.stability_limit
+ %res.stability_limit
 end

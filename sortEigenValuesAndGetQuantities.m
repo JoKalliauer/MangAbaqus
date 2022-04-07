@@ -150,7 +150,7 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
 end
 %model.filename
 eigvalTMP=model.eigenvalues;
-if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr') ||  strcmp(main.whichEV,'bungle_rK0r')
+if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr') ||  strcmp(main.whichEV,'bungle_rK0r') ||  strcmp(main.whichEV,'bungle_K0r1')  ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r')
  eigvecTMP = model.eigenvectors;
  realistic=false;
  evmiddle=5;
@@ -200,7 +200,6 @@ else
 %  eigvecTMP = model.eigvecDRH;
 %  realistic=true;
 %  evmiddle=3;
-%  warning('MyProgam:whichEV','main.whichEV not regogniced')
  %relDofs=...;
  %relNodes=...;
  error('MyProgam:whichEV','main.whichEV not regogniced')
@@ -346,7 +345,7 @@ if isempty(kl)
  kl=numel(lambda0);
 end
 % stability_limit = lambda0(kl) + lami;
-res.stability_limit = [kl,lami]
+res.stability_limit = [kl,lami];
 SchrittBefor=max(min(floor(res.stability_limit(1)),f),1);
 EVatStability=eigvec{SchrittBefor}(evmiddle,:,:,1);
 switch sortType
@@ -413,24 +412,27 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.rho,'KtR1') || strcmp(main.whichEV,'Disp_rK0r')
+if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.rho,'KtR1') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r')
+ if sum(strcmp(fieldnames(model), 'stiffnessMatrices')) == 0
+  error('MyPrgm:Missing','model.stiffnessMatrices missing, most likely main.whichEV changed, try modelprops.forcerun=1')
+ end
  Kt0_0=model.stiffnessMatrices{1,1};
 end
 
-for i = 4:f %f = length(eigval)
+for i = 1:f %f = length(eigval)
  %disp(i)
-%  C0 = eigvec{i}(5,:,:); C0 = reshape(C0,size(C0,2),size(C0,3));
-%  
-%  if strcmpi(sortType, 'none')
-%   is0 = 1;
-%  else
-%   [~,is0] = compareEigenmodes(C0,r0try);
-%  end
+ %  C0 = eigvec{i}(5,:,:); C0 = reshape(C0,size(C0,2),size(C0,3));
+ %
+ %  if strcmpi(sortType, 'none')
+ %   is0 = 1;
+ %  else
+ %   [~,is0] = compareEigenmodes(C0,r0try);
+ %  end
  %        val = [is0;val];
-%  if ~isempty(forcedeig)
-%   is0 = forcedeig;
-%  end
- 
+ %  if ~isempty(forcedeig)
+ %   is0 = forcedeig;
+ %  end
+
  eigposition(i) = is0(1);
  %        Lami = eigval{i}(5,is);
  %        if sum(Lami<0)<length(Lami)
@@ -462,7 +464,9 @@ for i = 4:f %f = length(eigval)
  if r02'*r01<0;  r01 = -r01;  end
  rm = eigvec{i}(evmiddle,:,:,is0(isi));
  rm = reshape(rm,numel(rm),1);
- rm = rm/norm(rm);
+ if strcmp(main.Normierung,'R1')
+  rm = rm/norm(rm);
+ end
  eigvalSort=eigvalTMP{i}(evmiddle,is0(isi));
  if r01'*rm<0;  rm = -rm;  end
  r11 = eigvec{i}(evmiddle+1,:,:,is0(isi)); r11 = reshape(r11,numel(r11),1);
@@ -471,7 +475,7 @@ for i = 4:f %f = length(eigval)
  r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r')
+ if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r')
   Nenner02=sqrt(r02'*Kt0_0*r02);
   Nenner01=sqrt(r01'*Kt0_0*r01);
   Nenner0=sqrt(rm'*Kt0_0*rm);
@@ -482,12 +486,14 @@ for i = 4:f %f = length(eigval)
    Nenner01=sqrt(r01'*Kt01*r01);
    Nenner0=sqrt(rm'*KT*rm);
    Nenner11=sqrt(r11'*Kt11*r11);
- else
+ elseif strcmp(main.Normierung,'R1')
   Nenner02=norm(r02);
   Nenner01=norm(r01);
   Nenner0=norm(rm);
   Nenner11=norm(r11);
   Nenner12=norm(r12);
+ else
+  error('MyPrgm:NoTested','not tested/Implemented')
  end
  r02 = r02/Nenner02;
  r01 = r01/Nenner01;
@@ -510,7 +516,11 @@ for i = 4:f %f = length(eigval)
   Mrm=Kt0_0*rm;
   Mr11=Kt0_0*r11;
   Mr12=Kt0_0*r12;
-  RS = [Mr02/norm(Mr02), Mr01/norm(Mr01),Mrm/norm(Mrm),Mr11/norm(Mr11),Mr12/norm(Mr12)];
+  if strcmp(main.Normierung,'KtR1')
+   RS = [Mr02/norm(Mr02), Mr01/norm(Mr01),Mrm/norm(Mrm),Mr11/norm(Mr11),Mr12/norm(Mr12)];
+  else
+   RS = [Mr02, Mr01,Mrm,Mr11,Mr12];
+  end
  else
   RS = [r02, r01, rm, r11, r12];
  end
@@ -518,30 +528,30 @@ for i = 4:f %f = length(eigval)
   dksi = arclengths{i};
   %            dksi = ones(size(dksi,1),size(dksi,2))*(lambda(2)-lambda(1));
   
- if any(isnan(r0atl0))
+  if any(isnan(r0atl0))
    %disp(['L508_forcedeig=',num2str(forcedeig),'; is0(isi)=',num2str(is0(isi)),'; i=',num2str(i)])
-  if any(~isnan(r02)) && lambda0(i)~=0  && norm(dot(r02,r01))>rstabil
-   r0atl0=r02;
-  elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,rm))>rstabil
-   r0atl0=r01;
-  elseif any(~isnan(rm))  && norm(dot(rm,r11))>rstabil
-   warning('MyProgram:strange','r0 at lambda0 must be NaN')
-   r0atl0=rm;
-  elseif any(~isnan(r11))
-   if norm(dot(r11,r12))>rstabil
-    r0atl0=r11;
-%    elseif any(~isnan(r12)) && dot(r12,r13)>rstabil
-%     r0atl0=r12;
-%    elseif any(~isnan(r13)) && dot(r12,r13)>rstabil
-%     r0atl0=r13;
+   if any(~isnan(r02)) && lambda0(i)~=0  && norm(dot(r02,r01))>rstabil
+    r0atl0=r02;
+   elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,rm))>rstabil
+    r0atl0=r01;
+   elseif any(~isnan(rm))  && norm(dot(rm,r11))>rstabil
+    warning('MyProgram:strange','r0 at lambda0 must be NaN')
+    r0atl0=rm;
+   elseif any(~isnan(r11))
+    if norm(dot(r11,r12))>rstabil
+     r0atl0=r11;
+     %    elseif any(~isnan(r12)) && dot(r12,r13)>rstabil
+     %     r0atl0=r12;
+     %    elseif any(~isnan(r13)) && dot(r12,r13)>rstabil
+     %     r0atl0=r13;
+    else
+     %warning('MyProgram:precission','r at beginning is imprecise')
+    end
    else
-    %warning('MyProgram:precission','r at beginning is imprecise')
+    warning('MyProgram:strange','r11 at lambda0 schould not be NaN')
    end
-  else
-   warning('MyProgram:strange','r11 at lambda0 schould not be NaN')
+   %disp(r0atl0)
   end
-  %disp(r0atl0)
- end
 
   [v,a,speed,accel,at,an,rho,tau,ortCond1,rho2,drddr_,cosmu_,sinpsi_,ortCond2,ortCond3,ortCond4, t, ~, B, ~,...
    ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
@@ -606,7 +616,6 @@ for i = 4:f %f = length(eigval)
   %lami = ;
   LAM(i) = eigval{i}(5,is0(isi));
   EWd1l(i)= ( eigval{i}(6,is0(isi)) - eigval{i}(4,is0(isi)) ) / (2*epsilon);
-  EWd2l(i)= ( eigval{i}(4,is0(isi)) - 2*eigval{i}(5,is0(isi)) +eigval{i}(6,is0(isi)) ) / (epsilon^2);
   oneEWd2l(i)=1./EWd2l(i);
   %        disp(indi);
   R(:,i) = rm;%indi*rm;
@@ -637,7 +646,11 @@ for i = 4:f %f = length(eigval)
   
   %        r0try = indi*r0;
   %            end
+ else
+  warning('MyPrgm:RSNan:sortEigenValuesAndGetQuantities','RS is NAN')
+  warning('off','MyPrgm:RSNan:sortEigenValuesAndGetQuantities')
  end %all(isnan(RS))
+ EWd2l(i)= ( eigval{i}(4,is0(isi)) - 2*eigval{i}(5,is0(isi)) +eigval{i}(6,is0(isi)) ) / (epsilon^2);
  %end %isi=1:1
 end %i=1:f schleife ueber alle lambda
 
@@ -662,7 +675,7 @@ end %i=1:f schleife ueber alle lambda
 %   res.SpeedDach(i)=speed;
 % end
 
-if any(RHO>1)
+if any(RHO>1) && strcmp(main.Normierung,'R1')
  warning('MyProgramm:lowPrecission:RhoOne','rho is larger than one: %f',max(RHO))
  warning('off','MyProgramm:lowPrecission:RhoOne')
  RHO(RHO>1)=NaN;
@@ -672,14 +685,14 @@ else
   warning('MyProgramm:lowPrecission','rho differs from rho2 by %f',differences2)
  end
 end
-if any(RHO2>1)
+if any(RHO2>1) && strcmp(main.Normierung,'R1')
  warning('MyProgramm:lowPrecission:Rho2One','RHO2 is larger than one: %f',max(RHO2))
  warning('off','MyProgramm:lowPrecission:Rho2One')
  RHO2(RHO2>1)=NaN;
 end
 if any(RHO2<0)
  if any(RHO2<-1)
-  warning('MyProgramm:lowPrecission:Rho2minusOne','RHO2 is smaler than -1: %f',min(RHO2))
+  warning('MyProgramm:lowPrecission:Rho2minusOne','RHO2 is smaller than -1: %f',min(RHO2))
   RHO2(RHO2<-1)=NaN;
  else
   warning('MyProgramm:lowPrecission:Rho2Zero','RHO2 is smaler than zero: %f (%d)',min(RHO2),sum(RHO2<0))
@@ -789,7 +802,11 @@ if ~all(Cond6(3:end))
 end
 
 %RHO2(isnan(RHO2))=0;
-Cond7 = ~(abs(RHO2)>1);
+if strcmp(main.whichEV,'bungle_rK0r')
+ Cond7 =true(f,1);
+else
+ Cond7 = ~(abs(RHO2)>1);
+end
 if ~all(Cond7)
  warning('MyProgam:Limits','|RHO2| is large: %f',max(abs(RHO2)))
 end
@@ -877,10 +894,8 @@ Orthcosmu=[false;(res.cosmu(2:end)-res.cosmu(1:end-1))>0.6];
 res.cosmu(Orthcosmu)=NaN;
 sinpsi = sinpsi(Orth);    res.sinpsi = sinpsi;
 coplanar = coplanar(Orth); res.coplanar = coplanar;
-%OC6(OC6<0)=0;% for debugging
 OC6(~OrthNaN)=NaN;
 res.OC6 = OC6(Orth);
-%OC7(OC7<0)=0; %for debugging
 OC7(~OrthNaN)=NaN;
 res.OC7 = OC7(Orth);
 
@@ -894,7 +909,6 @@ res.HYPO=HYPO(Orth);
 
 res.HypoM2110=EWd2l./model.rddotKtr;
 res.HypoB2110=HypoB2110Zaeler./model.rddotKtr;
-%tmp1=[res.HypoM2110,res.HypoB2110]
 res.CosGamma=CosGamma(Orth);
 res.Normd3rds3=Normd3rds3(Orth);
 res.SinGamma=SinGamma(Orth);
