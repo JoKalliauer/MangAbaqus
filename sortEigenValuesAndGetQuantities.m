@@ -412,7 +412,7 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.rho,'KtR1') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r')
+if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.rho,'KtR1') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'A0R1')
  if sum(strcmp(fieldnames(model), 'stiffnessMatrices')) == 0
   error('MyPrgm:Missing','model.stiffnessMatrices missing, most likely main.whichEV changed, try modelprops.forcerun=1')
  end
@@ -492,6 +492,12 @@ for i = 1:f %f = length(eigval)
   Nenner0=norm(rm);
   Nenner11=norm(r11);
   Nenner12=norm(r12);
+ elseif strcmp(main.Normierung,'A0R1')
+  Nenner02=norm(Kt0_0*r02);
+  Nenner01=norm(Kt0_0*r01);
+  Nenner0 =norm(Kt0_0*rm );
+  Nenner11=norm(Kt0_0*r11);
+  Nenner12=norm(Kt0_0*r12);
  else
   error('MyPrgm:NoTested','not tested/Implemented')
  end
@@ -510,19 +516,23 @@ for i = 1:f %f = length(eigval)
  %  elseif lambda0(i)<2*epsilon
  %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
  %  end
- if strcmp(main.rho,'KtR1')
+ if strcmp(main.rho,'A0R1')
   Mr02=Kt0_0*r02;
   Mr01=Kt0_0*r01;
   Mrm=Kt0_0*rm;
   Mr11=Kt0_0*r11;
   Mr12=Kt0_0*r12;
-  if strcmp(main.Normierung,'KtR1')
+  if strcmp(main.Normierung,'A0R1')
    RS = [Mr02/norm(Mr02), Mr01/norm(Mr01),Mrm/norm(Mrm),Mr11/norm(Mr11),Mr12/norm(Mr12)];
-  else
+  elseif  strcmp(main.Normierung,'R1')
    RS = [Mr02, Mr01,Mrm,Mr11,Mr12];
+  else
+   error('MyPrgm:NotTested','not tested/implemted')
   end
- else
+ elseif strcmp(main.rho,'R1')
   RS = [r02, r01, rm, r11, r12];
+ else
+  error('MyPrgm:NotTested','not tested/implemted')
  end
  if ~all(isnan(RS(:)))
   dksi = arclengths{i};

@@ -155,6 +155,9 @@ if differences>2.2088e-06
 end
 if rho<0
  rho=NaN;
+elseif rho>1.01
+ warning('MyProgram:OutputRHOlarge','rho is over 1.2')
+ rho=NaN;
 end
 % if rho>0.8
 %  disp(rho);
@@ -184,11 +187,15 @@ normd3rds3=norm(d3rds3);
   rho2 = -N'*r0;
  end
  if rho2<0
-  if rho2<-.1
+  if rho2<-.01
    if strcmp(main.Normierung,'R1')
     rho2=NaN;
+   elseif strcmp(main.Normierung,'A0R1')
+    rho2=NaN; 
+   elseif abs(norm(r0)-1)<=eps(1)
+    warning('MyPrgm:NotTested','not tested')
    else
-    error('MyPrgm:NotTested','not tested')
+    warning('MyPrgm:NotTested','not tested')
    end
   else
    warning('MyProgram:OutputRHONegative','rho2 is slighly negativ')

@@ -591,9 +591,9 @@ for i = 1:length(matches)
      Nenner0=sqrt(transpose(rmj)*Kt0_0*rmj);
     elseif strcmp(modelprops.whichEV,'bungle_rTK0r') || strcmp(modelprops.whichEV,'rCT_K0_r')  ||  strcmp(modelprops.Normierung,'rCT_K0_r') %Konunjiert Komplex transponiert
      Nenner0=sqrt(ctranspose(rmj)*Kt0_0*rmj);
-    elseif strcmp(modelprops.whichEV,'bungle_K0r1')
+    elseif strcmp(modelprops.whichEV,'bungle_K0r1')  ||  strcmp(modelprops.Normierung,'A0R1')
      Nenner0=norm(Kt0_0*rmj);
-    elseif strcmp(modelprops.whichEV,'bungle')
+    elseif strcmp(modelprops.Normierung,'R1')
      Nenner0=norm(rmj);
     else
      assert(0,'not implemented')
@@ -668,7 +668,9 @@ for i = 1:length(matches)
   end
  end
  
- eigvec1{i} = rmj;
+ if ~strcmp(modelprops.whichEV,'skip')
+  eigvec1{i} = rmj;
+ end
 end%for i = 1:length(matches)
 if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
 
@@ -708,7 +710,7 @@ if ~strcmp(modelprops.whichEV,'skip')
  if sum(strcmp(fieldnames(modelprops), 'rho')) == 0
   modelprops.rho=[];
  end
- if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r')
+ if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace
  elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp')
   model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted)%much diskspace

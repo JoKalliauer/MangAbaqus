@@ -61,8 +61,8 @@
   
   
   %modelprops.forceAbaqus=true;
-  modelprops.forceAbaqus=0; %default: false
-  modelprops.forcerun=0; %default=true
+  modelprops.forceAbaqus=1; %default: false
+  modelprops.forcerun=1; %default=true
   %modelprops.forcerun=false;
   modelprops.numofeigs=9;
   modelprops.allowComplex=true;

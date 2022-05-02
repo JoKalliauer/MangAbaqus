@@ -632,8 +632,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   hold on
   if k3==resEWs(1) && main.colorshift==0
    grid on
-  end
-  xlabel(xlabelload,'Interpreter','latex');
+  end  
+  xlabel(myxlabelload,'Interpreter','latex');
   ylabelJK='radius of the first Frenet-curvature $\rho$';
   ylabel(ylabelJK,'Interpreter','latex');
   bbb = gca();
@@ -646,8 +646,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if all(isnan(res(k3).RHO2)) % from sortEigenValuesAndGetQuantities.m
    warning('MyPrgm:Plot:Rho2:NaN','RHO2 is NaN')
   else
-   Values=min(numel(xValload)-1,numel(res(k3).RHO2)-1);
-   plot(xValload(2:Values),res(k3).RHO2(2:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+   Values=min(numel(xPlot)-1,numel(res(k3).RHO2)-1);
+   plot(xPlot(2:Values),res(k3).RHO2(2:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   end
   if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_rho14.svg'))
@@ -1287,7 +1287,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   if k3==resEWs(1) && main.colorshift==0
-   plot(xPlot0,zeros(size(xPlot0)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+   %plot(xPlot0,zeros(size(xPlot0)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
    grid on
    grid minor
   end
@@ -1302,16 +1302,18 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if exist('xlimJK','var')
    xlim(xlimJK)
   end
-  ylim([-.4 1])
- % xlim([-.8 -.4])
+  %ylim([-.4 1])
+ % xlim([-.8 -.4]) 
+ %set(gca, 'YScale', 'log')
   xlabel(myxlabelload,'Interpreter','latex');
   ylabel('Re($\chi$)','Interpreter','latex');
   title(modelfilename,'Interpreter','none')
   if strcmp(main.typeofanalysis,'KNL2')
    maxy4=max(y4);
     bbb = gca();
-    obergrenze=max(1,min(2,round(abs(maxy4),2,'significant')));
-    bbb.YLim = [-.4,obergrenze];%[.99,1];
+    obergrenze=max(1,min(700,round(abs(maxy4),2,'significant')));
+    untergr   =min(max(min(y4),-1),-1);
+    bbb.YLim = [untergr,obergrenze];%[.99,1];
   end
   if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM35.svg'))
@@ -1500,6 +1502,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
 
+  %fignr=42
  if ismember(42,plotfig)
   figure(42);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -1519,7 +1522,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   bbb.YAxisLocation = 'origin';
   Values=min(numel(xValload0)-1,numel(res(k3).NormR)-1);
   plot(xValload0(2:Values),(res(k3).NormR(2:Values)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
-  if model.savefigures==true
+  if savefigures==true
    dianame=strcat(modelfilename,'NormR_42');
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
@@ -1734,7 +1737,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
   yData=model.NormR1(:,k3);
   Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
-  %set(gca, 'YScale', 'log')
+  set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
   plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
@@ -1860,7 +1863,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    dianame=strcat(modelfilename,figname);
   if savefigures==true
    set(gcf,'renderer','Painters')
-   print('-dsvg', '-vector',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
   elseif savefigures==2
     cfig('NaNs')='keep';

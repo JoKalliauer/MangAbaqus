@@ -88,35 +88,35 @@ format longG
   %plotfig=[902,908,916,9021,9022,913,900];
   %plotfig=[11,12,15,19,35,36,37]
   %plotfig=[957];
-  %plotfig=[15,16,45,35,19,52];%EW
+  %plotfig=[15,45,35,19,52];%EW
   %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
   %plotfig=[902,908,916]
-  plotfig=[2,14,35,42,47,48,50:51,53,54];%EV-Normierung
+  %plotfig=[2,14,35,42,47,48,50:51,53,54];%EV-Normierung
   %plotfig=[902,906,964,966,968];%Arbeit/Last
-  %plotfig=[15,35];
+  plotfig=[35];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
   %modelprops.lambda = 0:epsil:max([2,20*epsil]);%3.07999
   %modelprops.epsilon = epsil;
-  modelprops.loadfactor = 1.0;
+  modelprops.loadfactor = -1;
   %int
   
   modelprops.profil.tw= 8.6e-3;
-  modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=1;
+  modelprops.forceAbaqus=1; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
+  modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
+  %modelprops.numofeigs=1;
   modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
-  main.closall=0;
+  main.closall=1;
   main.savefigures=1;
-  main.check=0;
+  main.check=1;
   main.colorshift=0;
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
-  main.whichEV='rCT_K0_r'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'
-  main.Normierung='rCT_K0_r'; % 'R1'; 'rCT_K0_r'
-  main.rho='KtR1'; % KtR1 R1
+  main.whichEV='skip'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'
+  main.Normierung='skip'; % 'R1'; 'rCT_K0_r'
+  main.rho='skip'; % KtR1 R1 'A0R1' 
   
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
@@ -142,21 +142,22 @@ numofelms={2};
 %Exz={0.02,0.05,.1,.2,.5,1,2,5};
 %Exz={0.1,0.001,0.01,0.1,1,10,.1};
 %Exz={0.05};
-%Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
+%Exz={modelprops.ecc};modelprops.numofeigs=inf;%min 7 EV
 %Exz={.005};modelprops.numofeigs=6;%min 6 EV
-%Exz={.5};modelprops.numofeigs=17;%min 17EV
+%Exz={.5};modelprops.numofeigs=18;%min 17EV
 %Exz={0.005,.01,.02,modelprops.ecc,.1,.2,.5};modelprops.numofeigs=17;
 %Exz={0.05};modelprops.numofeigs=7;
-Exz={0};modelprops.numofeigs=1;
+%Exz={0.02};modelprops.numofeigs=2;
+Exz={0};%modelprops.numofeigs=1;
 
 %  modelprops.orientate=5.99;
 
-epsils={.02,.01,0.002}
+epsils={.02}
 %epsils={.01}
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max([2,20*modelprops.epsilon])
+ modelprops.lambda = 0:modelprops.epsilon:max([20,20*modelprops.epsilon])
  for k=1:numel(Exz)
   for j=1:numel(numofelms)
    modelprops.numofelm = cell2mat(numofelms(j));

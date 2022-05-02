@@ -75,6 +75,8 @@ end
      model.xlabelloadname='bending moment $M$ [N\,m]';
     case 'mixedCantilever'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.mixedCantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+    case 'RotatedCantilever'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.RotatedCantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'cantilever'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.cantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam'
