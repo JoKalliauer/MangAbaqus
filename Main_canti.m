@@ -8,10 +8,11 @@
  set(0, 'DefaultFigureWindowState', 'normal');
 
   % there are following predefined test cases:
-  modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
-  modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
+  %modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
+  %modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
   %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [1 0.9008]; %LF(1)..P; %LF(end)...M
-  modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [0 1]; %LF(1)..P; %LF(end)...M
+  %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [0 1]; %LF(1)..P; %LF(end)...M
+  modelprops.testcase = 'RotatedCantilever'; modelprops.loadfactor = 1;
   
   modelprops.length = 5;
   
@@ -35,22 +36,24 @@
   
   
   % possible types of analysis
-  %modelprops.typeofanalysis = 'I';modelprops.sigma=eps(1e-292); %identity matrix
+  modelprops.typeofanalysis = 'I';modelprops.sigma=eps(1e-292); %identity matrix
   %modelprops.typeofanalysis = 'CLE';modelprops.sigma=pi() %
   %modelprops.typeofanalysis = 'KNL'; %[ (Kts+Ktu) - EW * Kt0 ] %konvergiert nicht
-  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+  %modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  modelprops.numofelm = 50;
+  modelprops.numofelm = 1;
   
-  epsil = 0.02;  % finite difference step %epsil = 0.005;
+  epsil = 0.005;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [11,15,16]; %#ok<*NBRAK> #ok<NASGU>
   %plotfig=[15,16,44,943:945,947:954];
   %plotfig=[15,16,943,952,953,955:956];
   %plotfig=[15,16,37,33];
-  plotfig=[35,16,916,963,919,969,902,906,917,911];%Verschiebungen
+  %plotfig=[35,16,916,963,919,969,902,906,917,911];%Verschiebungen
+  %plotfig=[15,45,35,19,52];%EW
+  plotfig=[14,15,45,35,19];%EW
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   main.whichEV='rCT_K0_r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r';
  
@@ -59,7 +62,7 @@
   %modelprops.lambda = 5*epsil; % do not go over snap-through point
   %lastlam=1.2/.97955;
   %lastlam=.84;
-  lastlam=1.1;
+  lastlam=2;
   modelprops.lambda = [0:epsil:lastlam-epsil,lastlam]; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
   modelprops.epsilon = epsil;
@@ -68,7 +71,7 @@
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %default: false
   modelprops.forcerun=0; %default=true
-  modelprops.numofeigs=1;
+  modelprops.numofeigs=inf;
   modelprops.allowComplex=true;
   main.closall=0;
   main.savefigures=1;

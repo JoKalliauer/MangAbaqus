@@ -156,7 +156,8 @@ end
 if rho<0
  rho=NaN;
 elseif rho>1.01
- warning('MyProgram:OutputRHOlarge','rho is over 1.2')
+ warning('MyProgram:getQuanitites:OutputRHOlargeOver','rho is over 1.2')
+ warning('off','MyProgram:getQuanitites:OutputRHOlargeOver')
  rho=NaN;
 end
 % if rho>0.8

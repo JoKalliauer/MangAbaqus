@@ -89,7 +89,7 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
      wNodes=ones(numel(dksi11vec),1)/numel(dksi11vec);
     end
     dksi11 = dot(dksi11vec,wNodes);
-    displacements_ = Displ{matches(i)};
+    displacements_ = Displ{matches(i)+1};
     %displacements_(abs(displacements_)<=1e-31)=0;%remove numeric issues close to zero
     %displacements_(abs(displacements_)<=1e-14)=0;%remove numeric issues close to zero
     dxidli=dksi11/dl;
@@ -174,9 +174,9 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
      %BeamDisp(:,1)
      %BeamDisp(:,OberesAuflager)
      arclengthJK{i+1}=(ga*sum(Verschiebungen)+gb*sum(Verschiebungen([2:LagerOben-1,LagerOben+1:end])))/((ga+gb)*size(Verschiebungen,2)-2*gb);
-     if i+1==221
-      disp(arclengthJK{i+1});
-     end
+%      if i+1==221
+%       disp(arclengthJK{i+1});
+%      end
      %arclengthJK{i+1}=mean(Verschiebungen);
     elseif  strcmp(model.filename(1:7),'ecc64-B')
      if i==1
@@ -193,9 +193,9 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
      arcUnten=(sum(Verschiebungen(StabUnten))-sum(Verschiebungen([KnotenMitte,LagerUnten]))/2)/(numel(StabUnten)-1);
      arcOben=(sum(Verschiebungen(StabOben))-sum(Verschiebungen([KnotenMitte,LagerOben]))/2)/(numel(StabOben)-1);
      arclengthJK{i+1}=(arcOben+arcUnten)/2;
-     if i+1==221
-      disp(arclengthJK{i+1});
-     end
+%      if i+1==221
+%       disp(arclengthJK{i+1});
+%      end
      %arclengthJK{i+1}=mean(Verschiebungen);
     end
    else

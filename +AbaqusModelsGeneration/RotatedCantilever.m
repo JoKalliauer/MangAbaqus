@@ -29,7 +29,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = RotatedCantilever(
 
  %% Boundary
  BCrpRight=[];%4% Torsion fixiert oder nicht
- filename = ['mixedC',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(1)),'-l',num2str(Linp),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-BR',num2str(BCrpRight)];
+ filename = ['RotC',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(1)),'-l',num2str(Linp),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-BR',num2str(BCrpRight)];
 
 
 

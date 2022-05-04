@@ -686,8 +686,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if strcmp(main.typeofanalysis,'KNL2')
    maxy4=max([y4,1.0]);
     bbb = gca();
-    obergrenze=min(2,max(round(abs(maxy4),2,'significant'),maxy4));
-    bbb.YLim = [-.5,obergrenze];
+    obergrenze=min(2.5,max(round(abs(maxy4),2,'significant'),maxy4));
+    bbb.YLim = [-1.2,obergrenze];
     cfig('yMax')=obergrenze;
   end
    figname='_LAM15';
@@ -2366,7 +2366,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   y=cell2mat(model.wMaxJK);
-  lambdaplot=lambda0;
+  lambdaplot=lambda;
   %plot(lambdaplot,zeros(size(lambdaplot)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
 %   plot(lambdaplot,cell2mat(model.arclengthurHM),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',MyColours{1});
  % plot(lambdaplot,cell2mat(model.arclengthurJK),'LineStyle','--','Marker',markJK,'LineWidth',1.5,'Color',MyColours{2});
