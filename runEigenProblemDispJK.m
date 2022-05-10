@@ -5,6 +5,9 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  %Displ = NodalResults2Displ(Nres);
  if numel(Displ)<1
   displacementsenable=false;
+ elseif  numel(Displ)==2
+  warning('MyPrgm:Disp:DiplOnly2','Displ only has 2 entries')
+  displacementsenable=false;
  else
   displacementsenable=true;
  end
@@ -45,6 +48,9 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  lasti=length(matches);
  DisplAbs=NaN(lasti,1);
  d2ksi=NaN(1,lasti);
+ if ~displacementsenable
+  lasti=0;
+ end
  for i = 1:lasti %i=0 keine last; i=1 erste Last
   if usejava('jvm'); waitbar(i/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
   %disp('Lambda:');
@@ -53,16 +59,16 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
   %disp('-------------');
   %     Energy(i,2) = membrane(matches(i));
   %     Energy(i,3) = nonmembrane(matches(i));
- %for i
+  %for i
   if i==0
-
    
-  else % if i~= 1
-
-
+   
+  else  % if i~= 1
+   
+   
    % -1.
-
-   if matches(i)>=1
+   
+   if matches(i)>=1 && displacementsenable
     if matches(i)==1
      DisplAbs(i)=mean(sqrt(sum(Displ{matches(i)}.*Displ{matches(i)},1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
      DisplMatip1=Displ{matches(i+1)};
@@ -74,7 +80,7 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
      dksiMat=(Displ{matches(i)}-Displ{matches(i)-1});
      dl=(model.lambda(matches(i))-model.lambda(matches(i)-1));
      d2ksi(i)=NaN;
-    else
+    elseif displacementsenable
      DisplMatip1=Displ{matches(i+1)};
      DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
      dksiMat=(Displ{matches(i)}-Displ{matches(i)-1})/2;
@@ -99,7 +105,7 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
     dudli=max(abs(dksiMat(1,:)))/dl;
     duEdli=(max((dksiMat(1,:)))-min((dksiMat(1,:))))/dl;
    end
-
+   
    % 2.
    if displacementsenable
     dksiMat=Displ{matches(i)+1}-Displ{matches(i)};
@@ -107,25 +113,25 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
    else
     dksi12 = NaN;
    end
-   end
-   
-   darclengths{i} = [dksi11,dksi12];
-   dxidl{i}=dxidli;
-   dUdl{i}=dUdli;
-   dwdl{i}=dwdli;
-   dvdl{i}=dvdli;
-   dudl{i}=dudli;
-   duEdl(i)=duEdli;
-
-   displacements{i} = displacements_;
-   lengthMaxJK{i}=max(abs(displacements_(:)));
-   wMaxJK{i}=max(abs(displacements_(end,:)));
-   vMaxJK{i+1}=max(abs(displacements_(2,:)));
-   uMaxJK{i+1}=max(abs(displacements_(1,:)));
-   [s1,idx1(i+1)]=max(displacements_(1,:));
-   [s2,idx2(i+1)]=min(displacements_(1,:));
-   sDiffJK(i+1)=s1-s2;
-   arclengthHM{i}=sqrt(sum(sum(displacements_.*displacements_)));
+  end
+  
+  darclengths{i} = [dksi11,dksi12];
+  dxidl{i}=dxidli;
+  dUdl{i}=dUdli;
+  dwdl{i}=dwdli;
+  dvdl{i}=dvdli;
+  dudl{i}=dudli;
+  duEdl(i)=duEdli;
+  
+  displacements{i} = displacements_;
+  lengthMaxJK{i}=max(abs(displacements_(:)));
+  wMaxJK{i}=max(abs(displacements_(end,:)));
+  vMaxJK{i+1}=max(abs(displacements_(2,:)));
+  uMaxJK{i+1}=max(abs(displacements_(1,:)));
+  [s1,idx1(i+1)]=max(displacements_(1,:));
+  [s2,idx2(i+1)]=min(displacements_(1,:));
+  sDiffJK(i+1)=s1-s2;
+  arclengthHM{i}=sqrt(sum(sum(displacements_.*displacements_)));
    
    if strcmp(model.filename(1:4),'ecc-')
     if strcmp(model.filename(1:7),'ecc-B32')

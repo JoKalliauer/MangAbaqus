@@ -16,7 +16,7 @@
   %modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
   
   %modelprops.length = [];
-  modelprops.length = 5;
+  modelprops.length = 5;%m
   
   % possible element types (be aware of 2D and 3D):
   %2D:

@@ -269,7 +269,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   lambda0=zeros(numel(lambda),1);
   lambda0(1:end)=lambda;
  else
-  lambda0=zeros(numel(lambda)+1,1);
+  if isnan(lambda(1))
+   lambda0=NaN(numel(lambda)+1,1);
+  else
+   lambda0=zeros(numel(lambda)+1,1);
+  end
   lambda0(2:end)=lambda;
  end
  NrFulllambda0=numel(model.fulllambda);
@@ -490,6 +494,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
+ %plotfig=007;
  if ismember(7,plotfig)
   figure(7)
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -590,6 +595,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
  if ismember(12,plotfig)
   figure(12);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+
   hold on
   aaa = gca();
   plot(lambda(2:end),real(LAM(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
@@ -601,7 +608,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    grid minor
   end
   aaa.XLim = [0 inf];
-  if model.savefigures==true
+  if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM12.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_LAM12.png'))
    print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_LAM12.pdf'),'-fillpage')
@@ -798,7 +805,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
 
   hold on
   %xPlot=lambda0(1:end)*xValfulllambda0Mult;  
-  y19imag=imag(model.fullEV(k3,1:numel(xPlot0)));%y4=imag(LAM(2:end));
+  y19=model.fullEV(k3,1:numel(xPlot0));
+  y19imag=imag(y19);%y4=imag(LAM(2:end));
+  yreal=real(y19);
+  y19imag(isnan(yreal))=NaN;
   y4=y19imag;
   if main.allowComplex==2
    y4(y19imag==0)=NaN;
@@ -856,7 +866,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    grid on
    grid minor
   end
-  if model.savefigures==true
+  if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_CosPhi.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_CosPhi.png'))
    print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_CosPhi.pdf'),'-fillpage')
@@ -1309,11 +1319,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   ylabel('Re($\chi$)','Interpreter','latex');
   title(modelfilename,'Interpreter','none')
   if strcmp(main.typeofanalysis,'KNL2')
-   maxy4=max(y4);
-    bbb = gca();
-    obergrenze=max(1,min(700,round(abs(maxy4),2,'significant')));
-    untergr   =min(max(min(y4),-1),-1);
-    bbb.YLim = [untergr,obergrenze];%[.99,1];
+%    maxy4=max(y4);
+%     bbb = gca();
+%     obergrenze=max(1,min(700,round(abs(maxy4),2,'significant')));
+%     untergr   =min(max(min(y4),-1),-1);
+    %bbb.YLim = [untergr,obergrenze];%[.99,1];
   end
   if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_LAM35.svg'))
@@ -1590,12 +1600,12 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   figure(45);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
-  x=model.fulllambda(1:end)*xValfulllambda0Mult; %xValfullload0
+  %x=model.fulllambda(1:end)*xValfulllambda0Mult; %xValfullload0
   y4=abs(model.fullEV(k3,1:numel(xPlot0)));
   plot(xPlot0,y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   title(modelfilename)
   if k3==resEWs(1) && main.colorshift==0
-   plot(xPlot0,zeros(size(xPlot0)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+   plot(xPlot0,0.*y4,'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
    grid on
    grid minor
   end
@@ -1786,7 +1796,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if main.closall==true
    title(modelfilename,'Interpreter','none')
   end
-  yData=model.rTKt0rij(:,k3);
+  yData=model.rCTKt0rij(:,k3);
   Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
@@ -1811,7 +1821,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if main.closall==true
    title(modelfilename,'Interpreter','none')
   end
-  yData=model.rSKt0rij(:,k3);
+  yData=model.rNCTKt0rij(:,k3);
   Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
@@ -1936,6 +1946,100 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   plot(xPlot(1:Values),-yData(1:Values),'LineStyle','-','Marker','none','LineWidth',0.5,'Color',colJK);
   %xlim([-.8 -.4])
+  dianame=strcat(modelfilename,'_normR',num2str(fignr));
+  if savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
+  end
+ end
+ 
+     fignr=55;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(myxlabelload,'Interpreter','latex');
+  ylabelJK='$Re(r) \cdot Kt0 \cdot Re(r)$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  end
+  yData=model.RerNCTKt0Rerij(:,k3);
+  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  %set(gca, 'YScale', 'log')
+  title(modelfilename,'Interpreter','none')
+  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  dianame=strcat(modelfilename,'_normR',num2str(fignr));
+  if savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
+  end
+ end
+ 
+  
+     fignr=56;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(myxlabelload,'Interpreter','latex');
+  ylabelJK='$Re(r) \cdot A_0 \cdot Re(r)$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  end
+  yData=model.RerCTKt0Rerij(:,k3);
+  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  %set(gca, 'YScale', 'log')
+  title(modelfilename,'Interpreter','none')
+  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',3,'Color',colJK);
+  bbb=gca;
+  myylim=ylim;
+  if myylim(2)>10
+   bbb.YLim = [myylim(1),10];
+   if myylim(1)<-10
+    bbb.YLim = [-10,10];
+   end
+  end
+  bbb.YLim = [-10^-7,4*10^-7];
+  dianame=strcat(modelfilename,'_normR',num2str(fignr));
+  if savefigures==true
+   print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
+  end
+ end
+ 
+      fignr=57;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(myxlabelload,'Interpreter','latex');
+  ylabelJK='$Re(r) \cdot A \cdot Re(r)$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  end
+  yData=model.RerARerij(:,k3);
+  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  %set(gca, 'YScale', 'log')
+  title(modelfilename,'Interpreter','none')
+  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',3,'Color',colJK);
+  bbb=gca;
+  myylim=ylim;
+  if myylim(2)>10
+   bbb.YLim = [myylim(1),10];
+   if myylim(1)<-10
+    bbb.YLim = [-10,10];
+   end
+  end
+  bbb.YLim = [-10^-7,4*10^-7];
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -2820,13 +2924,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   ylabelJK='model.rdotKtr';
   ylabel(ylabelJK,'Interpreter','latex');
   bbb = gca();
-  %bbb.YLim = [0,1];
-  %if main.closall==true
    title(modelfilename,'Interpreter','none')
-  %end
-  %bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
-  %xPlot=xValload;
   Xlength=min(numel(xValload),numel(model.rdotKtr));
   y4=model.rdotKtr(1:Xlength);
   plot(xValload(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
@@ -3245,8 +3344,9 @@ fignr=947;% (43)
   figure(fignr);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
-  if k3==resEWs(1) && main.colorshift==0
+  if main.colorshift==0
    grid on
+   grid minor
   end
   if strcmp(xBezug,'n')%lambda
    xPlot=lambda(1:end)*xValfulllambda0Mult; %xValfullload0
@@ -3272,6 +3372,13 @@ fignr=947;% (43)
   Xlength=min(numel(xPlot),numel(model.rKt0r));
   y4=model.rKt0r(1:Xlength);
   plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  myylim=ylim;
+  if myylim(2)>10
+   bbb.YLim = [myylim(1),10];
+   if myylim(1)<-10
+    bbb.YLim = [-10,10];
+   end
+  end
   if model.savefigures==true
    dianame=strcat(modelfilename,'rKt0r_',num2str(fignr));
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
@@ -3592,6 +3699,72 @@ fignr=947;% (43)
      print ('-dsvg',strcat('Output/Figures/PlotIt/',dianame,'.svg'))
     end
    end
+ end
+ 
+ fignr=970;% (970)
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if main.colorshift==0
+   grid on
+   grid minor
+  end
+  xlabel(xlabelload,'Interpreter','latex');
+  ylabelJK='model.RrA0Rr';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  title(modelfilename,'Interpreter','none')
+  bbb.YAxisLocation = 'origin';
+  Xlength=min(numel(xPlot),numel(model.rdotKtr));
+  y4=model.RrA0Rr(1:Xlength);
+  plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  myylim=ylim;
+  if myylim(2)>10
+   bbb.YLim = [myylim(1),10];
+   if myylim(1)<-10
+    bbb.YLim = [-10,10];
+   end
+  end
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'rdotKtr_',num2str(fignr));
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+ 
+ fignr=971;% (971)
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if main.colorshift==0
+   grid on
+   grid minor
+  end
+  xlabel(myxlabelload,'Interpreter','latex');
+  ylabelJK='model.RrARr';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  title(modelfilename,'Interpreter','none')
+  bbb.YAxisLocation = 'origin';
+  Xlength=min(numel(xPlot),numel(model.rdotKtr));
+  y4=model.RrARr(1:Xlength);
+  plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  myylim=ylim;
+  if myylim(2)>10
+   bbb.YLim = [myylim(1),10];
+   if myylim(1)<-10
+    bbb.YLim = [-10,10];
+   end
+  end
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'rdotKtr_',num2str(fignr));
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
  end
  
 end %function

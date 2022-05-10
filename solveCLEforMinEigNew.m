@@ -11,21 +11,21 @@ LM=Kt;%Linke Matrix fuers EW-Problem
 %  else
 %   fast=false;
 %  end
-sortJK=1;%default is sort for the smallest abs-eigenvalue
+if sum(strcmp(fieldnames(modelprops), 'sortJKeigval')) == 0
+ modelprops.sortJKeigval=1;%default is sort for the smallest abs-eigenvalue
+end
+sortJK=modelprops.sortJKeigval;%default is sort for the smallest abs-eigenvalue
 
 if nargin==0
  %evec0 = []; eval0 = [];
  error('MyProgram:Strange','no input')
 end
-% <<<<<<< HEAD
 
 if sum(strcmp(fieldnames(modelprops), 'sigma')) == 0
  modelprops.sigma=0;
 elseif numel(modelprops.sigma)==0
  modelprops.sigma=0;
 end
-% =======
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
 
 
 DOFKt=size(Kt,1);
@@ -84,7 +84,6 @@ switch typeofanal
   %EWgesucht=-1;
  case 'KNL2' % [ Kt - EW * Kt0 ]
   if iter>1
-   %B =  -Kt0_0;
    RM = Kt0_0;
   else
    evec0 = NaN(DOFKt,numofeigs);
@@ -92,16 +91,9 @@ switch typeofanal
    KB1=0*Kt;
    imagValuesi=NaN;
    return
-   %B = NaN(size(Kt,1),size(Kt,1)); %B = eye(size(Kt,1),size(Kt,1));
   end
-  %EWgesucht=0;
-  % <<<<<<< HEAD
-  sortJK=-1;%take the most negativ real value
-  % =======
-  %     sortJK=-1;
-  % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+  %sortJK=-1;%take the most negativ real value
  case 'KNL3' % [ Kt0 + EW * (Kts+Ktu) ]
-  %B = Kt - Kt0_0;
   LM = Kt0_0;
   B=NaN(size(LM));
   %EWgesucht=1.1;
@@ -236,18 +228,9 @@ if check1 && check2
  %     end
  assert(any(any(LM~=RM)),'LM and RM must be different')
  assert(any(RM(:)),'RM must not be zero')
- % <<<<<<< HEAD
- %     if fast==true
- %      [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma);
- %     else
  %[evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
  [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma);
  KB1=LM-eval(1)*RM;
- %imagValuesi=NaN;
- %     end
- % =======
- %     [evec,eval] = eigs(LM,RM,numofeigs,modelprops.sigma,'Tolerance',eps(1e-290),'MaxIterations',3000);
- % >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  diageval = diag(eval);
  diffs=diageval(2:end)-diageval(1:end-1);
  relevantAbs=(abs(diffs)<2.923e-15);%1.0e-06

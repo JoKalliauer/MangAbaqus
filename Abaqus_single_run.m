@@ -71,14 +71,14 @@ assert(max([forcedeig 0])<=min(modelprops.numofeigs),'forceeig must be smaler or
 modelprops.forcedeig=forcedeig;
 [sl1, sl2]=size(modelprops.lambda);
 if sl1>1 && sl2==1; modelprops.lambda=transpose(modelprops.lambda); end
-modelprops.lambda=unique(sort([0 modelprops.lambda]));
+modelprops.lambda=unique(sort([modelprops.lambda]));
 diffs=modelprops.lambda(2:end) - modelprops.lambda(1:end-1);
 mindiff=min(diffs);
 if numel(mindiff)>0
  assert(modelprops.epsilon-mindiff<=+eps(2*modelprops.lambda(end)),'epsilon larger than lamdba0-steps')
 end
 if mindiff<7*modelprops.epsilon
- maxdiff=max(diffs);
+ maxdiff=max(diffs(2:end));
  if mindiff<maxdiff+eps(max(1,maxdiff))
   ratio=maxdiff/modelprops.epsilon;
   assert(abs(ratio-uint8(ratio))<eps(35),'epsilon larger than lamdba0-steps')
@@ -228,7 +228,7 @@ end %if (strcmpi(sortType,'none'))&&isempty(forcedeig)
 
 
 lastLambda=max(modelprops.lambda);
-minLambda=min([modelprops.lambda,-lastLambda,0]);
+minLambda=min([modelprops.lambda,-lastLambda]);
 main.typeofanalysis=modelprops.typeofanalysis;
 for k3 = resEWs
  if strcmp(modelprops.testcase,'eccenCompressionBeam') && strcmp(modelprops.elementtype,'B32OS') && strcmp(modelprops.typeofanalysis,'KNL2') && modelprops.epsilon == 0.01 && max(modelprops.lambda)>1.8
@@ -251,7 +251,7 @@ for k3 = resEWs
    warning('off','MyProgram:Input:LamdbaAvail:SingleRun')
    res(k3).lambda(toolarge)=NaN;
   end
-  toostart = abs(res(k3).lambda(2:end)) < (min(modelprops.lambda(2:end))-eps(single(10)));
+  toostart = abs(res(k3).lambda(2:end)) < (min(modelprops.lambda(1:end))-eps(single(10)));
   if any(toostart)
    warning('MyProgram:Input','first lambdas ignored try using modelprops.forcerun=true')
    res(k3).lambda(toostart)=NaN;
@@ -292,6 +292,14 @@ toonegativ=model.fulllambda<-max(modelprops.lambda);
 if any(toonegativ)
  model.fulllambda(toonegativ)=NaN;
  model.fullload0(toonegativ)=NaN;
+end
+toostart=model.fulllambda<min(modelprops.lambda);
+if any(toostart)
+ model.fulllambda(toostart)=NaN;
+end
+toostart=model.lambda<min(modelprops.lambda);
+if any(toostart)
+ model.lambda(toostart)=NaN;
 end
 
 

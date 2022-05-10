@@ -531,6 +531,8 @@ for i = 1:f %f = length(eigval)
   end
  elseif strcmp(main.rho,'R1')
   RS = [r02, r01, rm, r11, r12];
+ elseif strcmp(main.rho,'skip')
+  RS = [r02, r01, rm, r11, r12]*NaN;
  else
   error('MyPrgm:NotTested','not tested/implemted')
  end

@@ -301,7 +301,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  else
   [Displ3,Rot3] = NodalResults2DisplJK(Nres);
  end
- if ~isempty(Displ3)
+ if ~isempty(Displ3) && numel(Displ3)>2
   model=runEigenProblemDispJK(modelprops,model,Displ3,[],[],matches,wbrEP);
   model=runEigenProblemRotJK([],model,Rot3,[],[],matches,wbrEP);
  end

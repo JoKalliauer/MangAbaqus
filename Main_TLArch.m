@@ -1,6 +1,5 @@
 %#!
 %university:TU Wien
- %#ok<*NOPTS>
  close all 
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
  set(0, 'DefaultFigureWindowState', 'normal');
@@ -15,10 +14,7 @@
   %modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
   %modelprops.testcase = 'cantilever';
   %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.164669;
-  %testcase = 'eccenCompressionBeam2D';
-  
-  %modelprops.length = [];
-  modelprops.length = 5;
+  modelprops.testcase = 'Kreis_arch3D';
   
   % possible element types (be aware of 2D and 3D):
   %2D:
@@ -50,40 +46,37 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 2;
+  modelprops.numofelm = 10;
   
   
-  epsil = 0.005;%  0.01;
+  epsil = 0.00005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  %plotfig= [1,2,3,12,14,15,16,19,21,24,22,25]; %#ok<*NBRAK>
-  %plotfig= [3,7,14,15,28,33]
   %plotfig= [14,28,33];
   %plotfig=[1:14,21,24,26,30,211];
-  %plotfig=30;
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
   %plotfig=[7,14,15,30,211,43]; %#ok<NASGU>
   %plotfig=[15,943:945,948:949];main.savefigures=1
   %plotfig=[15,947,949,952,955:956,16,943,953,943,16];
-  %plotfig=953;
-  plotfig=[14,15];
-  forcedeig = []; %1; % forced eigenvector number 'none' sorting
+  %plotfig=[15,45,35,19,52];%EW
+  plotfig=[45,35];%EW
+  forcedeig = []; %1; % forced eigenvector number
   
-  maxload=30
-  maxlambda=maxload/83.3;
-  %modelprops.lambda = 5*epsil; % do not go over snap-through point
-  modelprops.lambda = 0:epsil:maxlambda; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  
+  %modelprops.lambda = 0:epsil:.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0.3:epsil:.335; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.length=19.074;% [m] 
   
   modelprops.epsilon = epsil;
-  modelprops.loadfactor =0;
+  modelprops.loadfactor =1;
   %
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=1;
-  modelprops.allowComplex=false;
+  modelprops.numofeigs=18;
+  modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
   main.savefigures=1; % false... no figures, true... figures, 2 for TeX
@@ -93,22 +86,20 @@
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   modelprops.MeterValue=1;
-  main.whichEV='Disp'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.Normierung='R1';
   main.rho='R1'; % KtR1 R1
   
   modelprops.followsigma=false;
-
-  % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
-%[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
 %close all
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32H'}
+eltypes={'B32H'};
 %eltypes={'B32H'}
 for i=1:numel(eltypes)
- modelprops.elementtype = char(eltypes(i))
+ modelprops.elementtype = char(eltypes(i));
  main.colorshift=i-1;
  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
   [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);

@@ -10,6 +10,9 @@ if numel(Displ)<1
  else
   warning('Myprgm:Unexpected','unexpected behaviour')
  end
+elseif numel(Displ)==1
+ warning('myPrgm:Sub:VARmissing','no disp data?')
+ displacementsenable=false; 
 else
  displacementsenable=true;
 end
@@ -43,6 +46,8 @@ NormKt0r = NaN(lenMatch,1);
 KB1Klammer = cell(lenMatch,1);
 t_KB1_t = NaN(lenMatch,1);
 imagValues= NaN(lenMatch,1);
+RrA0Rr = NaN(lenMatch,1);
+RrARr = NaN(lenMatch,1);
 
 %  matches = NaN(0);
 %  n = 0;
@@ -100,8 +105,11 @@ RR0 = NaN(newsizeKt0,numofeigs);
 NormeigvecA0r = NaN(lenLam0,numofeigs);
 NormR1= NaN(lenLam0,numofeigs);
 rKt0rij= NaN(lenLam0,numofeigs);
-rTKt0rij= NaN(lenLam0,numofeigs);%https://de.mathworks.com/help/matlab/ref/transpose.html
-rSKt0rij= NaN(lenLam0,numofeigs);%https://de.mathworks.com/help/matlab/ref/ctranspose.html
+rCTKt0rij= NaN(lenLam0,numofeigs);%https://de.mathworks.com/help/matlab/ref/transpose.html
+rNCTKt0rij= NaN(lenLam0,numofeigs);%https://de.mathworks.com/help/matlab/ref/ctranspose.html
+RerNCTKt0Rerij= NaN(lenLam0,numofeigs);
+RerCTKt0Rerij= NaN(lenLam0,numofeigs);
+RerARerij= NaN(lenLam0,numofeigs);
 cosphirij = NaN(lenLam0,numofeigs);
 if numel(Displ)>0
  sizeDisp=size(Displ{1},1);
@@ -569,6 +577,8 @@ for i = 1:length(matches)
    rdotKtr(i)=transpose(rm)*Ktprim0*rm;
    rdotKtt(i)=(transpose(rm)*Ktprim0*v+transpose(v)*Ktprim0*rm)/2;
    t_KB1_t(i)=transpose(v)*KB1Klammer{i}*v;
+   RrA0Rr(i)=transpose(real(rm))*Kt0_0*real(rm);%2022-05-09
+   RrARr(i)=transpose(real(rm))*KT*real(rm);%2022-05-09
   elseif strcmp(modelprops.whichEV,'bungle')
    if ~isnan(rm)
     assert(abs(norm(rm)-1)<1e-7,'rm not 1')
@@ -613,30 +623,37 @@ for i = 1:length(matches)
 
     rNCTKt0rijIJ=single((transpose(rmj)*Kt0_0*rmj));%nonconjungate Sklalar
     if real(rNCTKt0rijIJ)/abs(imag(rNCTKt0rijIJ))>7e9
-     rSKt0rij(i,j)=real(rNCTKt0rijIJ);%nonconjungate sklarprodukt
+     rNCTKt0rij(i,j)=real(rNCTKt0rijIJ);%nonconjungate sklarprodukt
     elseif real(rNCTKt0rijIJ)<0
      warning('MyPrgm:negativ:rSKt0rijIJ','rSKt0rijIJ ist negativ')
      warning('off','MyPrgm:negativ:rSKt0rijIJ')
-     rSKt0rij(i,j)=rNCTKt0rijIJ;%nonconjungate sklarprodukt
+     rNCTKt0rij(i,j)=rNCTKt0rijIJ;%nonconjungate sklarprodukt
     else
      warning('MyPrgm:Complex:rSKt0rijIJ','rSKt0rijIJ ist komplex')
      warning('off','MyPrgm:Complex:rSKt0rijIJ')
-     rSKt0rij(i,j)=NaN;%rSKt0rijIJ;%sklarprodukt
+     rNCTKt0rij(i,j)=NaN;%rSKt0rijIJ;%sklarprodukt
     end
+    RerNCTKt0RerijIJ=single((transpose(real(rmj))*Kt0_0*real(rmj)));%nonconjungate Sklalar
+    RerNCTKt0Rerij(i,j)=RerNCTKt0RerijIJ;
 
 
     rCTKt0rijIJ=single((ctranspose(rmj)*Kt0_0*rmj));%conjungate TRansponiert
     if real(rCTKt0rijIJ)/abs(imag(rCTKt0rijIJ))>3e10
-     rTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
+     rCTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
     elseif real(rCTKt0rijIJ)<0
      warning('MyPrgm:negativ:rTKt0rijIJ','rTKt0rijIJ ist negativ')
      warning('off','MyPrgm:negativ:rTKt0rijIJ')
-     rTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
+     rCTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
     else
      warning('MyPrgm:Complex:rTKt0rijIJ','rTKt0rijIJ ist komplex')
      warning('off','MyPrgm:Complex:rTKt0rijIJ')
-     rTKt0rij(i,j)=NaN;%rTKt0rijIJ;%conjungate TRansponiert
+     rCTKt0rij(i,j)=NaN;%rTKt0rijIJ;%conjungate TRansponiert
     end
+    RerCTKt0RerijIJ=single((ctranspose(real(rmj))*Kt0_0*real(rmj)));%conjungate TRansponiert
+    RerCTKt0Rerij(i,j)=RerCTKt0RerijIJ;
+    
+    
+    RerARerij(i,j)=single((transpose(real(rmj))*KT*real(rmj)));
 
 
 
@@ -657,8 +674,8 @@ for i = 1:length(matches)
     cosphirij(i,j)=cosphirIJij;
 
    else
-    rTKt0rij(i,j)=NaN;
-    rSKt0rij(i,j)=NaN;
+    rCTKt0rij(i,j)=NaN;
+    rNCTKt0rij(i,j)=NaN;
     cosphirij(i,j)=NaN;
    end
 
@@ -698,14 +715,19 @@ model.rKt0r  =single(rKt0r);
 model.RerKt0Imr=single(RerKt0Imr);
 %model.KB1=KB1Klammer;%much diskspace
 model.t_KB1_t=single(t_KB1_t);
+model.RrA0Rr=single(RrA0Rr);
+model.RrARr=single(RrARr);
 if ~strcmp(modelprops.whichEV,'skip')
  model.NormKt0r=single(NormKt0r);
  model.eigenvectors = (eigvec);%much diskspace
  model.eigvec1=eigvec1;
  model.NormeigvecA0r=(NormeigvecA0r);%single leads to jumps in function
- model.rKt0rij=single(rKt0rij);
- model.rTKt0rij=single(rTKt0rij);
- model.rSKt0rij=single(rSKt0rij);
+ model.rKt0rij=single(rKt0rij);%outdated thats NaN
+ model.rCTKt0rij=single(rCTKt0rij);% model.rTKt0rij=single(rCTKt0rij);
+ model.rNCTKt0rij=single(rNCTKt0rij);% model.rSKt0rij=single(rNCTKt0rij);
+ model.RerNCTKt0Rerij=single(RerNCTKt0Rerij);
+ model.RerCTKt0Rerij=single(RerCTKt0Rerij);
+ model.RerARerij=single(RerARerij);
  model.cosphirij=(cosphirij);%single leads to jumps in function
  if sum(strcmp(fieldnames(modelprops), 'rho')) == 0
   modelprops.rho=[];

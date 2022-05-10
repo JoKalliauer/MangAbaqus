@@ -55,8 +55,10 @@ while ~feof(u)
         if size(ELres(C{i}),1)==size(Val(:,i),1)
          ELres(C{i}) = [ELres(C{i}),Val(:,i)];
         end
-       else
+       elseif ~isempty(Val)
         ELres(C{i}) = [Val(:,1:2),Val(:,i)];
+       else
+        warning('MyPrgm:DAT:VAL:empty','Val is empty, dont know what that means')
        end
       end
       if feof(u)
@@ -76,20 +78,30 @@ while ~feof(u)
       Val = []; ecount = 0;
       while (~isempty(tline))&&(~feof(u))
        ecount = ecount + 1;
-       Val(ecount,:) = sscanf(tline,'%f',[1 length(C)]);
+       rhs=sscanf(tline,'%f',[1 length(C)]);
+       if isempty(Val) && isempty(rhs)
+        warning('MyPrgm:DAT:VAL:stillempty','Strange, Val is empty, set it to Nan')
+        Val=[];
+       else
+        Val(ecount,:) =rhs;
+       end
        tline = fgetl(u);
       end
       for i = 2:length(C) %C{1}='NODE'
        if ~Nres.isKey(C{i})
         Nres(C{i}) = NaN(max(Val(:,1)),2); % [Val(:,1),Val(:,i)];
        end
-       if Nres.isKey(C{i})
-        toupdate = [Nres(C{i}),NaN(size(Nres(C{i}),1),1)]; %add a new coloum to Nres(C{i})
-        toupdate(Val(:,1),DispNr+1) = Val(:,i); % toupdate(Val(:,1),DispNr) = Val(:,i);
-        toupdate(abs(toupdate)<=8.78e-30)=0;%remove numeric issues close to zero
-        Nres(C{i}) = toupdate;
+       if size(Val,2)>=i
+        if Nres.isKey(C{i})
+         toupdate = [Nres(C{i}),NaN(size(Nres(C{i}),1),1)]; %add a new coloum to Nres(C{i})
+         toupdate(Val(:,1),DispNr+1) = Val(:,i); % toupdate(Val(:,1),DispNr) = Val(:,i);
+         toupdate(abs(toupdate)<=8.78e-30)=0;%remove numeric issues close to zero
+         Nres(C{i}) = toupdate;
+        else
+         Nres(C{i}) = [Val(:,1),Val(:,i)];
+        end
        else
-        Nres(C{i}) = [Val(:,1),Val(:,i)];
+        warning('MyPrgm:DAT:VAL:stillempty2','Strange, Val is still again empty, set it to Nan')
        end
       end
       if feof(u)

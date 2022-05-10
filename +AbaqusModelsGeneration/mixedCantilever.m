@@ -93,7 +93,7 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = mixedCantilever(Li
  %+5...My
  %+6...Mz
  BCrpLeft=[1,2,3,4,5,6];
-for i=1:numel(BCrpLeft)
+ for i=1:numel(BCrpLeft)
   BC=[BC;dofpNode*(rpLeft - 1) + BCrpLeft(i), 0]; %#ok<AGROW>
  end
  for i=1:numel(BCrpRight)

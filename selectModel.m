@@ -47,6 +47,8 @@ end
     case 'TL_arch3D'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.TL_arch3D([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
      model.xlabelloadname='line load $p$ [N/m]';
+    case 'Kreis_arch3D'
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.Kreis_arch3D([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
     case 'TL_arch3DKg'
      [filename,~,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.TL_arch3DKg([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
     case 'TL_arch3D_sin'
