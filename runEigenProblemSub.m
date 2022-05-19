@@ -548,7 +548,10 @@ for i = 1:length(matches)
     Nenner01=sqrt(transpose(r01)*Kt0_0*r01);
     Nenner0=sqrt(transpose(rm)*Kt0_0*rm);
     Nenner11=sqrt(transpose(r11)*Kt0_0*r11);
-   elseif strcmp(modelprops.whichEV,'bungle_rTK0r') %Transponiert: r^T*r1
+   elseif strcmp(modelprops.whichEV,'bungle_rTK0r') || strcmp(modelprops.whichEV,'bungle_rK0r') %Transponiert: r^T*r1
+    if strcmp(modelprops.whichEV,'bungle_rK0r')
+     warning('MyProgram:UnclearInput','please use bungle_r.K0r or bungle_rTK0r instead of bungle_rK0r')
+    end
     Nenner01=sqrt(r01'*Kt0_0*r01);
     Nenner0=sqrt(rm'*Kt0_0*rm);
     Nenner11=sqrt(r11'*Kt0_0*r11);
@@ -592,7 +595,7 @@ for i = 1:length(matches)
   NormKt0r(i)=single(norm(Kt0_0*rm));
  end
  for j=1:numofeigs
-  if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.whichEV,'bungle_r.K0r')|| strcmp(modelprops.whichEV,'bungle_rTK0r') ||  strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r')
+  if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.whichEV,'bungle_r.K0r')|| strcmp(modelprops.whichEV,'bungle_rTK0r') ||  strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.whichEV,'split')
    rmj=r0t(:,j);
    if ~any(isnan(rmj))
     if strcmp(modelprops.whichEV,'bungle_rKr')
@@ -605,6 +608,10 @@ for i = 1:length(matches)
      Nenner0=norm(Kt0_0*rmj);
     elseif strcmp(modelprops.Normierung,'R1')
      Nenner0=norm(rmj);
+    elseif strcmp(modelprops.Normierung,'skip')
+     warning('MyPrgm:runEigen:Inconsistent:Input','Normierung is set to skip, but whichEV is not skip')
+     warning('off','MyPrgm:runEigen:Inconsistent:Input')
+     Nenner0=NaN;
     else
      assert(0,'not implemented')
     end
@@ -685,7 +692,7 @@ for i = 1:length(matches)
   end
  end
  
- if ~strcmp(modelprops.whichEV,'skip')
+ if ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
   eigvec1{i} = rmj;
  end
 end%for i = 1:length(matches)

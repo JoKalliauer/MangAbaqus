@@ -45,13 +45,13 @@ assert(min(modelprops.numofelm)>0,'numberOfElements must be greater zero')
 mustBeInteger(modelprops.numofelm)
 modelprops.numofelm=uint16(modelprops.numofelm);
 if sum(strcmp(fieldnames(modelprops), 'numofeigs')) == 0
- modelprops.numofeigs=0;
+ modelprops.numofeigs=1; %setting default value to 1
 end
 if modelprops.numofeigs>14
  warning('MyProgramm:Input','For higher precission reduce the number of requested eigenvalues')
  if modelprops.numofeigs>2500
   modelprops.numofeigs=min(2500,20*(modelprops.numofelm+2));
-  warning('MyProgramm:Input','The eigenvalues are reduced to modelprops.numofeigs, otherwise it will need more than 30GB RAM')
+  warning('MyProgramm:Input','The eigenvalues are reduced to %d, otherwise it will need more than 30GB RAM',modelprops.numofeigs)
  end
 end
 %  if any(modelprops.lambda<4*modelprops.epsilon)
@@ -104,6 +104,10 @@ assert(sum(modelprops.numofelm)<=2*2048,'more than 1000 Elements need more than 
   assert(sum(modelprops.numofelm)<2000,'MATLAB-Problem with eigs: Maximum number of attempts to perform numeric factorization of symmetric indefinite matrix exceeded.')%BB5-B31OSH2000-l5-f1-eps0.001-u1
  end
 end
+if modelprops.numofelm*numel(modelprops.lambda)>=131070
+ assert(modelprops.numofelm<200,'Matlab will need more than 32GB')
+ assert(numel(modelprops.lambda)<671,'Matlab will need more than 32GB')
+end
 if sum(strcmp(fieldnames(main), 'whichEV')) == 0
  main.whichEV='split';
 end
@@ -122,7 +126,7 @@ if strcmp(main.whichEV,'Hyb') && modelprops.numofeigs>0
 end
 modelprops.whichEV=main.whichEV;
 if ismember(943,plotfig)
- if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r')
+ if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle')
   %
  else
   assert(0,'plot943 is proposed to work with bungle_rKr')

@@ -260,9 +260,16 @@ eigval = model.eigenvalues;
 lambda0 = model.lambda0;
 arclengths = model.arclengths;
 
-fold = length(eigval);
-assert(length(lambda0)>=fold,'set lambda0=5epsil or lager')
-f=fold;% f=min(fold,find(lambda0==lastLambda));
+fOld = length(eigval);
+fMax =length(lambda0);
+if fMax<fOld
+ if fMax<52
+  assert(fMax>=fOld,'set lambda0=5epsil or lager')
+ end
+ warning('MyPrgm:UnknownError','dont know what that means try forcerun=1')
+ fOld=fMax;%try to fix assert
+end
+f=fOld;% f=min(fOld,find(lambda0==lastLambda));
 eigposition = zeros(length(lambda0),1);
 
 %% Computed Quantities:
@@ -498,6 +505,14 @@ for i = 1:f %f = length(eigval)
   Nenner0 =norm(Kt0_0*rm );
   Nenner11=norm(Kt0_0*r11);
   Nenner12=norm(Kt0_0*r12);
+ elseif strcmp(main.Normierung,'skip')
+  warning('MyPrgm:sortEigenV:Inconsistent:Input','Normierung is set to skip, but whichEV is not skip')
+  warning('off','MyPrgm:sortEigenV:Inconsistent:Input')
+  Nenner02=NaN;
+  Nenner01=NaN;
+  Nenner0 =NaN;
+  Nenner11=NaN;
+  Nenner12=NaN;
  else
   error('MyPrgm:NoTested','not tested/Implemented')
  end
@@ -663,6 +678,7 @@ for i = 1:f %f = length(eigval)
   warning('off','MyPrgm:RSNan:sortEigenValuesAndGetQuantities')
  end %all(isnan(RS))
  EWd2l(i)= ( eigval{i}(4,is0(isi)) - 2*eigval{i}(5,is0(isi)) +eigval{i}(6,is0(isi)) ) / (epsilon^2);
+ LAM(i) = eigval{i}(5,is0(isi));
  %end %isi=1:1
 end %i=1:f schleife ueber alle lambda
 
@@ -919,8 +935,8 @@ res.X1=X1(Orth);res.X2=X2(Orth);res.X3=X3(Orth);res.X4=X4(Orth);
 
 res.HYPO=HYPO(Orth);
 
-res.HypoM2110=EWd2l./model.rddotKtr;
-res.HypoB2110=HypoB2110Zaeler./model.rddotKtr;
+%res.HypoM2110=EWd2l./model.rddotKtr;
+%res.HypoB2110=HypoB2110Zaeler./model.rddotKtr;
 res.CosGamma=CosGamma(Orth);
 res.Normd3rds3=Normd3rds3(Orth);
 res.SinGamma=SinGamma(Orth);

@@ -132,7 +132,7 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
   %warning('MyProgramm:Missing','_STIF*.mtx missing')
   if ~exist([AbaqusRunsFolder,filename,'_STIF7.mtx'],'file')
    AbaqusRunsFolder %#ok<NOPRT>
-   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true',AbaqusRunsFolder)
+   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true or switch on VPN',AbaqusRunsFolder)
    %return
   else
    warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')

@@ -57,7 +57,7 @@ format longG
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OS','B33'};
   %eltypes={'B31OS'};
-  eltypes={'B32OSH'};
+  eltypes={'B32OS'};
   %eltypes={'B32H'};
  
   
@@ -76,25 +76,23 @@ format longG
   
   %modelprops.numofelm = 4; %20
   
-  %epsil = .002; %epsil = 0.02;  % finite difference step %epsil = 0.005;
+  %epsil = .005; %epsil = 0.02;  % finite difference step %epsil = 0.005;
   %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   sortType = 'forwardJK';
-  %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
+  %plotfig= [2,3,14,15,26,28,33]; % Eigenvektorbewegung
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
-  %plotfig=[0,14,36,21,211,22,18,902,2147483646,902:909,915:917] %#ok<NASGU>
-  %plotfig=[7,14,15,23,30,211,36,913,908,916,906,902,908,911,916]; %#ok<NASGU>
-  %plotfig=[902,211]; %#ok<NASGU>
-  %plotfig=15;main.savefigures=1
-  %plotfig=[902,908,916,9021,9022,913,900];
+  plotfig=[7,14,15,23,30,35,36,45];%Hypothesen
   %plotfig=[11,12,15,19,35,36,37]
   %plotfig=[957];
   %plotfig=[12,15,45,35,19,52];%EW
-  %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
+  %plotfig=[902,908,916,9021,9022,913,900,913,911,0,36,21,211,22,18,902,2147483646,902:909,915:917,35,19,908,916,963,919,969,902,906,917];%Verschiebungen
   %plotfig=[902,908,916]
   %plotfig=[2,14,35,42,47,48,50:51,53,54];%EV-Normierung
   %plotfig=[902,906,964,966,968];%Arbeit/Last
-  %plotfig=[35,45,47:48,50:51,55:57,958,970,971];
-  plotfig=[35,56,57];
+  %plotfig=[16,19,35,45,47:48,50:51,55:57,958];
+  %plotfig=[16,19,35,45,47,56,57];
+  %plotfig=[16,35,45];
+  %plotfig=[35,211:214,58]%Debug
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
@@ -105,22 +103,22 @@ format longG
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  %modelprops.numofeigs=1;
+  %modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
   main.closall=1;
-  main.savefigures=1;
-  main.check=1;
+  main.savefigures=0;
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
   main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'
   main.Normierung='R1'; % 'R1'; 'rCT_K0_r'
-  main.rho='skip'; % KtR1 R1 'A0R1' 
+  main.rho='R1'; % KtR1 R1 'A0R1' 
   
-  modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
+  %modelprops.MeterValue=1; %1000mm=1m=0.001km ; 0.0101-999
+  main.xBezug='P'; %n..normalisiert; d..differenz zut Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
+  %main.xBezugNr=77;
   main.flipAxis=false;
   
   modelprops.sigma=0;
@@ -137,16 +135,16 @@ format longG
 %numofelms = {3,5,6,7,9,10};
 %numofelms = {1,2};
 %numofelms={2,5,20};
-numofelms={2};
+numofelms={4};
 
 %Exz={50,20,10,5,2,1,.5,.2,.1,.05,.02,.01,.005,0.002,0.001,.0005,0.0002,0.0001,0};
 %Exz={10,1,.1,0.01,.001,.0001,0};
 %Exz={0.02,0.05,.1,.2,.5,1,2,5};
 %Exz={0.1,0.001,0.01,0.1,1,10,.1};
 %Exz={0.05};
-Exz={modelprops.ecc};modelprops.numofeigs=8;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=4;%min 7 EV
 %Exz={.005};modelprops.numofeigs=6;%min 6 EV
-%Exz={.5};modelprops.numofeigs=18;%min 17EV
+%Exz={.5};;%min 17EV
 %Exz={0.005,.01,.02,modelprops.ecc,.1,.2,.5};modelprops.numofeigs=17;
 %Exz={0.05};modelprops.numofeigs=7;
 %Exz={0.02};modelprops.numofeigs=2;
@@ -155,8 +153,8 @@ Exz={modelprops.ecc};modelprops.numofeigs=8;%min 7 EV
 
 %  modelprops.orientate=5.99;
 
-%epsils={.02}
-epsils={.01}
+epsils={.005}%0.001 for imag-Bereich
+%epsils={1}
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));

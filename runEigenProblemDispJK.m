@@ -60,59 +60,62 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
   %     Energy(i,2) = membrane(matches(i));
   %     Energy(i,3) = nonmembrane(matches(i));
   %for i
+  
   if i==0
+   continue
+  end
    
-   
-  else  % if i~= 1
-   
-   
-   % -1.
-   
-   if matches(i)>=1 && displacementsenable
-    if matches(i)==1
-     DisplAbs(i)=mean(sqrt(sum(Displ{matches(i)}.*Displ{matches(i)},1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
-     DisplMatip1=Displ{matches(i+1)};
-     DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
-     dksiMat=Displ{matches(i)+1}-Displ{matches(i)};
-     dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)));
-     d2ksi(i)=NaN;
-    elseif matches(i)==matches(end)
-     dksiMat=(Displ{matches(i)}-Displ{matches(i)-1});
-     dl=(model.lambda(matches(i))-model.lambda(matches(i)-1));
-     d2ksi(i)=NaN;
-    elseif displacementsenable
-     DisplMatip1=Displ{matches(i+1)};
-     DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
-     dksiMat=(Displ{matches(i)}-Displ{matches(i)-1})/2;
-     dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)-1))/2;
-     d2ksi(i)=(DisplAbs(i+1)-2*DisplAbs(i)+DisplAbs(i-1))/(dl*dl);
-    end
-    dksi11vec = sqrt(sum(dksiMat.*dksiMat,1)); % sqrt(x²+y²+z²) für jeden Knoten
-    if numel(dksi11vec)==numel(wNodes)
-     %
-    else
-     warning('MyProgram:Disp','the Displ have wrong size')
-     wNodes=ones(numel(dksi11vec),1)/numel(dksi11vec);
-    end
-    dksi11 = dot(dksi11vec,wNodes);
-    displacements_ = Displ{matches(i)+1};
-    %displacements_(abs(displacements_)<=1e-31)=0;%remove numeric issues close to zero
-    %displacements_(abs(displacements_)<=1e-14)=0;%remove numeric issues close to zero
-    dxidli=dksi11/dl;
-    dUdli=max(abs(dksiMat(:)))/dl;
-    dwdli=max(abs(dksiMat(end,:)))/dl;
-    dvdli=max(abs(dksiMat(2,:)))/dl;
-    dudli=max(abs(dksiMat(1,:)))/dl;
-    duEdli=(max((dksiMat(1,:)))-min((dksiMat(1,:))))/dl;
-   end
-   
-   % 2.
-   if displacementsenable
+  
+  % -1.
+  
+  if matches(i)>=1 && displacementsenable
+   if matches(i)==1
+    DisplAbs(i)=mean(sqrt(sum(Displ{matches(i)}.*Displ{matches(i)},1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
+    DisplMatip1=Displ{matches(i+1)};
+    DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
     dksiMat=Displ{matches(i)+1}-Displ{matches(i)};
-    dksi12 = mean(sqrt(sum(dksiMat.*dksiMat,1)));
-   else
-    dksi12 = NaN;
+    dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)));
+    d2ksi(i)=NaN;
+   elseif matches(i)==matches(end)
+    dksiMat=(Displ{matches(i)}-Displ{matches(i)-1});
+    dl=(model.lambda(matches(i))-model.lambda(matches(i)-1));
+    d2ksi(i)=NaN;
+   elseif displacementsenable
+    DisplMatip1=Displ{matches(i+1)};
+    DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
+    dksiMat=(Displ{matches(i)}-Displ{matches(i)-1})/2;
+    dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)-1))/2;
+    d2ksi(i)=(DisplAbs(i+1)-2*DisplAbs(i)+DisplAbs(i-1))/(dl*dl);
    end
+   dksi11vec = sqrt(sum(dksiMat.*dksiMat,1)); % sqrt(x²+y²+z²) für jeden Knoten
+   if numel(dksi11vec)==numel(wNodes)
+    %
+   else
+    warning('MyProgram:Disp','the Displ have wrong size')
+    wNodes=ones(numel(dksi11vec),1)/numel(dksi11vec);
+   end
+   tmpNaNs=isnan(dksi11vec);
+   if any(tmpNaNs) && ~all(tmpNaNs)
+    dksi11vec(tmpNaNs)=0;
+   end
+   dksi11 = dot(dksi11vec,wNodes);
+   displacements_ = Displ{matches(i)+1};
+   %displacements_(abs(displacements_)<=1e-31)=0;%remove numeric issues close to zero
+   %displacements_(abs(displacements_)<=1e-14)=0;%remove numeric issues close to zero
+   dxidli=dksi11/dl;
+   dUdli=max(abs(dksiMat(:)))/dl;
+   dwdli=max(abs(dksiMat(end,:)))/dl;
+   dvdli=max(abs(dksiMat(2,:)))/dl;
+   dudli=max(abs(dksiMat(1,:)))/dl;
+   duEdli=(max((dksiMat(1,:)))-min((dksiMat(1,:))))/dl;
+  end
+  
+  % 2.
+  if displacementsenable
+   dksiMat=Displ{matches(i)+1}-Displ{matches(i)};
+   dksi12 = mean(sqrt(sum(dksiMat.*dksiMat,1)));
+  else
+   dksi12 = NaN;
   end
   
   darclengths{i} = [dksi11,dksi12];

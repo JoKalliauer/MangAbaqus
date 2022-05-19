@@ -54,7 +54,7 @@
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OSH','B33','B32','B31OS'}; 
   %eltypes={'B31'}%,'B32','B32OS','B31OS','B33'};
-  eltypes={'B32OSH'}
+  eltypes={'B32OS'}
  
   
   
@@ -82,9 +82,9 @@
   %plotfig=[11,14,15,19,43,952,955:956];  
   %plotfig=[11,12,15,19,35,36,37,45];
   %plotfig=[15,19,45];
-  %plotfig=[14,15,43];
+  plotfig=[14,15,43];
   %plotfig=[15,19,43,45];
-  plotfig=[15,16,943,953];
+  %plotfig=[15,16,943,953];
   %plotfig=[902,908,916,9021,9022,913,900];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
@@ -98,7 +98,7 @@
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.numofeigs=12;
+  modelprops.numofeigs=4;
   modelprops.allowComplex=1;
   %main.closall=true;
   main.closall=false;
@@ -108,7 +108,9 @@
   modelprops.ask_delete=true;
   main.rsame=0.8;
   main.rstabil=0.99999;
-  main.whichEV='bungle_rK0r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'
+  main.rho='R1'; % KtR1 R1 'A0R1' 
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   
   

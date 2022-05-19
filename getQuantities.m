@@ -239,8 +239,8 @@ Ebene=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
  %x3=norm(rho2*d3rds3+t);
  %x4=abs(dot(r0,d2rds2)+1);
  
- x1=dot(r0,d2rds2)+1;
- x2=dot(t,r0);
+ x1=abs(transpose(t)*d2rds2);
+ x2=r0'*d2rds2;
  x3=norm(rho2*d3rds3+t);
  x4=abs(dot(r0,d2rds2)+1);
 

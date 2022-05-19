@@ -6,7 +6,7 @@
 
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
-  modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
+  %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch3DKg'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch3D_sin'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch_Hinge';
@@ -46,36 +46,36 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 10;
+  modelprops.numofelm = 100;
   
   
-  epsil = 0.00005;%  0.01;
+  epsil = 0.0005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [14,28,33];
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  %plotfig=[7,14,15,30,211,43]; %#ok<NASGU>
-  %plotfig=[15,943:945,948:949];main.savefigures=1
-  %plotfig=[15,947,949,952,955:956,16,943,953,943,16];
+  %plotfig=[14,15,30,211,43];
+  %plotfig=[15,947,949,952,955:956,953];
   %plotfig=[15,45,35,19,52];%EW
-  plotfig=[45,35];%EW
+  %plotfig=[45,35,19];%EW
+  plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
   forcedeig = []; %1; % forced eigenvector number
   
   
   %modelprops.lambda = 0:epsil:.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
-  modelprops.lambda = 0.3:epsil:.335; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
-  modelprops.length=19.074;% [m] 
   
   modelprops.epsilon = epsil;
   modelprops.loadfactor =1;
   %
   
-  modelprops.profil.tw= 8.6e-3;
+  modelprops.length=19.074;% [m] 
+  [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335; modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
+  %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=18;
+  modelprops.numofeigs=100;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
@@ -83,24 +83,27 @@
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
-  main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
+  %main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
+  main.rstabil=NaN;
   modelprops.MeterValue=1;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
-  main.Normierung='R1';
-  main.rho='R1'; % KtR1 R1
+  main.whichEV='skip'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.Normierung='skip';
+  main.rho='skip'; % KtR1 R1
   
   modelprops.followsigma=false;
+  modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
+  main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 
 %close all
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32H'};
+eltypes={'B32'};
 %eltypes={'B32H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));
- main.colorshift=i-1;
+ main.colorshift=3*i-3;
  % % modelprops.ask_delete=false; modelprops.forceAbaqus=true; modelprops.forcerun=true;
   [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
  

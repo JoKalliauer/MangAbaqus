@@ -21,19 +21,20 @@ elmtype=eltype;
 
  MV=modelprops.MeterValue;
 
-% pure SI units: Newtons, meters, Pascals, etc.
-filename = ['Kreis_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 
-%% RECT
- h = 20e-2*MV;
- b = 10e-2*MV;
-  
-%% Span
+
+ 
+%% Span Vorgaben:
  R=modelprops.length*MV;% [m] 19.074
  W=215/360;% [-] Umdrehungen
+ Emodul=2e+11/MV; % [N/m^2]
+ nu=.25;
+ h=modelprops.profil.h;
+ b=modelprops.profil.b;
  
- Emodul=2e+11/MV;
- nu=.3;
+
+ filename = ['Kreis_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-h',num2str(h),'-b',num2str(b)];
+ 
  %EA=Emodul*b*h;
  %EI=Emodul*b*h^3/12;
  %kappa=6/5;
