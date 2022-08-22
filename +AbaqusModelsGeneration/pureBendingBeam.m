@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingBeam(Linp,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,h]  = pureBendingBeam(Linp,numofelm,lambda,loadFactor,elType,modelprops,AbaqusRunsFolder)
  if nargin<1
   Linp = 5.0;
  end

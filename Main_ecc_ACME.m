@@ -54,7 +54,7 @@
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OSH','B33','B32','B31OS'}; 
   %eltypes={'B31'}%,'B32','B32OS','B31OS','B33'};
-  eltypes={'B32OS'}
+  eltypes={'B32OSH'}
  
   
   

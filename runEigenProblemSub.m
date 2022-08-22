@@ -595,7 +595,7 @@ for i = 1:length(matches)
   NormKt0r(i)=single(norm(Kt0_0*rm));
  end
  for j=1:numofeigs
-  if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.whichEV,'bungle_r.K0r')|| strcmp(modelprops.whichEV,'bungle_rTK0r') ||  strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.whichEV,'split')
+  if strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.whichEV,'split') || strcmp(modelprops.whichEV,'corrected')
    rmj=r0t(:,j);
    if ~any(isnan(rmj))
     if strcmp(modelprops.whichEV,'bungle_rKr')
@@ -741,7 +741,7 @@ if ~strcmp(modelprops.whichEV,'skip')
  end
  if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace
- elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp')
+ elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split') 
   model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted)%much diskspace
  end
 end

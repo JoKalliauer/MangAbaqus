@@ -55,11 +55,11 @@
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  %plotfig=[14,15,30,211,43];
+  plotfig=[14,15,30,43];
   %plotfig=[15,947,949,952,955:956,953];
   %plotfig=[15,45,35,19,52];%EW
   %plotfig=[45,35,19];%EW
-  plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
+  %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
   forcedeig = []; %1; % forced eigenvector number
   
   
@@ -75,7 +75,7 @@
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=100;
+  modelprops.numofeigs=3;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
@@ -87,9 +87,9 @@
   %main.rstabil=0.9999999;
   main.rstabil=NaN;
   modelprops.MeterValue=1;
-  main.whichEV='skip'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
-  main.Normierung='skip';
-  main.rho='skip'; % KtR1 R1
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; 'skip'
+  main.Normierung='R1'; % 'skip' 'R1'
+  main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;
   modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
@@ -99,7 +99,7 @@
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32'};
+eltypes={'B32','B32H'};
 %eltypes={'B32H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));

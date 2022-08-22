@@ -281,6 +281,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  if strcmp(xBezug,'n')%lambda nachträglich normalisiert
   xPlot0=lambda0(1:end)*xValfulllambda0Mult; %xValfullload0
   xPlot=model.fulllambda(2:end-3)*xValfulllambda0Mult; %xValfullload0
+  FullxPlot0=model.fulllambda(1:end-3)*xValfulllambda0Mult;%different from xPlot0 if lambda(1)>>epsil
   myxlabelload='$\lambda$ gem Referenzlast';
   %xlim([.94 1.03])
  elseif strcmp(xBezug,'1') %Abaqus-Lambda
@@ -526,7 +527,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if yl(2)>10
    ylim([0,min(10,yl(2))]);
   end
-  if model.savefigures==true
+  if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_torque.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_torque.png'))
    print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_torque.pdf'),'-fillpage')
@@ -651,7 +652,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   ylabelJK='radius of the first Frenet-curvature $\rho$';
   ylabel(ylabelJK,'Interpreter','latex');
   bbb = gca();
-  %bbb.YLim = [0,1];
+  bbb.YLim = [0,1];
   if main.closall==true
    title(modelfilename,'Interpreter','none')
   end
@@ -892,7 +893,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    figure(211);
    set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[0   0   XBreite   YHohe]); 
    hold on
-   plot(lambda(2:end),res(k3).X1(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+   LastVal=numel(res(k3).X1);
+   plot(lambda(2:LastVal),res(k3).X1(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
    xlabel('Lambda');
    ylabel('$x1$','Interpreter','latex');
    ylabel('$\mathbf{r}_1\cdot\mathbf{r}_1"+1$','Interpreter','latex');
@@ -911,7 +913,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    figure(212);
    set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[XBreite   0   XBreite   YHohe]); 
    hold on
-   plot(lambda(2:end),res(k3).X2(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+   LastVal=numel(res(k3).X2);
+   plot(lambda(2:LastVal),res(k3).X2(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
    xlabel('Lambda');
    ylabel('$x2$','Interpreter','latex');
    title(modelfilename)
@@ -928,7 +931,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    figure(213);
    set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[2*XBreite   0   XBreite   YHohe]); 
    hold on
-   plot(lambda(2:end),res(k3).X3(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+   LastVal=numel(res(k3).X3);
+   plot(lambda(2:LastVal),res(k3).X3(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
    xlabel('Lambda');
    ylabel('x3','Interpreter','latex');
    title(modelfilename)
@@ -946,7 +950,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[3*XBreite   0   XBreite   YHohe]); 
    hold on
    set(gca, 'YScale', 'log')
-   plot(lambda(2:end),res(k3).X4(2:end),'LineStyle','-','Marker','o','LineWidth',1.5,'Color',colJK);%,'Color',colo);
+   LastVal=numel(res(k3).X4);
+   plot(lambda(2:LastVal),res(k3).X4(2:end),'LineStyle','-','Marker','o','LineWidth',1.5,'Color',colJK);%,'Color',colo);
    xlabel('Lambda');
    ylabel('$x_4$','Interpreter','latex');
    ylabel('$\mathbf{r}_1\cdot\mathbf{r}_1^{,,}+1$','Interpreter','latex');
@@ -1001,7 +1006,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   plot(lambda(1:yNumel),yData,'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
   %yticks(0:.05:1)
   %bbb.XLim = [0 inf];
-  if model.savefigures==true
+  if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_HYPO.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_HYPO.png'))
    print('-fillpage',strcat('Output/Figures/PDF/',modelfilename,'_HYPO.pdf'),'-dpdf')
@@ -1220,7 +1225,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   %plot(xValload,1-(res(k3).RHO2(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);
   %yticks(0:.05:1)
   %bbb.XLim = [0 inf];
-  if model.savefigures==true
+  if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_rho31.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',modelfilename,'_rho31.png'))
    print('-fillpage',strcat('Output/Figures/PDF/',modelfilename,'_rho31.pdf'),'-dpdf')

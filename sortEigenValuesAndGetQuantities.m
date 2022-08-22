@@ -190,7 +190,7 @@ elseif strcmp(main.whichEV,'Hyb')
  evmiddle=3;
  relDofs=1:model.inDOF(3);
  relNodes=model.inDOF(1):model.inDOF(2);
-elseif strcmp(main.whichEV,'all')
+elseif strcmp(main.whichEV,'all') || strcmp(main.whichEV,'corrected')
  eigvecTMP = model.eigvecDRH;
  realistic=true;
  evmiddle=3;
@@ -207,10 +207,10 @@ end
 EVtmpsize=size(eigvecTMP{1});
 eigvec=cell(size(eigvecTMP));
 DimsEVtmp=numel(EVtmpsize);
-if model.numofeigs<=1.5
+if model.numofeigs<=1.5 %Wenn man nur einen Eigenwert hat, dann schmeißt Matlab die letzte Dimension weg, daher eine Dimension mehr
  DimsEVtmp=DimsEVtmp+1;
 end
-if DimsEVtmp>3
+if DimsEVtmp>3 %Wenn man den aufgespalteten Eigenvektor in Knoten *Freiheitsgrade nimmt
 %  eigvec=cell(size(eigvecTMP));
  for i=1:numel(eigvecTMP)
   if ~isempty(eigvecTMP{i}) && exist('relDofs','var')
@@ -225,12 +225,19 @@ if DimsEVtmp>3
    else
     warning('MyPrgm:Input','relNodes undefined')
    end
-   eigvec{i}=eigvecTMP{i}(:,relDofs,relNodes,:);
+   eigveci=eigvecTMP{i}(:,relDofs,relNodes,:);
+   h=model.sectiondata.houtside;
+   eigveci(:,4:6,:)=h.*eigveci(:,4:6,:);
+%    if model.dofpNode==7 % If OpenSection-Element
+%     eigveci(:,7,:)=1.*eigveci(:,7,:);
+%    end
+   eigvec{i}=eigveci;
   else
-   eigvec{i}=eigvecTMP{i};
+   eigvec{i}=NaN*eigvecTMP{i};
+   %error('myprgm:outdate','this chose is no longer maintained')
   end
  end
-else
+else %wenn man den Vektor als vektor lässt, was eigentlich bullshit ist.
 %  eigvec=eigvecTMP;
  for i=1:numel(eigvecTMP)
   eigvec{i}(:,:,1,:)=eigvecTMP{i}(:,:,:);

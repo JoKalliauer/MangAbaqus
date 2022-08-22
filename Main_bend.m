@@ -61,12 +61,13 @@
   %plotfig=[15,943:945,948:954];main.savefigures=1; %#ok<NASGU>
   %plotfig=[14,15,16,952,953];
   %plotfig=[14,15,16];
-  %plotfig=[2,14,35,42,47,48,50:51,53];%EV-Normierung
-  plotfig=35;
+  plotfig=[2,14,35,42,47,48,50:51,53];%EV-Normierung
+  %plotfig=35;
+  plotfig=[14]
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
-  modelprops.epsilon = .02;  % .02;
+  modelprops.epsilon = .01;  % .02;
   %epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
   %modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
@@ -75,18 +76,18 @@
   
   %modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=0; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
-  modelprops.numofeigs=inf;
+  modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+  modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
   main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
   main.check=0;
   main.colorshift=5;
   modelprops.ask_delete=true;
-  %modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; 'rNCT_K0_r';'rCT_K0_r'
-  main.Normierung='A0R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'
-  main.rho='A0R1'; % KtR1 R1; 'A0R1'
+  modelprops.MeterValue=1; %1000mm=1m=0.001km
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' 
+  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'
+  main.rho='R1'; % KtR1 R1; 'A0R1'
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
    
   %modelprops.sigma=-10;

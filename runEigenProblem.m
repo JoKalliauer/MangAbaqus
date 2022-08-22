@@ -329,6 +329,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  end
  dt=whos('model');
  if numel(model.lambda)>10
+  model.date=date;
   save([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(model.numofeigs),'.mat'],'model');
   if dt.bytes>2*1024^3
    warning('MyProgram:Size','model needs %f GB (> 2GB) space',dt.bytes/1024^3)

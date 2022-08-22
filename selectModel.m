@@ -65,7 +65,7 @@ end
        warning('MyPrgm:Input','B31OSH need at least 2 elements to calculate a stiffnessmatrix')
       end
      end
-     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.pureBendingBeam(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode,model.sectiondata.houtside] = AbaqusModelsGeneration.pureBendingBeam(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
      model.xlabelloadname='bending moment $M$ [N\,m]';
 %      model.xValload=model.load;
     case 'pureBendingBeamMalendowski'
