@@ -35,7 +35,7 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %modelprops.elementtype = 'xx'; %current
-  eltypes={'B32OSH'}
+  eltypes={'B32OS','B32OSH'};
  
   
   
@@ -52,7 +52,7 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 5;%20
+  modelprops.numofelm = 2;%20
   %BB5-B31OSH2048-l5-f1-eps0.001-u1
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,3,7,14,15,16,21,211,23,26,28,29]; %#ok<*NBRAK>
@@ -61,13 +61,14 @@
   %plotfig=[15,943:945,948:954];main.savefigures=1; %#ok<NASGU>
   %plotfig=[14,15,16,952,953];
   %plotfig=[14,15,16];
-  plotfig=[2,14,35,42,47,48,50:51,53];%EV-Normierung
+  %plotfig=[2,14,30,35,42,47,48,50:51,53];%EV-Normierung
   %plotfig=35;
-  plotfig=[14]
+  %plotfig=14;
+  plotfig=[945,958,972];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
-  modelprops.epsilon = .01;  % .02;
+  modelprops.epsilon = .02;  % .02;
   %epsils= {1,.5,.2,.1,.05,.02,.01,.005,.002,.001};
   %modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);%10; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   
@@ -81,12 +82,12 @@
   modelprops.allowComplex=false;
   main.closall=0;
   main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=0;
-  main.colorshift=5;
+  main.check=1;
+  %main.colorshift=5;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' 
-  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'
+  main.whichEV='NoHyb'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb'
+  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r'
   main.rho='R1'; % KtR1 R1; 'A0R1'
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
    
@@ -105,12 +106,12 @@
 % %eltypes={'B31OSH'}
 % % %plotfig=[];
 %epsils={.05,.02,.01}
-epsils={modelprops.epsilon}
+epsils={modelprops.epsilon};
 for j=1:numel(epsils)
     modelprops.epsilon = cell2mat(epsils(j));
-    modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon)
+    modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);
  for i=1:numel(eltypes)
-  elementtype = char(eltypes(i))
+  elementtype = char(eltypes(i));
   %  if strcmp(elementtype,'B32OSH') ||  strcmp(elementtype,'B31OSH')
   %   main.check=true;
   %  else

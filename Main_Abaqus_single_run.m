@@ -12,7 +12,7 @@
   %modelprops.testcase = 'cantilever';
   %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.164669;
   %testcase = 'eccenCompressionBeam2D';
-  modelprops.testcase = 'twoBeams';
+  %modelprops.testcase = 'twoBeams';
   %[~,modelprops.ecc]=eccfromU(.978);
   %BpM=(modelprops.ecc)^2*0.0080678/1.319847665625e-05
   %BpGes=BpM/(1+BpM)

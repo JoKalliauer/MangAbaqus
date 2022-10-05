@@ -114,7 +114,9 @@ cosphirij = NaN(lenLam0,numofeigs);
 if numel(Displ)>0
  sizeDisp=size(Displ{1},1);
  if size(Displ{1},1)~=oldsizeKt0
-  warning('MyProgram:Disp','size(Displ{1},1) has a different size than oldsizeKt0')
+  if ~strcmp(modelprops.elementtype(end),'H')%not shure what this warning means
+   warning('MyProgram:Disp','size(Displ{1},1) has a different size than oldsizeKt0')
+  end
  end
 else
  warning('MyProgram:Disp','Displ from *.dat are empty, maybe Abaqus-Error')
@@ -358,7 +360,15 @@ for i = 1:length(matches)
    r12_=NaN*r11_;
    eigval12_=NaN*eigval11_;
   else
-   [r12_,eigval12_,~,KB1Klammer{i+2},imagValues(i+2)] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+   if ~any(Kt12)
+    if i~=length(matches)
+     warning('MyPrgm:Zero','Kt12 is zero')
+    end
+    r12_=NaN*r11_;
+    eigval12_=NaN*eigval11_;
+   else
+    [r12_,eigval12_,~,KB1Klammer{i+2},imagValues(i+2)] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+   end
   end
 
 
@@ -529,14 +539,25 @@ for i = 1:length(matches)
  end
 
  %% Normierung
- if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1')
+ if strcmp(modelprops.whichEV,'NoHyb')
+  if strcmp(modelprops.elementtype(end),'H')
+   HybrideFreiheitsgrade=(diag(Kt0_0)<=0);
+   r01t(HybrideFreiheitsgrade,:)=0;
+   r0t(HybrideFreiheitsgrade,:)=0;
+   r11t(HybrideFreiheitsgrade,:)=0;
+  else
+   modelprops.whichEV='bungle'; % for nonhybrid elements nothing to change
+   %HybrideFreiheitsgrade=[];
+  end
+ end
+ if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
   if isempty(modelprops.forcedeig)
    forcedeig=1;
   else
    forcedeig=modelprops.forcedeig(1);
   end
   rm=r0t(:,forcedeig);
-  if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1')
+  if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') ||  strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'NoHyb')
    r01=r01t(:,forcedeig);
    r11=r11t(:,forcedeig);
 
@@ -548,7 +569,7 @@ for i = 1:length(matches)
     Nenner01=sqrt(transpose(r01)*Kt0_0*r01);
     Nenner0=sqrt(transpose(rm)*Kt0_0*rm);
     Nenner11=sqrt(transpose(r11)*Kt0_0*r11);
-   elseif strcmp(modelprops.whichEV,'bungle_rTK0r') || strcmp(modelprops.whichEV,'bungle_rK0r') %Transponiert: r^T*r1
+   elseif strcmp(modelprops.whichEV,'bungle_rTK0r') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.Normierung,'rCT_K0_r') %Transponiert: r^T*r1
     if strcmp(modelprops.whichEV,'bungle_rK0r')
      warning('MyProgram:UnclearInput','please use bungle_r.K0r or bungle_rTK0r instead of bungle_rK0r')
     end
@@ -558,6 +579,10 @@ for i = 1:length(matches)
    elseif strcmp(modelprops.whichEV,'bungle_K0r1')
     Nenner01=NaN;
     Nenner0=norm(Kt0_0*rm);
+    Nenner11=NaN;
+   elseif strcmp(modelprops.Normierung,'R1')
+    Nenner01=NaN;
+    Nenner0=norm(rm);
     Nenner11=NaN;
    else
     assert(0,'not implemented')
@@ -576,7 +601,9 @@ for i = 1:length(matches)
    v = (r11 - r01)/(2*modelprops.epsilon);
    ZweirKtt(i)=transpose(rm)*KT*v+transpose(v)*KT*rm;
    %NormR1(i)=norm(rm);
-   assert(norm(rm)~=1,'Norm should not be one')
+   if ~strcmp(modelprops.Normierung,'R1')
+    assert(norm(rm)~=1,'Norm should not be one')
+   end
    rdotKtr(i)=transpose(rm)*Ktprim0*rm;
    rdotKtt(i)=(transpose(rm)*Ktprim0*v+transpose(v)*Ktprim0*rm)/2;
    t_KB1_t(i)=transpose(v)*KB1Klammer{i}*v;
@@ -593,9 +620,14 @@ for i = 1:length(matches)
   rKt0r(i)=single(transpose(rm)*Kt0_0*rm);
   RerKt0Imr(i)=single(real(transpose(rm))*Kt0_0*imag(rm));
   NormKt0r(i)=single(norm(Kt0_0*rm));
+ elseif strcmp(modelprops.whichEV,'sqrtK_r') || strcmp(modelprops.whichEV,'sqrtK0_r')
+  %everythings fine
+ else
+  warning('MyPrgm:NotImplemented','modelprops.whichEV=%s unkonwn?',modelprops.whichEV)
  end
  for j=1:numofeigs
-  if strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.whichEV,'split') || strcmp(modelprops.whichEV,'corrected')
+  locNorm=strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r');
+  if locNorm || strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.whichEV,'split') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'sqrtK_r') || strcmp(modelprops.whichEV,'NoHyb')
    rmj=r0t(:,j);
    if ~any(isnan(rmj))
     if strcmp(modelprops.whichEV,'bungle_rKr')
@@ -606,7 +638,14 @@ for i = 1:length(matches)
      Nenner0=sqrt(ctranspose(rmj)*Kt0_0*rmj);
     elseif strcmp(modelprops.whichEV,'bungle_K0r1')  ||  strcmp(modelprops.Normierung,'A0R1')
      Nenner0=norm(Kt0_0*rmj);
-    elseif strcmp(modelprops.Normierung,'R1')
+    elseif strcmp(modelprops.whichEV,'sqrtK_r')
+     %this seems to be useless, modify sortEigenValuesAndGetQuantities instead
+     %rmj_old=rmj;
+     %rmj=sqrt(full(diag(KT))).*rmj_old;
+     rmj=NaN*rmj;
+     Nenner0=norm(rmj);
+    elseif strcmp(modelprops.Normierung,'R1') &&  ( strcmp(modelprops.whichEV,'bungle') ||  strcmp(modelprops.whichEV,'NoHyb') )
+     %warning('MyPrgm:unused','this code should be unused, please check if modelprops.whichEV=%s is correct',modelprops.whichEV)
      Nenner0=norm(rmj);
     elseif strcmp(modelprops.Normierung,'skip')
      warning('MyPrgm:runEigen:Inconsistent:Input','Normierung is set to skip, but whichEV is not skip')
@@ -621,6 +660,14 @@ for i = 1:length(matches)
     end
 
     rmj = rmj/(Nenner0);
+%     
+%     if 1==0
+%      rmj_oldN=rmj_old;
+%      rmjN=rmj;
+%      rmj_oldN(abs(rmj_oldN)<.01)=0;
+%      rmjN(abs(rmjN)<.01)=0; 
+%      tmpJK=[rmj_oldN rmjN]; %#ok<NASGU>
+%     end
 
     eigvecA0rij=Kt0_0*(rmj);
     NormeigvecA0rij=norm(eigvecA0rij);
@@ -628,7 +675,7 @@ for i = 1:length(matches)
     NormR1ij=norm(rmj);
     NormR1(i,j)=NormR1ij;
 
-    rNCTKt0rijIJ=single((transpose(rmj)*Kt0_0*rmj));%nonconjungate Sklalar
+    rNCTKt0rijIJ=transpose(rmj)*Kt0_0*rmj;%nonconjungate Skalar
     if real(rNCTKt0rijIJ)/abs(imag(rNCTKt0rijIJ))>7e9
      rNCTKt0rij(i,j)=real(rNCTKt0rijIJ);%nonconjungate sklarprodukt
     elseif real(rNCTKt0rijIJ)<0
@@ -640,11 +687,11 @@ for i = 1:length(matches)
      warning('off','MyPrgm:Complex:rSKt0rijIJ')
      rNCTKt0rij(i,j)=NaN;%rSKt0rijIJ;%sklarprodukt
     end
-    RerNCTKt0RerijIJ=single((transpose(real(rmj))*Kt0_0*real(rmj)));%nonconjungate Sklalar
+    RerNCTKt0RerijIJ=transpose(real(rmj))*Kt0_0*real(rmj);%nonconjungate Sklalar
     RerNCTKt0Rerij(i,j)=RerNCTKt0RerijIJ;
 
 
-    rCTKt0rijIJ=single((ctranspose(rmj)*Kt0_0*rmj));%conjungate TRansponiert
+    rCTKt0rijIJ=ctranspose(rmj)*Kt0_0*rmj;%conjungate TRansponiert
     if real(rCTKt0rijIJ)/abs(imag(rCTKt0rijIJ))>3e10
      rCTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
     elseif real(rCTKt0rijIJ)<0
@@ -656,11 +703,11 @@ for i = 1:length(matches)
      warning('off','MyPrgm:Complex:rTKt0rijIJ')
      rCTKt0rij(i,j)=NaN;%rTKt0rijIJ;%conjungate TRansponiert
     end
-    RerCTKt0RerijIJ=single((ctranspose(real(rmj))*Kt0_0*real(rmj)));%conjungate TRansponiert
+    RerCTKt0RerijIJ=ctranspose(real(rmj))*Kt0_0*real(rmj);%conjungate TRansponiert
     RerCTKt0Rerij(i,j)=RerCTKt0RerijIJ;
     
     
-    RerARerij(i,j)=single((transpose(real(rmj))*KT*real(rmj)));
+    RerARerij(i,j)=transpose(real(rmj))*KT*real(rmj);
 
 
 
@@ -680,12 +727,16 @@ for i = 1:length(matches)
 
     cosphirij(i,j)=cosphirIJij;
 
-   else
+
+   else %any(isnan(rmj))
     rCTKt0rij(i,j)=NaN;
     rNCTKt0rij(i,j)=NaN;
     cosphirij(i,j)=NaN;
    end
-
+  elseif strcmp(modelprops.whichEV,'sqrtK0_r')
+   %everything is fine, no warning, it is just implemented in sortEigenValuesAndGetQuantities and not here.
+  elseif ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
+   warning('MyPrgm:NotImplemented','if modelprops.whichEV=%s is implented in sortEigenValuesAndGetQuantities then please modify the code here',modelprops.whichEV)
 %    if strcmp(modelprops.whichEV,'bungle_rK0r') && abs(rKt0rijtmp-1)>1
 %     error('myprgm:Mistake','rK0r not 1? (rK0r=%f)',abs(rKt0rijtmp-1))
 %    end
@@ -693,6 +744,12 @@ for i = 1:length(matches)
  end
  
  if ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
+  if ~exist('rmj','var')
+   if ~strcmp(modelprops.whichEV,'sqrtK0_r')
+    warning('MyPrgm:Unknown','modelprops.whichEV=%s might be unkown',modelprops.whichEV)
+   end
+   rmj=NaN*r0t(:,j);
+  end
   eigvec1{i} = rmj;
  end
 end%for i = 1:length(matches)
@@ -739,9 +796,11 @@ if ~strcmp(modelprops.whichEV,'skip')
  if sum(strcmp(fieldnames(modelprops), 'rho')) == 0
   modelprops.rho=[];
  end
- if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1')
+ if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1') ||  strcmp(modelprops.whichEV,'sqrtK0_r')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace
- elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split') 
+ elseif strcmp(modelprops.whichEV,'sqrtK_r')
+  model.stiffnessMatrices = StiffMtxs;% very much diskspace
+ elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split')  || strcmp(modelprops.whichEV,'k11')
   model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted)%much diskspace
  end
 end

@@ -5,7 +5,7 @@
  close all
 % format shortG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
- set(0, 'DefaultFigureWindowStyle', 'docked');
+ %set(0, 'DefaultFigureWindowStyle', 'docked');
   %#ok<*NBRAK>
    %#ok<*NASGU>
   
@@ -19,12 +19,12 @@
   %modelprops.testcase = 'cantilever';
   %modelprops.ecc = 0.164669;
   %modelprops.ecc=(81*sqrt(64373/403390))/800;
-  %modelprops.ecc=0;
+  modelprops.ecc=0;
   %modelprops.ecc=0.02;
   %modelprops.ecc=50; %.5
   %modelprops.ecc=.005; %.5
   %modelprops.ecc=.5;
-  [~,modelprops.ecc]=eccfromU(0.5);
+  %[~,modelprops.ecc]=eccfromU(0.5);
   modelprops.testcase = 'eccenCompressionBeam'; 
   %modelprops.testcase = 'eccenCompressionBeam64';
   %testcase = 'eccenCompressionBeam2D';
@@ -54,7 +54,7 @@
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OSH','B33','B32','B31OS'}; 
   %eltypes={'B31'}%,'B32','B32OS','B31OS','B33'};
-  eltypes={'B32OSH'}
+  eltypes={'B32OS'}
  
   
   
@@ -72,7 +72,7 @@
   
   %modelprops.numofelm = 4; %20
   
-  epsil = 0.005;%.01; %epsil = 0.02;  % finite difference step %epsil = 0.005;
+  epsil = 0.1;%.01; %epsil = 0.02; 0.005  % finite difference step %epsil = 0.005;
   sortType = 'forwardJK'; % eigenvectors sorting type: 'none', 'forwards', 'backwards', 'forwardJK'
   %plotfig= [2,3,14,15,26,28,33]; %#ok<*NBRAK>
   %plotfig= [36,900,908,902,916,913]; %#ok<*NBRAK> 36,900,908,902,916,
@@ -82,7 +82,7 @@
   %plotfig=[11,14,15,19,43,952,955:956];  
   %plotfig=[11,12,15,19,35,36,37,45];
   %plotfig=[15,19,45];
-  plotfig=[14,15,43];
+  plotfig=[14,15,43,945];
   %plotfig=[15,19,43,45];
   %plotfig=[15,16,943,953];
   %plotfig=[902,908,916,9021,9022,913,900];

@@ -40,9 +40,9 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
     else
      %/home/jkalliau/ownCloud/Linux/bin/imwsrun
      if modelprops.ask_delete==false || ~usejava('desktop')
-      reply=system(['exec /usr/bin/imwsrun abaqus:2021 cpus=1 interactive ask_delete=OFF job=',filename]);
+      reply=system(['exec /usr/bin/imwsrun abaqus cpus=1 interactive ask_delete=OFF job=',filename]);
      else
-      reply=system(['exec /usr/bin/imwsrun abaqus:2021 cpus=1 interactive job=',filename]);
+      reply=system(['exec /usr/bin/imwsrun abaqus cpus=1 interactive job=',filename]);
      end
     end
     if reply==1

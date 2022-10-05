@@ -47,9 +47,8 @@ if numel(NreskeysIn)>0
  smallnr= (abs(RES)<=2.25e-12);
  if any(smallnr(:))
   if any(RES(smallnr))
-   if any(abs(RES(smallnr))>=eps(5000))
-    warning('MyPrgm:Numeric','remove numeric issues close to zero')
-   end
+   if any(abs(RES(smallnr))>
+   warning('MyPrgm:Numeric','remove numeric issues close to zero')
    RES(smallnr)=0;%remove numeric issues close to zero
   end
  end

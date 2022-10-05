@@ -150,7 +150,7 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
 end
 %model.filename
 eigvalTMP=model.eigenvalues;
-if strcmp(main.whichEV,'bungle') ||  strcmp(main.whichEV,'bungle_rKr') ||  strcmp(main.whichEV,'bungle_rK0r') ||  strcmp(main.whichEV,'bungle_K0r1')  ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r')
+if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb')
  eigvecTMP = model.eigenvectors;
  realistic=false;
  evmiddle=5;
@@ -190,7 +190,7 @@ elseif strcmp(main.whichEV,'Hyb')
  evmiddle=3;
  relDofs=1:model.inDOF(3);
  relNodes=model.inDOF(1):model.inDOF(2);
-elseif strcmp(main.whichEV,'all') || strcmp(main.whichEV,'corrected')
+elseif strcmp(main.whichEV,'all') || strcmp(main.whichEV,'corrected') || strcmp(main.whichEV,'k11')
  eigvecTMP = model.eigvecDRH;
  realistic=true;
  evmiddle=3;
@@ -202,7 +202,7 @@ else
 %  evmiddle=3;
  %relDofs=...;
  %relNodes=...;
- error('MyProgam:whichEV','main.whichEV not regogniced')
+ error('MyProgam:whichEV','main.whichEV=%s not regogniced',main.whichEV)
 end
 EVtmpsize=size(eigvecTMP{1});
 eigvec=cell(size(eigvecTMP));
@@ -227,7 +227,7 @@ if DimsEVtmp>3 %Wenn man den aufgespalteten Eigenvektor in Knoten *Freiheitsgrad
    end
    eigveci=eigvecTMP{i}(:,relDofs,relNodes,:);
    h=model.sectiondata.houtside;
-   eigveci(:,4:6,:)=h.*eigveci(:,4:6,:);
+   eigveci(:,4:6,:)=h/2.*eigveci(:,4:6,:);
 %    if model.dofpNode==7 % If OpenSection-Element
 %     eigveci(:,7,:)=1.*eigveci(:,7,:);
 %    end
@@ -426,11 +426,30 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.rho,'KtR1') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'A0R1')
+if strcmp(main.rho,'KtR1') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'A0R1') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.Normierung,'rK0r')
  if sum(strcmp(fieldnames(model), 'stiffnessMatrices')) == 0
   error('MyPrgm:Missing','model.stiffnessMatrices missing, most likely main.whichEV changed, try modelprops.forcerun=1')
  end
  Kt0_0=model.stiffnessMatrices{1,1};
+ if strcmp(main.whichEV,'sqrtK0_r')
+  Kt0ii=full(diag(Kt0_0));
+  dofs=uint16(numel(Kt0ii));
+  Freiheitsgrade=7*dofs/10;% 7/10 to ignore hybrid dofs
+  if any(Kt0ii(1:Freiheitsgrade)<=0)
+   warning('MyPrgm:MangWrong','according to Mang this must be positive');
+  end
+  neg=find(Kt0ii<=0,1);
+  if isempty(neg)
+   removeDOF=inf;
+  else
+   removeDOF=max(neg,Freiheitsgrade+1);
+   assert(removeDOF<uint16(inf),'overflow error')
+  end
+  if removeDOF<dofs
+   Kt0ii(removeDOF:dofs)=0;
+  end
+  sqrtKt0ii=sqrt(Kt0ii); %only for main.whichEV='sqrtK0_r'
+ end
 end
 
 for i = 1:f %f = length(eigval)
@@ -489,7 +508,7 @@ for i = 1:f %f = length(eigval)
  r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r')
+ if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'rK0r')
   Nenner02=sqrt(r02'*Kt0_0*r02);
   Nenner01=sqrt(r01'*Kt0_0*r01);
   Nenner0=sqrt(rm'*Kt0_0*rm);
@@ -500,6 +519,31 @@ for i = 1:f %f = length(eigval)
    Nenner01=sqrt(r01'*Kt01*r01);
    Nenner0=sqrt(rm'*KT*rm);
    Nenner11=sqrt(r11'*Kt11*r11);
+ elseif strcmp(main.whichEV,'sqrtK_r') && strcmp(main.Normierung,'R1')
+  iV=[i-2, i-1, i, i+1, i+2];
+  iV(iV<1)=1;
+  iV(iV>f)=f;
+     r02=sqrt(full(diag(model.stiffnessMatrices{iV(1),1}))).*r02;
+     r01=sqrt(full(diag(model.stiffnessMatrices{iV(2),1}))).*r01;
+     rm=sqrt(full(diag(model.stiffnessMatrices{iV(3),1}))).*rm;
+     r11=sqrt(full(diag(model.stiffnessMatrices{iV(4),1}))).*r11;
+     r12=sqrt(full(diag(model.stiffnessMatrices{iV(5),1}))).*r12;
+  Nenner02=norm(r02);
+  Nenner01=norm(r01);
+  Nenner0=norm(rm);
+  Nenner11=norm(r11);
+  Nenner12=norm(r12);
+ elseif strcmp(main.whichEV,'sqrtK0_r') && strcmp(main.Normierung,'R1')
+     r02=sqrtKt0ii.*r02;
+     r01=sqrtKt0ii.*r01;
+     rm=sqrtKt0ii.*rm;
+     r11=sqrtKt0ii.*r11;
+     r12=sqrtKt0ii.*r12;
+  Nenner02=norm(r02);
+  Nenner01=norm(r01);
+  Nenner0=norm(rm);
+  Nenner11=norm(r11);
+  Nenner12=norm(r12);
  elseif strcmp(main.Normierung,'R1')
   Nenner02=norm(r02);
   Nenner01=norm(r01);

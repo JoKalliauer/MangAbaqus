@@ -46,6 +46,9 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
  
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
  lasti=length(matches);
+ if lasti<=1
+  warning('Myprgm:STrange','lasti<=1, try using smaller stepsizes')
+ end
  DisplAbs=NaN(lasti,1);
  d2ksi=NaN(1,lasti);
  if ~displacementsenable

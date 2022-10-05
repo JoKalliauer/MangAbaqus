@@ -48,7 +48,6 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  %45 abs(model.fullEV)
  
  
- %943 model.rddotKtr
  
  
  %900 detKt
@@ -71,6 +70,8 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  %951 rdotKtt
  %952 t_KB1_t
  %953 -2*model.t_KB1_t
+ %958 model.rKt0r
+ %972 model.rdotKtr / model.rKt0r
  
  xBezug=main.xBezug;
 %n..normiert auf Reflast
@@ -733,7 +734,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
- %plotfig=16;
+ %fignr=016;
  if ismember(16,plotfig)
   figure(16);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -757,7 +758,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    grid on
    grid minor
   end
-  ylim([-30,30])
+  %ylim([-30,30])
   if model.savefigures ~= 2
    title(modelfilename)
   end
@@ -3427,7 +3428,7 @@ fignr=947;% (43)
   y4=model.rKt0r(1:Xlength);
   plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   myylim=ylim;
-  if myylim(2)>10
+  if myylim(2)>10 && myylim(1)<10
    bbb.YLim = [myylim(1),10];
    if myylim(1)<-10
     bbb.YLim = [-10,10];
@@ -3815,6 +3816,47 @@ fignr=947;% (43)
   end
   if model.savefigures==true
    dianame=strcat(modelfilename,'rdotKtr_',num2str(fignr));
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+ 
+     fignr=972;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if main.colorshift==0
+   grid on
+   grid minor
+  end
+  if strcmp(xBezug,'n')%lambda
+   xPlot=lambda(1:end)*xValfulllambda0Mult; %xValfullload0
+   xlabel('$\lambda$','Interpreter','latex');
+  elseif strcmp(xBezug,'1')
+   xPlot=lambda(1:end); %xValfullload0
+   xlabel('$\lambda gem Abaqus$','Interpreter','latex');
+  else
+   xPlot=xValload(1:end);%x=lambda(3:end)
+   xlabel(xlabelload,'Interpreter','latex');
+   xlim([1040000 1130000])
+  end
+  ylabelJK='$\frac{\mathbf{r}_\mathbf{u}\cdot\dot{\mathbf{K}}\cdot\mathbf{r}_\mathbf{u}}{\mathbf{r}_\mathbf{u}\cdot\mathbf{K}_0\cdot\mathbf{r}_\mathbf{u}} ; \frac{\hat{\mathbf{r}}^T\cdot\dot{\hat{\mathbf{K}}}\cdot\hat{\mathbf{r}}}{\hat{\mathbf{r}}^T\cdot\hat{\mathbf{K}}_0\cdot\hat{\mathbf{r}}}$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  %bbb.YLim = [0,1];
+  %if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  %end
+  %bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  %xPlot=xValload;
+  Xlength=min(numel(xPlot),numel(model.rKt0r));
+  y4=model.rdotKtr(1:Xlength)./model.rKt0r(1:Xlength);
+  plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'rdotKtr_p_rKt0r_',num2str(fignr));
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
    print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')

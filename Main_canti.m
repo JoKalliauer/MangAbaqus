@@ -8,8 +8,8 @@
  set(0, 'DefaultFigureWindowState', 'normal');
 
   % there are following predefined test cases:
-  modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
-  %modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5;
+  %modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
+  modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5; modelprops.loadfactor = 1
   %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [1 0.9008]; %LF(1)..P; %LF(end)...M
   %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [0 1]; %LF(1)..P; %LF(end)...M
   %modelprops.testcase = 'RotatedCantilever'; modelprops.loadfactor = 1;
@@ -45,7 +45,7 @@
   
   modelprops.numofelm = 1;
   
-  epsil = 0.005;  % finite difference step %epsil = 0.005;
+  epsil = 0.1;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [11,15,16]; %#ok<*NBRAK> #ok<NASGU>
   %plotfig=[15,16,44,943:945,947:954];
@@ -53,7 +53,7 @@
   %plotfig=[15,16,37,33];
   %plotfig=[35,16,916,963,919,969,902,906,917,911];%Verschiebungen
   %plotfig=[15,45,35,19,52];%EW
-  plotfig=[14,15,45,35];%EW
+  plotfig=[14,15,16,45,35];%EW
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r'; 
   main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'

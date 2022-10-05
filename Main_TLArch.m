@@ -6,14 +6,11 @@
 
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
-  %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
+  modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch3DKg'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch3D_sin'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch_Hinge';
   %modelprops.testcase = 'TL_arch3D_Hinge';
-  %modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
-  %modelprops.testcase = 'cantilever';
-  %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.164669;
   modelprops.testcase = 'Kreis_arch3D';
   
   % possible element types (be aware of 2D and 3D):
@@ -28,7 +25,7 @@
   %eltype = 'B31H' %Timoshenko 
   %modelprops.elementtype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
-  %eltype = 'B32OS'; %Timoshenko 
+  eltype = 'B32OS'; %Timoshenko 
   %eltype = 'B32OSH'; %Timoshenko 
  
   
@@ -49,13 +46,13 @@
   modelprops.numofelm = 100;
   
   
-  epsil = 0.0005;%  0.01;
+  epsil = 0.01;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [14,28,33];
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  plotfig=[14,15,30,43];
+  plotfig=[14,15,16,30,43];
   %plotfig=[15,947,949,952,955:956,953];
   %plotfig=[15,45,35,19,52];%EW
   %plotfig=[45,35,19];%EW
@@ -71,15 +68,15 @@
   
   modelprops.length=19.074;% [m] 
   [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335; modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
-  %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
+  [~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
   modelprops.forceAbaqus=0; 
-  modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
+  modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=3;
+  modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
+  main.savefigures=0; % false... no figures, true... figures, 2 for TeX
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
@@ -87,7 +84,7 @@
   %main.rstabil=0.9999999;
   main.rstabil=NaN;
   modelprops.MeterValue=1;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; 'skip'
+  main.whichEV='sqrtK_r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; 'skip';  'sqrtK_r'
   main.Normierung='R1'; % 'skip' 'R1'
   main.rho='R1'; % KtR1 R1 'skip'
   
@@ -99,7 +96,7 @@
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32','B32H'};
+eltypes={'B32'};
 %eltypes={'B32H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));

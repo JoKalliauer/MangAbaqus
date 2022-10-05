@@ -164,6 +164,7 @@ if modelprops.loadfactor==0 %&& numel(modelprops.numelFac)>1
  modelpropsNEW.numofelm=NaN;
  model=mergeModel(modelP1,modelM1);
 else
+ %%%%%%%%%%%%%%  [model] = runEigenProblem(modelprops)  %%%%%%%%%%%%%%
  [model] = runEigenProblem(modelprops);
 end
 %model.fullEV
@@ -176,7 +177,7 @@ model.lambdainput=model.lambda0;
 main.allowComplex=modelprops.allowComplex;
 for i=1:numel(model.eigenvalues)
  if numel(model.eigenvalues{i})==0
-  if modelprops.numofeigs>0
+  if modelprops.numofeigs>0 && i<numel(model.eigenvalues)
    warning('MyProgram:Empty','some eigenvalues are empty, please rerun using modelprops.forceAbaqus=true')
   end
   model.eigenvalues=model.eigenvalues(1:i-1);%delete last entry
@@ -248,6 +249,7 @@ for k3 = resEWs
  if strcmp(modelprops.whichEV,'skip')
   res=NaN;
  else
+  %%%%%%%%%%%%%%  sortEigenValuesAndGetQuantities  %%%%%%%%%%%%%%
   res(k3) = sortEigenValuesAndGetQuantities(model,sortType,[],k3,limit,lastLambda,main);  % forcedeig=k3;
   toolarge=res(k3).lambda>max(modelprops.lambda);
   if any(toolarge)
@@ -265,7 +267,7 @@ end % for k3 = resEWs
 if numel(resEWs)==0
  res=NaN;
 end
-toolarge = abs(model.lambda0)>max(abs(modelprops.lambda))+eps(1);
+toolarge = abs(model.lambda0)>max(abs(modelprops.lambda))+eps(single(1));
 if any(toolarge)
  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
  model.lambda0(toolarge)=NaN;
@@ -280,7 +282,7 @@ if any(toolarge)
  model.load(toolarge)=NaN;
  model.load0([false;toolarge])=NaN;
 end
-toolarge=model.lambda0>max(modelprops.lambda);
+toolarge=model.lambda0>max(modelprops.lambda)+eps(single(1));
 if any(toolarge)
  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
  model.lambda0(toolarge)=NaN;
@@ -341,6 +343,7 @@ if usejava('desktop')
   tooNegativ=(model.fulllambda<minLambda-eps(minLambda));
   model.fulllambda(tooNegativ)=NaN;
  end
+ %%%%%%%%%%%%%%  plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)  %%%%%%%%%%%%%%
  plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main);
 end%if usejava('desktop')
 if main.savefigures==true %&& ~strcmp(main.whichEV,'skip')

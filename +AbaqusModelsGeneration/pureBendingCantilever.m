@@ -26,7 +26,10 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode]  = pureBendingCantile
  
   MV=modelprops.MeterValue;
   
-
+ if numel(loadFactor)>1
+  warning('MyPrgm:NotImplemented','loadFactor is a vector')
+ end
+  
  filename = ['BendC',num2str(modelprops.orientate),'-',elType,'-',num2str(numofelm(1)),'-l',num2str(Linp),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 
 
