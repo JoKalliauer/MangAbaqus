@@ -152,6 +152,8 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
    xValfulllambda0Mult=1/0.57280;%/0.57280;
   elseif strcmp(model.filename(1),'c')%canti
    xlabelload='point load [N]';
+  elseif strcmp(model.filename(1),'K')%Kreis_arch3D
+   xValfulllambda0Mult=1/0.15;% rought estimate where the first complex eigenvalue gets negative
   else %everything unknown
    xlabelload='load';
    xValload=model.load(1:lengthlam-1);
@@ -2972,7 +2974,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   figure(fignr);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
-  if k3==resEWs(1) && main.colorshift==0
+  if main.colorshift==0
    grid on
   end
   xlabel(xlabelload,'Interpreter','latex');
@@ -2981,9 +2983,20 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   bbb = gca();
    title(modelfilename,'Interpreter','none')
   bbb.YAxisLocation = 'origin';
+  if strcmp(xBezug,'n')%lambda
+   xPlot=lambda(1:end)*xValfulllambda0Mult; %xValfullload0
+   xlabel('$\lambda$','Interpreter','latex');
+  elseif strcmp(xBezug,'1')
+   xPlot=lambda(1:end); %xValfullload0
+   xlabel('$\lambda gem Abaqus$','Interpreter','latex');
+  else
+   xPlot=xValload(1:end);%x=lambda(3:end)
+   xlabel(xlabelload,'Interpreter','latex');
+   xlim([1040000 1130000])
+  end
   Xlength=min(numel(xValload),numel(model.rdotKtr));
   y4=model.rdotKtr(1:Xlength);
-  plot(xValload(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   if model.savefigures==true
    dianame=strcat(modelfilename,'rdotKtr_',num2str(fignr));
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
@@ -3427,13 +3440,13 @@ fignr=947;% (43)
   Xlength=min(numel(xPlot),numel(model.rKt0r));
   y4=model.rKt0r(1:Xlength);
   plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
-  myylim=ylim;
-  if myylim(2)>10 && myylim(1)<10
-   bbb.YLim = [myylim(1),10];
-   if myylim(1)<-10
-    bbb.YLim = [-10,10];
-   end
-  end
+%   myylim=ylim;
+%   if myylim(2)>10 && myylim(1)<10
+%    bbb.YLim = [myylim(1),10];
+%    if myylim(1)<-10
+%     bbb.YLim = [-10,10];
+%    end
+%   end
   if model.savefigures==true
    dianame=strcat(modelfilename,'rKt0r_',num2str(fignr));
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))

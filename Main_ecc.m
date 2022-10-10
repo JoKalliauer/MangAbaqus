@@ -21,12 +21,12 @@ format longG
   %modelprops.testcase = 'cantilever';
   %modelprops.ecc = 0.164669;
   %modelprops.ecc=(81*sqrt(64373/403390))/800;
-  modelprops.ecc=0.5;
+  %modelprops.ecc=0.5;
   %modelprops.ecc=0.02;
   %modelprops.ecc=50; %.5
   %modelprops.ecc=.005; %.5
   %modelprops.ecc=0;
-  %[~,modelprops.ecc]=eccfromU(0.5);
+  [~,modelprops.ecc]=eccfromU(0.5);
   modelprops.testcase = 'eccenCompressionBeam'; 
   %modelprops.orientate=56;
   %modelprops.testcase = 'eccenCompressionBeam64';
@@ -57,7 +57,7 @@ format longG
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OS','B33'};
   %eltypes={'B31OS'};
-  eltypes={'B32OS'};
+  eltypes={'B32OS','B32OSH'};
   %eltypes={'B32H'};
  
   
@@ -94,6 +94,7 @@ format longG
   %plotfig=[16,35,45];
   %plotfig=[35,211:214,58]%Debug
   plotfig=[14,35];%rho
+  plotfig=[15,35,945,958,972];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
@@ -103,18 +104,19 @@ format longG
   %int
   
   modelprops.profil.tw= 8.6e-3;
-  %modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
+  modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
-  main.closall=1;
+  main.closall=0;
   main.savefigures=1;
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
   main.rsame=NaN;%0.8;
   main.rstabil=NaN;%0.99999;
-  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'
-  main.Normierung='skip'; % 'R1'; 'rCT_K0_r' 'sqrtK_r'
+  modelprops.allowComplex=true;
+  main.whichEV='NoHyb'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'
+  main.Normierung='R1'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip'
   main.rho='R1'; % KtR1 R1 'A0R1' 
   
   %modelprops.MeterValue=1; %1000mm=1m=0.001km ; 0.0101-999
@@ -155,7 +157,7 @@ Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
 %  modelprops.orientate=5.99;
 
 %epsils={.005}%0.001 for imag-Bereich
-epsils={.1}%
+epsils={.02}%
 %epsils={1}
 
 for l=1:numel(epsils)

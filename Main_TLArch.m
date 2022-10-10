@@ -25,8 +25,8 @@
   %eltype = 'B31H' %Timoshenko 
   %modelprops.elementtype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
-  eltype = 'B32OS'; %Timoshenko 
-  %eltype = 'B32OSH'; %Timoshenko 
+  %eltype = 'B32OS'; %Timoshenko Verschiebungselement
+  %eltype = 'B32OSH'; %Timoshenko hybrid
  
   
   
@@ -43,10 +43,10 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 100;
+  modelprops.numofelm = 10;
   
   
-  epsil = 0.01;%  0.01;
+  epsil = 0.002;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [14,28,33];
   %plotfig=[1:14,21,24,26,30,211];
@@ -57,6 +57,7 @@
   %plotfig=[15,45,35,19,52];%EW
   %plotfig=[45,35,19];%EW
   %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
+  plotfig=[15,35,945,958,972];
   forcedeig = []; %1; % forced eigenvector number
   
   
@@ -72,7 +73,7 @@
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=1;
+  modelprops.numofeigs=2;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
@@ -84,19 +85,19 @@
   %main.rstabil=0.9999999;
   main.rstabil=NaN;
   modelprops.MeterValue=1;
-  main.whichEV='sqrtK_r'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; 'skip';  'sqrtK_r'
-  main.Normierung='R1'; % 'skip' 'R1'
+  main.whichEV='NoHyb'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; 'skip';  'sqrtK_r'
+  main.Normierung='rCT_K0_r'; % 'skip' 'R1'
   main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;
   modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
-  main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
+  main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 
 %close all
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32'};
+eltypes={'B32','B32H'};
 %eltypes={'B32H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));

@@ -550,6 +550,8 @@ for i = 1:length(matches)
    %HybrideFreiheitsgrade=[];
   end
  end
+ 
+ 
  if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
   if isempty(modelprops.forcedeig)
    forcedeig=1;
@@ -583,6 +585,11 @@ for i = 1:length(matches)
    elseif strcmp(modelprops.Normierung,'R1')
     Nenner01=NaN;
     Nenner0=norm(rm);
+    Nenner11=NaN;
+   elseif strcmp(modelprops.Normierung,'skip')
+    warning('MyPrgm:Unexpected','Due to perfomance-reasons this code should not be called')
+    Nenner01=NaN;
+    Nenner0=NaN;
     Nenner11=NaN;
    else
     assert(0,'not implemented')

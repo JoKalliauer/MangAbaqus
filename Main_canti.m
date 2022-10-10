@@ -8,8 +8,8 @@
  set(0, 'DefaultFigureWindowState', 'normal');
 
   % there are following predefined test cases:
-  %modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
-  modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5; modelprops.loadfactor = 1
+  modelprops.testcase = 'cantilever'; modelprops.loadfactor = 1;% modelprops.loadfactor = 0.7535;
+  %modelprops.testcase = 'pureBendingCantilever'; modelprops.orientate=5; modelprops.loadfactor = 1
   %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [1 0.9008]; %LF(1)..P; %LF(end)...M
   %modelprops.testcase = 'mixedCantilever'; modelprops.loadfactor = [0 1]; %LF(1)..P; %LF(end)...M
   %modelprops.testcase = 'RotatedCantilever'; modelprops.loadfactor = 1;
@@ -54,8 +54,9 @@
   %plotfig=[35,16,916,963,919,969,902,906,917,911];%Verschiebungen
   %plotfig=[15,45,35,19,52];%EW
   plotfig=[14,15,16,45,35];%EW
+  plotfig=[15,35,945,958,972];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r'; 
+  main.whichEV='NoHyb'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r'; 
   main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'
   main.rho='R1'; % KtR1 R1; 'A0R1'
  
@@ -72,7 +73,7 @@
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %default: false
-  modelprops.forcerun=0; %default=true
+  modelprops.forcerun=1; %default=true
   modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   main.closall=0;
@@ -83,6 +84,8 @@
   main.colorshift=0;
   
   modelprops.sigma=0;
+  modelprops.followsigma=true;
+  modelprops.sortJKeigval=-1; %1..closest to zero, -1 ..most negative one
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
   main.flipAxis=false;
