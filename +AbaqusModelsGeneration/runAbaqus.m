@@ -126,12 +126,24 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
   %return
  end %if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
 
- cd ~/ownCloud/Post/MangAbaqus/ %cd ..
+ if isunix %linux-PC
+   cd ~/ownCloud/Post/MangAbaqus/ %cd ..
+ elseif ispc %windows
+   cd 'C:\Users\jokal\OneDrive\Dokumente\GitHub\MangAbaqus\' %cd ..
+   %cd '%USERPROFILE%\Documents\MangAbaqus\' %cd ..
+   %warning('MyPrgm:OS','Please specify the location, this must be changed to the correct folder')
+   error('MyPrgm:OS','Please specify the location, this must be changed to the correct folder')
+ elseif ismac %Mac-PC
+     warning('MyProgram:OS','not tested on Mac-pc')
+ else
+     warning('MyProgram:OS','OS unknown')
+ end
  
  if ~exist([AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
   %warning('MyProgramm:Missing','_STIF*.mtx missing')
   if ~exist([AbaqusRunsFolder,filename,'_STIF7.mtx'],'file')
    AbaqusRunsFolder %#ok<NOPRT>
+   %warning('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true or switch on VPN',AbaqusRunsFolder)
    error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true or switch on VPN',AbaqusRunsFolder)
    %return
   else

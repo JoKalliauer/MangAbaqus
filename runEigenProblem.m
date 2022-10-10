@@ -32,8 +32,19 @@ function [model] = runEigenProblem(modelprops)
  end
  if strcmp(modelprops.testcase,'pureBendingBeamMalendowski')
   NotSyncedFolder='./';
+  warning('MyProgram:outdated','pureBendingBeamMalendowski should only be used for historical reasons')
  else
-  NotSyncedFolder='~/Abaqus/MangAbaqus/';% NotSyncedFolder='./' 
+   if isunix %linux-pC
+    NotSyncedFolder='~/Abaqus/MangAbaqus/';% NotSyncedFolder='./' 
+   elseif ispc  %windows
+     warning('MyProgram:OS','This program is written for Linux, some features might not work on Windows')
+     NotSyncedFolder='C:\Data\Abaqus\MangAbaqus\';% NotSyncedFolder='./'
+     %NotSyncedFolder='%USERPROFILE%/Abaqus/MangAbaqus/';% NotSyncedFolder='./'
+   elseif ismac %Mac-PC
+     warning('MyProgram:OS','not tested on Mac-pc')
+   else
+     warning('MyProgram:OS','OS unknown')
+   end
  end
 
  if sum(strcmp(fieldnames(modelprops), 'followsigma')) == 0
@@ -94,8 +105,11 @@ function [model] = runEigenProblem(modelprops)
    mkdir(AbaqusRunsFolder);
   end
   if ispc
-   warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
-   return
+   warning('MyProgram:OS','AbaqusRunsFolder does not exist, try creating it on at %s',AbaqusRunsFolder)
+   mkdir(AbaqusRunsFolder);
+   warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder did not exist, this program was written for Linux')
+   %warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
+   %return
   end
  end
  model = selectModel(modelprops,AbaqusRunsFolder);
