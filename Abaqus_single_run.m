@@ -350,5 +350,10 @@ if main.savefigures==true %&& ~strcmp(main.whichEV,'skip')
  printresMulti(res,model,plotfig,[],[],resEWs,main.whichEV)
 end
 disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),'.mat']);
-beep
+
+  %sound when finished (easter egg)
+  beep
+  load handel y
+  sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
+
 end
