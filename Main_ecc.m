@@ -57,7 +57,7 @@ format longG
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OS','B33'};
   %eltypes={'B31OS'};
-  eltypes={'B32OS','B32OSH'};
+  eltypes={'B32OSH'};
   %eltypes={'B32H'};
  
   

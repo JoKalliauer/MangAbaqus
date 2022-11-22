@@ -64,7 +64,7 @@
   %plotfig=[2,14,30,35,42,47,48,50:51,53];%EV-Normierung
   %plotfig=35;
   %plotfig=14;
-  plotfig=[945,958,972];
+  plotfig=[15,35,945,958,972];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   

@@ -52,7 +52,7 @@
   %plotfig=[1:14,21,24,26,30,211];
   %plotfig=[2,7,14,21,26,211,30,34];
   %plotfig=[14,15,16,37,38,900,211];
-  plotfig=[14,15,16,30,43];
+  %plotfig=[14,15,16,30,43];
   %plotfig=[15,947,949,952,955:956,953];
   %plotfig=[15,45,35,19,52];%EW
   %plotfig=[45,35,19];%EW
@@ -69,7 +69,7 @@
   
   modelprops.length=19.074;% [m] 
   [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335; modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
-  [~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
+  %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;

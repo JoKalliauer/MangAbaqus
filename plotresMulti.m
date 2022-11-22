@@ -3844,9 +3844,11 @@ fignr=947;% (43)
    grid on
    grid minor
   end
+  yMult=1;
   if strcmp(xBezug,'n')%lambda
    xPlot=lambda(1:end)*xValfulllambda0Mult; %xValfullload0
    xlabel('$\lambda$','Interpreter','latex');
+   yMult=1/xValfulllambda0Mult;
   elseif strcmp(xBezug,'1')
    xPlot=lambda(1:end); %xValfullload0
    xlabel('$\lambda gem Abaqus$','Interpreter','latex');
@@ -3867,7 +3869,7 @@ fignr=947;% (43)
   %xPlot=xValload;
   Xlength=min(numel(xPlot),numel(model.rKt0r));
   y4=model.rdotKtr(1:Xlength)./model.rKt0r(1:Xlength);
-  plot(xPlot(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:Xlength),y4*yMult,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   if model.savefigures==true
    dianame=strcat(modelfilename,'rdotKtr_p_rKt0r_',num2str(fignr));
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
