@@ -105,7 +105,7 @@ format longG
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
+  modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
   main.closall=0;
   main.savefigures=1;
@@ -145,7 +145,7 @@ numofelms={2};
 %Exz={0.02,0.05,.1,.2,.5,1,2,5};
 %Exz={0.1,0.001,0.01,0.1,1,10,.1};
 %Exz={0.05};
-Exz={modelprops.ecc};modelprops.numofeigs=inf;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=80;%min 7 EV
 %Exz={.005};modelprops.numofeigs=6;%min 6 EV
 %Exz={.5};;%min 17EV
 %Exz={0.005,.01,.02,modelprops.ecc,.1,.2,.5};modelprops.numofeigs=17;

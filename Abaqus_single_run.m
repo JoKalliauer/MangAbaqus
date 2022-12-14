@@ -47,8 +47,8 @@ modelprops.numofelm=uint16(modelprops.numofelm);
 if sum(strcmp(fieldnames(modelprops), 'numofeigs')) == 0
  modelprops.numofeigs=1; %setting default value to 1
 end
-if modelprops.numofeigs>14
- warning('MyProgramm:Input','For higher precission reduce the number of requested eigenvalues')
+if modelprops.numofeigs>56%14
+ warning('MyProgramm:Input','For higher precission reduce the number of requested eigenvalues below 14')
  if modelprops.numofeigs>2500
   modelprops.numofeigs=min(2500,20*(modelprops.numofelm+2));
   warning('MyProgramm:Input','The eigenvalues are reduced to %d, otherwise it will need more than 30GB RAM',modelprops.numofeigs)
