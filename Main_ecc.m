@@ -57,7 +57,7 @@ format longG
   %eltypes={'B33','B33H','B31','B31H','B31OS','B31OSH','B32','B32H','B32OS','B32OSH'};
   %eltypes={'B32OS','B32OSH','B31OS','B33'};
   %eltypes={'B31OS'};
-  eltypes={'B32OSH'};
+  eltypes={'B32OS'};
   %eltypes={'B32H'};
  
   
@@ -145,7 +145,7 @@ numofelms={2};
 %Exz={0.02,0.05,.1,.2,.5,1,2,5};
 %Exz={0.1,0.001,0.01,0.1,1,10,.1};
 %Exz={0.05};
-Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=inf;%min 7 EV
 %Exz={.005};modelprops.numofeigs=6;%min 6 EV
 %Exz={.5};;%min 17EV
 %Exz={0.005,.01,.02,modelprops.ecc,.1,.2,.5};modelprops.numofeigs=17;
@@ -162,7 +162,7 @@ epsils={.02}%
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max([1.5,20*modelprops.epsilon])
+ modelprops.lambda = 0:modelprops.epsilon:max([2,20*modelprops.epsilon])
  %modelprops.epsilon=0.0005;modelprops.lambda = 1.0:modelprops.epsilon:max([1.1,20*modelprops.epsilon])
  for k=1:numel(Exz)
   for j=1:numel(numofelms)
