@@ -9,14 +9,8 @@ r0  = RS(:,3);%/norm(RS(:,3));
 rp1 = RS(:,4);%/norm(RS(:,4));
 rp2 = RS(:,5);%/norm(RS(:,5)); 
 
-%r0check = (r11 + 3*r01)/(2*(0.5*(ds01+ds11))^2 + 4);
-
-%    if nargin<3
-%        DT = 0.25*(dksi11 + dksi12 + dksi13 + dksi14);
-%    end
 ortCond8=min([dot(rm2,r0),dot(rm1,r0),dot(rp1,r0),dot(rp2,r0)]);
-%assert(ortCond8>.99,'the r vectors are to different')
-% <<<<<<< HEAD
+
 NaNcheck=any(isnan(RS(:,2:4)));%any(isnan(RS(:,2:7)));
 if ~isfield(main,'rsame')
  main.rsame=0.8;
@@ -42,18 +36,16 @@ if ortCond8<main.rsame && any(NaNcheck) && main.check==true
  if dot(rp2,r0)<main.rsame
   rp2=NaN*r0;
   %rp1=NaN*r0;
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  end
  r0=NaN*r0;
 end
 
-% <<<<<<< HEAD
+
 if ~isfield(main,'check')
  main.check=false %#ok<NOPRT>
 end
 if (~any(isnan(r0)) && ~any(isnan(rm1))) || main.check==false
-% =======
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+
  % Central difference
  v = (rp1 - rm1)/(2*DT); %(10)
  a = (rm1 - 2*r0 + rp1)/(DT)^2; %(11)
@@ -227,7 +219,7 @@ RxB=dot(r0,B);
 %rhodot=-dsdksi*tau*RxB;%-\dot{s}\,\tau\,(\mathrm{r}\cdot\mathrm{b})
 drhopds=-tau*RxB;
 if exist('EVatStability','var') && strcmp(main.whichEV,'bungle')
- rconst=(EVatStability*r0);
+ rconst=dot(EVatStability,r0);%(EVatStability*r0);
 else
  rconst=r0atl0(:)'*r0;
 end

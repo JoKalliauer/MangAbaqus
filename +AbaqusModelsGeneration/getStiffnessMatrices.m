@@ -31,6 +31,7 @@ if ~exist([model.AbaqusRunsFolder,filename,'_STIF9.mtx'],'file')
   warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')
  end
 end
+oldpwd=pwd;
 cd(model.AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/Post/MangAbaqus/AbaqusRuns %cd AbaqusRuns
 lenFN = length(filename);
 StifFilesMatlabVersion = ls([filename,'_STIF*.mtx']);
@@ -42,7 +43,7 @@ num = zeros(length(beg_),1);
 for i = 1:length(beg_)
  num(i) = str2double(StifFilesMatlabVersionTranspose((beg_(i)+lenFN+5):(end_(i)-1)));
 end
-cd ~/ownCloud/Post/MangAbaqus/ %cd ..
+cd(oldpwd);%cd ~/ownCloud/Post/MangAbaqus/ %cd ..
 
 num = sort(num);
 

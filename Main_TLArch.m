@@ -43,10 +43,10 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 20;
+  modelprops.numofelm = 2;
   
   
-  epsil = 0.002;%  0.01;
+  epsil = 0.005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [14,28,33];
   %plotfig=[1:14,21,24,26,30,211];
@@ -69,6 +69,7 @@
   %
   
   modelprops.length=19.074;% [m] 
+  modelprops.sectiondata_material_E = 210e9; %[N/m^2]
   [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335; modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
   %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
   modelprops.forceAbaqus=0; 
@@ -79,7 +80,7 @@
   %main.closall=true;
   main.closall=false;
   main.savefigures=0; % false... no figures, true... figures, 2 for TeX
-  main.check=1;
+  main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
   %main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
@@ -87,7 +88,7 @@
   main.rstabil=NaN;
   modelprops.MeterValue=1;
   main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r'
-  main.Normierung='R1'; % 'skip' 'R1' 'rCT_K0_r' 'k11'
+  main.Normierung='k11'; % 'skip' 'R1' 'rCT_K0_r' 'k11'
   main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;

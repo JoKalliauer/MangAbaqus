@@ -560,6 +560,9 @@ for i = 1:f
  
  
  if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
+  if ~isfield(modelprops,'forcedeig')
+   modelprops.forcedeig=1;
+  end
   if isempty(modelprops.forcedeig)
    forcedeig=1;
   else
@@ -592,7 +595,7 @@ for i = 1:f
     Nenner01=NaN;
     Nenner0=norm(Kt0_0*rm);
     Nenner11=NaN;
-   elseif strcmp(modelprops.Normierung,'k11')
+   elseif strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.whichEV,'k11')
     Nenner01=sqrt(dot(r01,diag(Kt01).*r01));
     Nenner0=sqrt(dot(rm,diag(KT).*rm));
     Nenner11=sqrt(dot(r11',diag(Kt11).*r11));
@@ -600,7 +603,7 @@ for i = 1:f
     Nenner01=NaN;
     Nenner0=norm(rm);
     Nenner11=NaN;
-   elseif strcmp(modelprops.Normierung,'skip') || strcmp(modelprops.whichEV,'k11')
+   elseif strcmp(modelprops.Normierung,'skip')
     warning('MyPrgm:Unexpected','Due to perfomance-reasons this code should not be called')
     Nenner01=NaN;
     Nenner0=NaN;
@@ -645,7 +648,7 @@ for i = 1:f
  elseif strcmp(modelprops.whichEV,'sqrtK_r') || strcmp(modelprops.whichEV,'sqrtK0_r')
   %everythings fine
  else
-  warning('MyPrgm:NotImplemented','modelprops.whichEV=%s unkonwn?',modelprops.whichEV)
+  warning('MyPrgm:NotImplemented','modelprops.whichEV=%s unknown?',modelprops.whichEV)
  end%if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
  
  

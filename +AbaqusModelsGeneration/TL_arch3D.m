@@ -20,9 +20,16 @@ end
 elmtype=eltype;
 
  MV=modelprops.MeterValue;
+ 
+ if isfield(modelprops,'sectiondata_material_E')
+  Emodul=modelprops.sectiondata_material_E;
+  filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-E',num2str(Emodul)];
+ else
+  Emodul=2e+11/MV;
+  % pure SI units: Newtons, meters, Pascals, etc.
+  filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
+ end
 
-% pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV)];
 
 %% RECT
  h = 20e-2*MV;
@@ -32,7 +39,8 @@ filename = ['TL_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFact
  L = 600e-2*MV; % m
  H = 240e-2*MV; % m
  
- Emodul=2e+11/MV;
+
+ 
 
 %% Load
  p = -83.3*10^3*10^2*loadFactor; % [N/m ?]ca
