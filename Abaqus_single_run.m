@@ -111,8 +111,8 @@ end
 if sum(strcmp(fieldnames(main), 'whichEV')) == 0
  main.whichEV='split';
 end
- modelprops.whichEV=main.whichEV;
- if sum(strcmp(fieldnames(main), 'Normierung')) == 0
+modelprops.whichEV=main.whichEV;
+if sum(strcmp(fieldnames(main), 'Normierung')) == 0
  main.Normierung='rCT_K0_r';
 end
 modelprops.Normierung=main.Normierung;
@@ -354,6 +354,6 @@ disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),
   %sound when finished (easter egg)
   beep
   load handel y
-  sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
+  %sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
 
 end

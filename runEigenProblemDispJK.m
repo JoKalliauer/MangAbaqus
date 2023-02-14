@@ -79,6 +79,13 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
     dksiMat=Displ{matches(i)+1}-Displ{matches(i)};
     dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)));
     d2ksi(i)=NaN;
+   elseif numel(model.lambda)<matches(i)+1
+    warning('MyPrgm:Inputproblem','something went wrong try (i) reducing modelprops.numofeigs ;(ii) reducing modelprops.lambda (iii) modelprops.forcerun=true')
+    %DisplMatip1=NaN;%*DisplMatip1;
+    DisplAbs(i+1)=NaN;%*DisplAbs(i);
+    dksiMat=NaN*dksiMat;
+    dl=NaN;
+    d2ksi(i)=NaN;
    elseif matches(i)==matches(end)
     dksiMat=(Displ{matches(i)}-Displ{matches(i)-1});
     dl=(model.lambda(matches(i))-model.lambda(matches(i)-1));
@@ -87,12 +94,12 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
     DisplMatip1=Displ{matches(i+1)};
     DisplAbs(i+1)=mean(sqrt(sum(DisplMatip1.*DisplMatip1,1))); % Mittelwert von [sqrt(x²+y²+z²) für jeden Knoten]
     dksiMat=(Displ{matches(i)}-Displ{matches(i)-1})/2;
-    if numel(model.lambda)<matches(i)+1
-     warning('MyPrgm:Inputproblem','something went wrong try (i) reducing modelprops.numofeigs ;(ii) reducing modelprops.lambda (iii) modelprops.forcerun=true')
-     dl=NaN;
-    else
+    %if numel(model.lambda)<matches(i)+1
+    % warning('MyPrgm:Inputproblem','something went wrong try (i) reducing modelprops.numofeigs ;(ii) reducing modelprops.lambda (iii) modelprops.forcerun=true')
+    % dl=NaN;
+    %else
      dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)-1))/2;
-    end
+    %end
     d2ksi(i)=(DisplAbs(i+1)-2*DisplAbs(i)+DisplAbs(i-1))/(dl*dl);
    end
    dksi11vec = sqrt(sum(dksiMat.*dksiMat,1)); % sqrt(x²+y²+z²) für jeden Knoten

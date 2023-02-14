@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements,load,dofpNode]  = eccenCompressionBeam(L0,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
+function [filename,lambda,BC,Nodes,Elements,load,dofpNode,h]  = eccenCompressionBeam(L0,numofelm,lambda,loadFactor,elType,ecc,modelprops,AbaqusRunsFolder)
  if nargin<1
   L0 = 5.0;
  end

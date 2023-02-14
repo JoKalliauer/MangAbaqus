@@ -31,6 +31,7 @@ StiffMtxs = cell(lenLam0,3);
 DetKtx = NaN(lenLam0,1);
 %load0 = NaN(lenLam0,1);
 eigvecDRH = cell(lenLam0,1);% DRH...Displacement,Rotation,Hybrid(splitted)
+eigvecH2 = cell(lenLam0,1);% DRH...Displacement,Rotation,Hybrid(splitted)
 
 
 
@@ -139,8 +140,10 @@ end
 
 R = NaN(7,size(r0t0,1),size(r0t0,2)); % dl x DoF x NrEigs
 R_DRsize=[5,model.dofpNode,size(model.Nodes,1),size(r0t0,2)]; % dl x DoFpNode x Nodes x NrEigs
-R_DRHsize=R_DRsize+[0 -numel(model.RestrictedDOFs) model.inDOF(2)-model.inDOF(1)+1 0]; % dl x DoFpNode(reducedRestricted) x Nodes(inkl.Hyb) x NrEigs
-R_DRH = NaN(R_DRHsize); % dl x DoFpNode x Nodes x NrEigs
+HNodes=model.inDOF(2)-model.inDOF(1)+1;
+%R_Hsize=[5,3,HNodes,size(r0t0,2)];
+R_DRHsize=R_DRsize+[0 -numel(model.RestrictedDOFs) HNodes 0]; % dl x DoFpNode(reducedRestricted) x Nodes(inkl.Hyb) x NrEigs
+R_DRH = NaN(R_DRHsize); % increments x DoFpNode x Nodes x NrEigs
 R_DRHsizeIn=R_DRHsize(2:4);%+[0 inNr 0]; %DoFpNode x Nodes(inkl.Hyb) x NrEigs
 ReducedHybridDofa=model.inDOF(3)+1:R_DRHsizeIn(1);
 ReducedHybridDofb=model.inDOF(4)+1:R_DRHsizeIn(1);
@@ -163,8 +166,9 @@ end
 if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
 
 taktuell=5;
+f=length(matches);
 
-for i = 1:length(matches)
+for i = 1:f
  if usejava('jvm'); waitbar(i/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
  %disp('Lambda:');
  %disp(lambda(matches(i)));
@@ -474,6 +478,9 @@ for i = 1:length(matches)
  %imagValues(i)=imagValuesi;
  eigvec{i} = (R);%single precission might be dangerous for postprocessing
  eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
+ %eigvecDR{i}=R_DRH(:,:,1:R_DRsize(3),:);% DRH...[Displacement,Rotation,Hybrid](splitted)
+ eigvecHi=R_DRH(:,1:3,R_DRsize(3)+1:end,:);% increments x DoFpNode x Nodes x NrEigs
+ eigvecH2{i}=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
  StiffMtxs{i,1} = KT;
  StiffMtxs{i,2} = Ktprim0;
  if modelprops.numofelm<=20 % skip DetKt for large, because it is slow
@@ -536,7 +543,7 @@ for i = 1:length(matches)
   end
  else
   DetKtx(i)=NaN;
- end
+ end % if modelprops.numofelm<=20
 
  %% Normierung
  if strcmp(modelprops.whichEV,'NoHyb')
@@ -549,7 +556,7 @@ for i = 1:length(matches)
    modelprops.whichEV='bungle'; % for nonhybrid elements nothing to change
    %HybrideFreiheitsgrade=[];
   end
- end
+ end % if strcmp(modelprops.whichEV,'NoHyb')
  
  
  if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
@@ -563,7 +570,10 @@ for i = 1:length(matches)
    r01=r01t(:,forcedeig);
    r11=r11t(:,forcedeig);
 
-   if strcmp(modelprops.whichEV,'bungle_rKr')
+   if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rCT_K_r')
+    if strcmp(modelprops.whichEV,'bungle_rKr')
+     warning('MyProgram:UnclearInput','please use bungle_r.K0r or bungle_rTK0r instead of bungle_rK0r')
+    end
     Nenner01=sqrt(r01'*Kt01*r01);
     Nenner0=sqrt(rm'*KT*rm);
     Nenner11=sqrt(r11'*Kt11*r11);
@@ -582,11 +592,15 @@ for i = 1:length(matches)
     Nenner01=NaN;
     Nenner0=norm(Kt0_0*rm);
     Nenner11=NaN;
+   elseif strcmp(modelprops.Normierung,'k11')
+    Nenner01=sqrt(dot(r01,diag(Kt01).*r01));
+    Nenner0=sqrt(dot(rm,diag(KT).*rm));
+    Nenner11=sqrt(dot(r11',diag(Kt11).*r11));
    elseif strcmp(modelprops.Normierung,'R1')
     Nenner01=NaN;
     Nenner0=norm(rm);
     Nenner11=NaN;
-   elseif strcmp(modelprops.Normierung,'skip')
+   elseif strcmp(modelprops.Normierung,'skip') || strcmp(modelprops.whichEV,'k11')
     warning('MyPrgm:Unexpected','Due to perfomance-reasons this code should not be called')
     Nenner01=NaN;
     Nenner0=NaN;
@@ -595,6 +609,7 @@ for i = 1:length(matches)
     assert(0,'not implemented')
    end
 
+   assert(numel(Nenner11)==1,'dimension wrong');
    r01 = r01/Nenner01;
    rm = rm/Nenner0;
    r11 = r11/Nenner11;
@@ -631,7 +646,9 @@ for i = 1:length(matches)
   %everythings fine
  else
   warning('MyPrgm:NotImplemented','modelprops.whichEV=%s unkonwn?',modelprops.whichEV)
- end
+ end%if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
+ 
+ 
  for j=1:numofeigs
   locNorm=strcmp(modelprops.Normierung,'rNCT_K0_r') ||  strcmp(modelprops.Normierung,'rCT_K0_r');
   if locNorm || strcmp(modelprops.whichEV,'bungle')|| strcmp(modelprops.whichEV,'split') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'sqrtK_r') || strcmp(modelprops.whichEV,'NoHyb')
@@ -654,6 +671,8 @@ for i = 1:length(matches)
     elseif strcmp(modelprops.Normierung,'R1') &&  ( strcmp(modelprops.whichEV,'bungle') ||  strcmp(modelprops.whichEV,'NoHyb') )
      %warning('MyPrgm:unused','this code should be unused, please check if modelprops.whichEV=%s is correct',modelprops.whichEV)
      Nenner0=norm(rmj);
+    elseif strcmp(modelprops.Normierung,'k11')
+     Nenner0=sqrt(dot(rm,diag(KT).*rm));
     elseif strcmp(modelprops.Normierung,'skip')
      warning('MyPrgm:runEigen:Inconsistent:Input','Normierung is set to skip, but whichEV is not skip')
      warning('off','MyPrgm:runEigen:Inconsistent:Input')
@@ -743,12 +762,9 @@ for i = 1:length(matches)
   elseif strcmp(modelprops.whichEV,'sqrtK0_r')
    %everything is fine, no warning, it is just implemented in sortEigenValuesAndGetQuantities and not here.
   elseif ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
-   warning('MyPrgm:NotImplemented','if modelprops.whichEV=%s is implented in sortEigenValuesAndGetQuantities then please modify the code here',modelprops.whichEV)
-%    if strcmp(modelprops.whichEV,'bungle_rK0r') && abs(rKt0rijtmp-1)>1
-%     error('myprgm:Mistake','rK0r not 1? (rK0r=%f)',abs(rKt0rijtmp-1))
-%    end
+   %warning('MyPrgm:NotImplemented','if modelprops.whichEV=%s is implented in sortEigenValuesAndGetQuantities then please modify the code here',modelprops.whichEV)
   end
- end
+ end %j=1:numofeigs
  
  if ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
   if ~exist('rmj','var')
@@ -760,6 +776,11 @@ for i = 1:length(matches)
   eigvec1{i} = rmj;
  end
 end%for i = 1:length(matches)
+for i=f+1:min(f+3,lenLam0)
+StiffMtxs{i}=StiffMtxs{i-1}*NaN;
+end
+
+
 if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
 
 % model=M1;
@@ -807,8 +828,12 @@ if ~strcmp(modelprops.whichEV,'skip')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace
  elseif strcmp(modelprops.whichEV,'sqrtK_r')
   model.stiffnessMatrices = StiffMtxs;% very much diskspace
- elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split')  || strcmp(modelprops.whichEV,'k11')
-  model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted)%much diskspace
+ elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split')
+  model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
+ elseif strcmp(modelprops.whichEV,'k11') || strcmp(modelprops.Normierung,'k11')
+  model.stiffnessMatrices = StiffMtxs(:,1);% very much diskspace
+  %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
+  model.eigvecH2=eigvecH2;%only Hybrid-DOFs^2
  end
 end
 

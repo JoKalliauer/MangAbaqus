@@ -1,3 +1,9 @@
 AbaqusRuns
 AnalysisResults
 Output
+*.asv
+*.mat
+*.m~
+*.mtx 
+*.png
+*.eps

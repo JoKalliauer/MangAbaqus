@@ -8,6 +8,16 @@ if nargin<1
  forcedeig = [];
 end
 
+
+ if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
+  StiffMtxs=model.stiffnessMatrices;% very much diskspace
+  %eigvecDRH=cell2mat(model.eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
+  %eigvecDRHi=eigvecDRH(:,:,:,forcedeig);
+  %[a, b, c, d]=size(eigvecDRHi);
+  %assert(a==5 && 6<=b && b<=7 && 2<=c && d==1,'dimension mistake')
+  %eigvecH2=model.eigvecH2;
+ end
+
 epsilon = model.lambda(2) - model.lambda(1);
 if ~exist('limit','var')
  limit.new=true;
@@ -489,25 +499,44 @@ for i = 1:f %f = length(eigval)
    end
   end
  end
- r02 = eigvec{i}(evmiddle-2,:,:,is0(isi));
+ NrEw=is0(isi);
+ r02 = eigvec{i}(evmiddle-2,:,:,NrEw);
  r02 = reshape(r02,numel(r02),1);
  r02 = r02/norm(r02);
- r01 = eigvec{i}(evmiddle-1,:,:,is0(isi)); r01 = reshape(r01,numel(r01),1);
+ r01 = eigvec{i}(evmiddle-1,:,:,NrEw); r01 = reshape(r01,numel(r01),1);
  r01 = r01/norm(r01);
  if r02'*r01<0;  r01 = -r01;  end
- rm = eigvec{i}(evmiddle,:,:,is0(isi));
+ rm = eigvec{i}(evmiddle,:,:,NrEw);
  rm = reshape(rm,numel(rm),1);
  if strcmp(main.Normierung,'R1')
   rm = rm/norm(rm);
  end
- eigvalSort=eigvalTMP{i}(evmiddle,is0(isi));
+ eigvalSort=eigvalTMP{i}(evmiddle,NrEw);
  if r01'*rm<0;  rm = -rm;  end
- r11 = eigvec{i}(evmiddle+1,:,:,is0(isi)); r11 = reshape(r11,numel(r11),1);
+ r11 = eigvec{i}(evmiddle+1,:,:,NrEw); r11 = reshape(r11,numel(r11),1);
  r11 = r11/norm(r11);
  if rm'*r11<0;  r11 = -r11;  end
- r12 = eigvec{i}(evmiddle+2,:,:,is0(isi)); r12 = reshape(r12,numel(r12),1);
+ r12 = eigvec{i}(evmiddle+2,:,:,NrEw); r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
+ if strcmp(main.Normierung,'k11'); eigvecH2i=model.eigvecH2{i}; end
+ if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
+  %rkDRH=squeeze(model.eigvecDRH{i}(1,:,:,NrEw));
+  %rlDRH=squeeze(model.eigvecDRH{i}(2,:,:,NrEw));
+  %rmDRH=squeeze(model.eigvecDRH{i}(3,:,:,NrEw)); % DoFpNode x Nodes
+  %rnDRH=squeeze(model.eigvecDRH{i}(4,:,:,NrEw));
+  %roDRH=squeeze(model.eigvecDRH{i}(5,:,:,NrEw));
+  Kt02=StiffMtxs{max(i-2,1)};
+  Kt01=StiffMtxs{max(i-1,1)};
+  KT  =StiffMtxs{i};
+  Kt11=StiffMtxs{i+1};
+  if numel(StiffMtxs)<i+2
+   Kt12=NaN*Kt11;
+  else
+   Kt12=StiffMtxs{i+2};
+  end
+ end
+ 
  if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'rK0r')
   Nenner02=sqrt(r02'*Kt0_0*r02);
   Nenner01=sqrt(r01'*Kt0_0*r01);
@@ -516,34 +545,40 @@ for i = 1:f %f = length(eigval)
   Nenner12=sqrt(r12'*Kt0_0*r12);
  elseif strcmp(main.whichEV,'bungle_rKr')
   assert(0,'not implemented')
-   Nenner01=sqrt(r01'*Kt01*r01);
-   Nenner0=sqrt(rm'*KT*rm);
-   Nenner11=sqrt(r11'*Kt11*r11);
+  Nenner01=sqrt(r01'*Kt01*r01);
+  Nenner0=sqrt(rm'*KT*rm);
+  Nenner11=sqrt(r11'*Kt11*r11);
  elseif strcmp(main.whichEV,'sqrtK_r') && strcmp(main.Normierung,'R1')
   iV=[i-2, i-1, i, i+1, i+2];
   iV(iV<1)=1;
   iV(iV>f)=f;
-     r02=sqrt(full(diag(model.stiffnessMatrices{iV(1),1}))).*r02;
-     r01=sqrt(full(diag(model.stiffnessMatrices{iV(2),1}))).*r01;
-     rm=sqrt(full(diag(model.stiffnessMatrices{iV(3),1}))).*rm;
-     r11=sqrt(full(diag(model.stiffnessMatrices{iV(4),1}))).*r11;
-     r12=sqrt(full(diag(model.stiffnessMatrices{iV(5),1}))).*r12;
+  r02=sqrt(full(diag(model.stiffnessMatrices{iV(1),1}))).*r02;
+  r01=sqrt(full(diag(model.stiffnessMatrices{iV(2),1}))).*r01;
+  rm=sqrt(full(diag(model.stiffnessMatrices{iV(3),1}))).*rm;
+  r11=sqrt(full(diag(model.stiffnessMatrices{iV(4),1}))).*r11;
+  r12=sqrt(full(diag(model.stiffnessMatrices{iV(5),1}))).*r12;
   Nenner02=norm(r02);
   Nenner01=norm(r01);
   Nenner0=norm(rm);
   Nenner11=norm(r11);
   Nenner12=norm(r12);
  elseif strcmp(main.whichEV,'sqrtK0_r') && strcmp(main.Normierung,'R1')
-     r02=sqrtKt0ii.*r02;
-     r01=sqrtKt0ii.*r01;
-     rm=sqrtKt0ii.*rm;
-     r11=sqrtKt0ii.*r11;
-     r12=sqrtKt0ii.*r12;
+  r02=sqrtKt0ii.*r02;
+  r01=sqrtKt0ii.*r01;
+  rm=sqrtKt0ii.*rm;
+  r11=sqrtKt0ii.*r11;
+  r12=sqrtKt0ii.*r12;
   Nenner02=norm(r02);
   Nenner01=norm(r01);
   Nenner0=norm(rm);
   Nenner11=norm(r11);
   Nenner12=norm(r12);
+ elseif strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
+  Nenner02=sqrt(dot(r02,diag(Kt02).*r02)+eigvecH2i(1,NrEw));
+  Nenner01=sqrt(dot(r01,diag(Kt01).*r01)+eigvecH2i(2,NrEw));
+  Nenner0 =sqrt(dot(rm ,diag(KT  ).*rm )+eigvecH2i(3,NrEw));
+  Nenner11=sqrt(dot(r11,diag(Kt11).*r11)+eigvecH2i(4,NrEw));
+  Nenner12=sqrt(dot(r12,diag(Kt12).*r12)+eigvecH2i(5,NrEw));
  elseif strcmp(main.Normierung,'R1')
   Nenner02=norm(r02);
   Nenner01=norm(r01);
@@ -567,6 +602,7 @@ for i = 1:f %f = length(eigval)
  else
   error('MyPrgm:NoTested','not tested/Implemented')
  end
+ assert(numel(Nenner02)==1,'Matrix dimensions must agree.')
  r02 = r02/Nenner02;
  r01 = r01/Nenner01;
  rm = rm/Nenner0;

@@ -83,7 +83,7 @@ end
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.cantilever(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam'
      numofelm=numofelm(1);
-     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.eccenCompressionBeam(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode,model.sectiondata.houtside] = AbaqusModelsGeneration.eccenCompressionBeam(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam64'
      numofelm=numofelm(1);
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.eccenCompressionBeam64(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);

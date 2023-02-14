@@ -121,6 +121,7 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
    xValload=model.load(1:lengthlam-1);%/100000;
    xValload0=model.load0;%/100000;
    %cfig('Cxticks')=0:10:70;
+   xValfulllambda0Mult=1/.333302;
   elseif strcmp(model.filename(2),'ec')%exzentrischer Druck alte Reflast
    xlabelload='normal force $N$ [N]';
    xValload=model.load(1:lengthlam-1);%/1000;

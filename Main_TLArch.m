@@ -11,7 +11,7 @@
   %modelprops.testcase = 'TL_arch3D_sin'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch_Hinge';
   %modelprops.testcase = 'TL_arch3D_Hinge';
-  modelprops.testcase = 'Kreis_arch3D';
+  %modelprops.testcase = 'Kreis_arch3D';
   
   % possible element types (be aware of 2D and 3D):
   %2D:
@@ -43,7 +43,7 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 10;
+  modelprops.numofelm = 20;
   
   
   epsil = 0.002;%  0.01;
@@ -57,7 +57,8 @@
   %plotfig=[15,45,35,19,52];%EW
   %plotfig=[45,35,19];%EW
   %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
-  plotfig=[15,35,945,958,972];
+  %plotfig=[15,35,945,958,972];
+  plotfig=[14,35];
   forcedeig = []; %1; % forced eigenvector number
   
   
@@ -73,31 +74,31 @@
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=2;
+  modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
   main.savefigures=0; % false... no figures, true... figures, 2 for TeX
-  main.check=0;
+  main.check=1;
   main.colorshift=0;
   modelprops.ask_delete=false;
   %main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   main.rstabil=NaN;
   modelprops.MeterValue=1;
-  main.whichEV='NoHyb'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; 'skip';  'sqrtK_r'
-  main.Normierung='rCT_K0_r'; % 'skip' 'R1'
+  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r'
+  main.Normierung='R1'; % 'skip' 'R1' 'rCT_K0_r' 'k11'
   main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;
   modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
-  main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
+  main.xBezug='n'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 
 %close all
 % %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
 % % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
 %eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32','B32H'};
+eltypes={'B32H'};
 %eltypes={'B32H'}
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));
