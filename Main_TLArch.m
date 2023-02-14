@@ -43,7 +43,7 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 2;
+  modelprops.numofelm = 20;
   
   
   epsil = 0.005;%  0.01;
@@ -68,7 +68,7 @@
   modelprops.loadfactor =1;
   %
   
-  modelprops.length=19.074;% [m] 
+  %modelprops.length=19.074;% [m] 
   modelprops.sectiondata_material_E = 210e9; %[N/m^2]
   [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335; modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
   %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
@@ -79,7 +79,7 @@
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=0; % false... no figures, true... figures, 2 for TeX
+  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;

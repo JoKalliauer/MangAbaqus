@@ -626,6 +626,7 @@ for i = 1:f
    v = (r11 - r01)/(2*modelprops.epsilon);
    ZweirKtt(i)=transpose(rm)*KT*v+transpose(v)*KT*rm;
    %NormR1(i)=norm(rm);
+   if ~isfield(modelprops,'Normierung'); warning('Myprgm:Strange','modelprops.Normierung unset assuming R1'); modelprops.Normierung='R1'; end
    if ~strcmp(modelprops.Normierung,'R1')
     assert(norm(rm)~=1,'Norm should not be one')
    end
