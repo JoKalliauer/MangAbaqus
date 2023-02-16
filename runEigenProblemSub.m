@@ -1,4 +1,28 @@
 function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,AnalysisResultsFolder)
+%#!/usr/bin/env octave -q
+%university:TU Wien
+%author:Johannes Kalliauer(©2020-2023), Michał Malendowski (©2019-2020)
+
+%% run the core of the EigenProblem
+
+%% Input
+% modelprops ... parameters which were used in the Abaqus-run
+% model ... structure for the Matlab-results
+% Displ ... Diplacements of the beam
+% Kts ... Stiffness matrix
+% Kg ... only relevant for modelprops.typeofanalysis == 'Kg' (outdated)
+% matches ... which lambda refers to which results
+% wbrEP .. Waitbar for Eigenproblem
+% AnalysisResultsFolder ... Folder of the Abaqus-Results
+
+%% Output
+% model ... results ot the Eigenvector-Problem
+
+
+%% Recent Changes
+%2023-02-16 JK: added comments for explanation, added error-identifyer
+
+%% Code
  
 % [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
 
@@ -477,7 +501,7 @@ for i = 1:f
  eigval{i} = EV;
  %imagValues(i)=imagValuesi;
  eigvec{i} = (R);%single precission might be dangerous for postprocessing
- eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)
+ eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
  %eigvecDR{i}=R_DRH(:,:,1:R_DRsize(3),:);% DRH...[Displacement,Rotation,Hybrid](splitted)
  eigvecHi=R_DRH(:,1:3,R_DRsize(3)+1:end,:);% increments x DoFpNode x Nodes x NrEigs
  eigvecH2{i}=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
@@ -640,7 +664,7 @@ for i = 1:f
     assert(abs(norm(rm)-1)<1e-7,'rm not 1')
    end
   else
-   error('not implemented')
+   error('Myprgm:missing','not implemented')
   end
   rKtr(i)=transpose(rm)*KT*rm;
   rKt0r(i)=single(transpose(rm)*Kt0_0*rm);

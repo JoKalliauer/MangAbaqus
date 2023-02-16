@@ -1,4 +1,22 @@
 function [sectiondata,modelpropsprofil] =Profil(name,modelpropsprofil)
+%#!/usr/bin/env octave -q
+%university:TU Wien
+%author:Johannes Kalliauer
+%created: 2022
+
+%% Defines predefined Profil-sets
+
+%% Input
+% name ... name of the predifend Set
+% modelpropsprofil ... profil-data of modelprops before adding more data (optional)
+
+%% Output
+% sectiondata ... data of the cross-section
+% modelpropsprofil ... profil-data of the predifend profil-set
+
+
+%% Recent Changes
+%2023-02-16 JK: added comments for explanation; added unit-comments
 
  MV=1; %[m] in and output is in meters, Abaqus might use differnet units
 
@@ -35,8 +53,8 @@ elseif strcmp(name,'PavlicekPage93')
  modelpropsprofil.b=A/modelpropsprofil.h;
  sectiondata=modelpropsprofil;
 elseif strcmp(name,'MalendowskiTLArch')
- modelpropsprofil.h=0.2;
- modelpropsprofil.b=0.1;
+ modelpropsprofil.h=0.2;%[m]
+ modelpropsprofil.b=0.1;%[m]
  sectiondata=modelpropsprofil;
 else
  error('MyPrgm:notImplemented','not implemented')

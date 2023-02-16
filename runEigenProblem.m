@@ -1,4 +1,29 @@
 function [model] = runEigenProblem(modelprops)
+%#!/usr/bin/env octave -q
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
+
+%% run the the EigenProblem outer program
+
+%% Input
+% modelprops ... parameters which were used in the Abaqus-run
+
+%% Output
+% model ... results ot the Eigenvector-Problem
+
+%% Structure
+  % * selectModel .. calls a function to create the input-file 
+  % * AbaqusModelsGeneration.runAbaqus ... run the input-file in Abaqus
+  % * AbaqusModelsGeneration.getStiffnessMatrices ... get the stiffness-matrix from Abaqus-results
+  % * AbaqusModelsGeneration.getHistoryOutputFromDatFile ... get the nodal-results from Abaus
+  % * runEigenProblemSub ... Run the core of the eigenvalue-Problem
+  % * runEigenProblemDispJK ... Posprocessing the displacements
+
+%% Recent Changes
+%2023-02-16 JK: datetime("today") instead of date and added warning-idenfifyer, deleted solcheck by Malendowski
+
+%% Code
+
  %modelname,lambda,epsil,numofelm,typeofanal,additionalParameters
  if nargin<1
   %testcase = 'TL_arch';
@@ -310,7 +335,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  if isempty(Nres.keys)
   Displ3=[];
   Rot3=[];
-  warning('No Displ-Results, check *.msg-file')
+  warning('MyPrgm:MSG','No Displ-Results, check *.msg-file')
   %return
  else
   [Displ3,Rot3] = NodalResults2DisplJK(Nres);
@@ -343,7 +368,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  end
  dt=whos('model');
  if numel(model.lambda)>10
-  model.date=date;
+  model.date=datetime("today");%model.date=date;
   save([AnalysisResultsFolder,model.filename,'-',modelprops.typeofanalysis,'-',num2str(model.numofeigs),'.mat'],'model');
   if dt.bytes>2*1024^3
    warning('MyProgram:Size','model needs %f GB (> 2GB) space',dt.bytes/1024^3)
@@ -359,45 +384,3 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
 %  end
  
 end %fucntion
-
-% function [eq1,eq2] = solcheck(Kt, typeofanal, dKt, ddKt, lam, epsil, Ls, rs, i, model)
-%     eigpo = 1;
-%
-%     L1 = Ls(5,eigpo) + lam;
-%     r01 = rs(4,:,eigpo); r01 = r01(:);  r01(model.BC(:,1)) = [];
-%     r0  = rs(5,:,eigpo); r0 = r0(:);    r0(model.BC(:,1)) = [];
-%     r11 = rs(6,:,eigpo); r11 = r11(:);  r11(model.BC(:,1)) = [];
-%     r12 = rs(7,:,eigpo); r12 = r12(:);  r12(model.BC(:,1)) = [];
-%     r13 = rs(8,:,eigpo); r13 = r13(:);  r13(model.BC(:,1)) = [];
-%     r1 = r0;
-%     if i == 1 % forward difference method
-%         dL1 = 1/epsil*(-3/2*Ls(5,eigpo) + 2*Ls(6,eigpo) - 1/2*Ls(7,eigpo));
-%         ddL1 = 1/epsil^2*(2*Ls(5,eigpo) - 5*Ls(6,eigpo) + 4*Ls(7,eigpo) - 1*Ls(8,eigpo));
-%         dr1 = 1/epsil*(-3/2*r0 + 2*r11 - 1/2*r12);
-%         ddr1 = 1/epsil^2*(2*r0 - 5*r11 + 4*r12 - 1*r13);
-%     else % central difference method
-%         dL1 = 1/epsil*(-1/2*Ls(4,eigpo) + 1/2*Ls(6,eigpo));
-%         ddL1 = 1/epsil^2*(1/2*Ls(4,eigpo) -2*Ls(5,eigpo)  + 1/2*Ls(6,eigpo));
-%         dr1 = 1/epsil*(-1/2*r01 + 1/2*r11);
-%         ddr1 = 1/epsil^2*(1/2*r01 -2*r0  + 1/2*r11);
-%     end
-%
-%
-%     switch typeofanal
-%         case 'I'
-%             B = -eye(size(Kt));
-%             dB = 0;
-%         case 'CLE'
-%             B = -dKt;
-%             dB = -ddKt;
-%         case 'I-CLE'
-%             B = eye(size(Kt)) - dKt;
-%             dB = -ddKt;
-%     end
-%
-%     eq1   = norm((full(Kt) - (L1-lam)*B)*r1);
-%     eq2_1 = norm((dKt - (dL1-1)*B - (L1-lam)*dB)*r1);
-%     eq2_2 = norm((Kt - (L1-lam)*B)*dr1);
-%     eq2   = norm((dKt - (dL1-1)*B - (L1-lam)*dB)*r1 + (Kt - (L1-lam)*B)*dr1);
-%
-% end

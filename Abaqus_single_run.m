@@ -2,12 +2,12 @@
 %university:TU Wien
 
 function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc,elementtype)
-%%Explantation
+%% Explantation
 %Outermost function that calls all programs, but Input must be provieded by a skript
 % modelprops.* enter runEigenProblem, hoever main.* does not enter runEigenProblem and is for postprocess, model.* is created by Matlabfunctions, not by the user.
 % e.g. [model] = runEigenProblem(modelprops)
 
-%Input
+%% Input
 % modelpros.* Input for runEigenProblem
 %  modelpros.numofelm numer of elements, might get overwritten by "numofelm"
 % sortType ... How the eigenvalues/-vectors are sorted
@@ -17,9 +17,27 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
 % numofelem ... Number of Elements
 % ecc       ... Eccentricity
 % elementtype...Type of element
-%Output
+
+%% Output
 % res  ... resulst of postprocess
 % model... results of runEigenProblem
+
+%% Structure
+% * runEigenProblem ... run the Eingenvalue-Problem
+%   * selectModel .. calls a function to create the input-file 
+%   * AbaqusModelsGeneration.runAbaqus ... run the input-file in Abaqus
+%   * AbaqusModelsGeneration.getStiffnessMatrices ... get the stiffness-matrix from Abaqus-results
+%   * AbaqusModelsGeneration.getHistoryOutputFromDatFile ... get the nodal-results from Abaus
+%   * runEigenProblemSub ... Run the core of the eigenvalue-Problem and saving it into model
+%     * solveCLEforMinEigNew ... get one specific eigenvalue and the eigenvector
+%   * runEigenProblemDispJK ... Posprocessing the displacements
+% * sortEigenValuesAndGetQuantities ... does the calculation of \rho
+% * plotresMulti ... Plots the requested graphs
+
+%% recent-change
+%2023-02-16 JK: enabling sound
+
+%% Code
 
 warning('on','MyProgramm:lowPrecission:RhoOne')
 
@@ -354,6 +372,6 @@ disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),
   %sound when finished (easter egg)
   beep
   load handel y
-  %sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
+  sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
 
 end

@@ -1,10 +1,25 @@
 function [Displ,Rot] = NodalResults2DisplJK(Nres)
+%% returns the displacement and the rotations from the nodal-results of Abaqus
+%university:TU Wien
+%author: Johannes Kalliauer(©2020-2023)
+
+%% Input
+% Nres ... Nodal results of Abaqus
+
+%% Output
+% Displ  ... Displacements
+% Rot ... Rotations
+
+%% recent-change
+%2023-02-16 JK: adding error-identifier
+
+%% Code
 
 NreskeysIn = Nres.keys;
 if isempty(NreskeysIn)
  %Displ=NaN;
  %Rot=NaN;
- error('No Displ-Results, check *.msg-file')
+ error('MyPrgm:MSG','No Displ-Results, check *.msg-file')
  %return
 end
 NresDisp=containers.Map(NreskeysIn,Nres.values);

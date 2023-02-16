@@ -1,4 +1,22 @@
 function runAbaqus(filename,AbaqusRunsFolder,modelprops)
+%#!/usr/bin/env octave -q
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
+
+%% start Abaqus
+
+%% Input
+% filename .. name of the inp-file
+% AbaqusRunsFolder .. location of the inp-file
+% modelprops ... parameters which are used for the Abaqus-run
+
+%% no Output (Abaqus-files are saved on disk)
+
+%% Recent Changes
+%2023-02-16 JK: cd(oldpwd)
+
+%% Code
+
  if nargin<1
   %modelname = 'pureBendingBeamShellElm';
  end
@@ -16,6 +34,7 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
    return
   end
  end
+ oldpwd=pwd;
  cd(AbaqusRunsFolder) %cd /home/jkalliau/Abaqus/ownCloud/Post/MangAbaqus/AbaqusRuns% cd AbaqusRuns
  assert(isfile(strcat(filename,'.inp')),'input-file does not exist in %s',AbaqusRunsFolder)
  if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
@@ -129,10 +148,11 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
  if isunix %linux-PC
    cd ~/ownCloud/Post/MangAbaqus/ %cd ..
  elseif ispc %windows
-   cd 'C:\Users\jokal\OneDrive\Dokumente\GitHub\MangAbaqus\' %cd ..
+   cd(oldpwd)
+   %cd 'C:\Users\jokal\OneDrive\Dokumente\GitHub\MangAbaqus\' %cd ..
    %cd '%USERPROFILE%\Documents\MangAbaqus\' %cd ..
    %warning('MyPrgm:OS','Please specify the location, this must be changed to the correct folder')
-   error('MyPrgm:OS','Please specify the location, this must be changed to the correct folder')
+   %error('MyPrgm:OS','Please specify the location, this must be changed to the correct folder')
  elseif ismac %Mac-PC
      warning('MyProgram:OS','not tested on Mac-pc')
  else

@@ -1,5 +1,24 @@
-%#!
+%#!/usr/bin/env octave -q
 %university:TU Wien
+%author of this script: Johannes Kalliauer(©2020-2023)
+%author of subprograms: Johannes Kalliauer(©2020-2023), Michał Malendowski (©2019-2020)
+%created: 2020
+
+%% Start Trust-line-arch
+
+%% Most important Parameters to set
+% modelprops ... parameters for running Abaqus
+%    modelprops.sectiondata_material_E ... defines the Youngs-Modulus
+% sortType ... should the eigenvectors be sorted (currently not really working)
+% forcedeig ... only plot a specific eigenvalue
+% main ... structure with parameters for post-processing Abaqus-results
+%   main.Normierung ... how the eivenvector should be normalized
+
+
+%% Recent Changes
+%2023-02-16 JK: added comments for explanation
+
+%% Define Setting for run
  close all 
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
  set(0, 'DefaultFigureWindowState', 'normal');
@@ -68,9 +87,9 @@
   modelprops.loadfactor =1;
   %
   
-  %modelprops.length=19.074;% [m] 
+  modelprops.length=19.074;% [m] 
   modelprops.sectiondata_material_E = 210e9; %[N/m^2]
-  [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335; modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
+  [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335;% modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
   %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
@@ -86,7 +105,7 @@
   %main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   main.rstabil=NaN;
-  modelprops.MeterValue=1;
+  modelprops.MeterValue=1;%1000mm=1m=0.001km
   main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r'
   main.Normierung='k11'; % 'skip' 'R1' 'rCT_K0_r' 'k11'
   main.rho='R1'; % KtR1 R1 'skip'
