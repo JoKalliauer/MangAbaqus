@@ -1,4 +1,27 @@
 function res = sortEigenValuesAndGetQuantities(model,sortType,~,forcedeig,limit,~,main) % forcedeig=k3;
+%% calculate rho based on the solution of the EW-problem
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
+
+%% Input
+% model ... results from runEigenProblem
+% sortType ... how to sort the eivenvalues (not working => ignore)
+% noplot,~ .. removed variable got replaced by plotfig, kept for backwards-compatibility
+% forcedeig ... force a specific Eigenvalue
+% limit ... if values are outside those limits consider it as numerical error
+% ~ ... removed variable
+% main ... parameters how to process the data
+
+%% Output
+% res ... results for rho and others
+
+
+%% Recent Changes
+%2023-02-16 JK: added explantation
+
+%% Code
+
+
 if nargin<1
  model = runEigenProblem();
  sortType = 'backwards';

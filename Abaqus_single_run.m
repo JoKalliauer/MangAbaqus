@@ -1,11 +1,10 @@
-%#!
-%university:TU Wien
-
 function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc,elementtype)
-%% Explantation
+%% Outermost function to call
 %Outermost function that calls all programs, but Input must be provieded by a skript
 % modelprops.* enter runEigenProblem, hoever main.* does not enter runEigenProblem and is for postprocess, model.* is created by Matlabfunctions, not by the user.
 % e.g. [model] = runEigenProblem(modelprops)
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
 
 %% Input
 % modelpros.* Input for runEigenProblem

@@ -87,7 +87,7 @@
   modelprops.loadfactor =1;
   %
   
-  modelprops.length=19.074;% [m] 
+  %modelprops.length=19.074;% [m] 
   modelprops.sectiondata_material_E = 210e9; %[N/m^2]
   [~,modelprops.profil] =Profil('MalendowskiTLArch'); modelprops.lambda = 0:epsil:.335;% modelprops.numofeigs=3; % 'PavlicekPage93' 'MalendowskiTLArch'
   %[~,modelprops.profil] =Profil('PavlicekPage93'); modelprops.lambda = 0:epsil:.25; % 'PavlicekPage93' 'MalendowskiTLArch'

@@ -1,9 +1,8 @@
 function [model] = runEigenProblem(modelprops)
+%% run the the EigenProblem outer program
 %#!/usr/bin/env octave -q
 %university:TU Wien
 %author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
-
-%% run the the EigenProblem outer program
 
 %% Input
 % modelprops ... parameters which were used in the Abaqus-run
