@@ -12,12 +12,14 @@ function [model] = runEigenProblem(modelprops)
 % model ... results ot the Eigenvector-Problem
 
 %% Structure
-  % * selectModel .. calls a function to create the input-file 
-  % * AbaqusModelsGeneration.runAbaqus ... run the input-file in Abaqus
-  % * AbaqusModelsGeneration.getStiffnessMatrices ... get the stiffness-matrix from Abaqus-results
-  % * AbaqusModelsGeneration.getHistoryOutputFromDatFile ... get the nodal-results from Abaus
-  % * runEigenProblemSub ... Run the core of the eigenvalue-Problem
-  % * runEigenProblemDispJK ... Posprocessing the displacements
+% * runEigenProblem ... run the Eingenvalue-Problem
+%   * selectModel .. calls a function to create the input-file 
+%   * AbaqusModelsGeneration.runAbaqus ... run the input-file in Abaqus
+%   * AbaqusModelsGeneration.getStiffnessMatrices ... get the stiffness-matrix from Abaqus-results
+%   * AbaqusModelsGeneration.getHistoryOutputFromDatFile ... get the nodal-results from Abaus
+%   * runEigenProblemSub ... Run the core of the eigenvalue-Problem and saving it into model
+%     * solveCLEforMinEigNew ... get one specific eigenvalue and the eigenvector
+%   * runEigenProblemDispJK ... Posprocessing the displacements
 
 %% Recent Changes
 %2023-02-16 JK: datetime("today") instead of date and added warning-idenfifyer, deleted solcheck by Malendowski
