@@ -1,4 +1,18 @@
 function model = selectModel(modelprops,AbaqusRunsFolder)
+%% calls a function based on modelprops.typeofanalysis which creates the inp-files for Abaqus
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
+
+%% Input
+% modelprops ... input-parameters from the script
+
+%% Output
+% model ... everything that should be returned to Abaqus_single_run
+
+%% Recent Changes
+%2023-02-16 JK: isfield(modelprops,'length')
+
+%% Code
 if nargin<1
     testcase = 'TL_arch';
     numofelm = 20;
@@ -27,7 +41,9 @@ if ~exist('testcase','var')
  testcase = modelprops.testcase;
 end
 if ~exist('L','var')
- L = modelprops.length;
+ if isfield(modelprops,'length')
+  L = modelprops.length;
+ end
 end
  if sum(strcmp(fieldnames(modelprops), 'MeterValue')) == 0
    modelprops.MeterValue=1;

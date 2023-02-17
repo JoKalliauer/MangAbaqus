@@ -1,4 +1,34 @@
 function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
+%% Plot Graphs
+%author:Johannes Kalliauer(©2020-2023) based on Michał Malendowski (©2019-2020)
+
+%% Input
+% res ... results from sortEigenValuesAndGetQuantities
+% model ... reults from runEigenProblem
+% plotfig ... which figures to plot
+% MyColours ... which colours to use
+% resEWs ... which EigenWalues
+% main ... optional post-processing-parameters from the script
+
+
+%% no Output (only matlab-figures, and png/pdf/svg/eps/wmf-files)
+
+%% Structure
+% * runEigenProblem ... run the Eingenvalue-Problem
+%   * selectModel .. calls a function to create the input-file 
+%   * AbaqusModelsGeneration.runAbaqus ... run the input-file in Abaqus
+%   * AbaqusModelsGeneration.getStiffnessMatrices ... get the stiffness-matrix from Abaqus-results
+%   * AbaqusModelsGeneration.getHistoryOutputFromDatFile ... get the nodal-results from Abaus
+%   * runEigenProblemSub ... Run the core of the eigenvalue-Problem and saving it into model
+%     * solveCLEforMinEigNew ... get one specific eigenvalue and the eigenvector
+%   * runEigenProblemDispJK ... Posprocessing the displacements
+% * sortEigenValuesAndGetQuantities ... does the calculation of \rho
+% * plotresMulti ... Plots the requested graphs
+
+%% recent-change
+%2023-02-16 JK: if main.savefigures missing, setting default value to false
+
+%% plotfig
  % 2...rho
  % 1...chi
  % 3..._velocity
@@ -72,6 +102,8 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  %953 -2*model.t_KB1_t
  %958 model.rKt0r
  %972 model.rdotKtr / model.rKt0r
+ 
+ %% Code
  
  xBezug=main.xBezug;
 %n..normiert auf Reflast
@@ -252,6 +284,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   main.savefigures=false;
   main.colorshift=0;
  end
+ if ~isfield(main,'savefigures'); main.savefigures=false; warning('MyPrgm:undefined','assuming not saving figures'); end
  if main.savefigures==true
   if ~exist('Output/Figures/', 'dir')
    if isunix
