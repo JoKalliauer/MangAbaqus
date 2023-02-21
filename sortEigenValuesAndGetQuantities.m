@@ -179,7 +179,8 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
 end
 %model.filename
 eigvalTMP=model.eigenvalues;
-if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb') || strcmp(main.whichEV,'k0_11')
+if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || ...
+  strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb') || strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11')
  eigvecTMP = model.eigenvectors; %defined in runEigenProblemSub
  realistic=false;
  evmiddle=5;
@@ -482,34 +483,15 @@ if strcmp(main.rho,'KtR1') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.
 end
 
 for i = 1:f %f = length(eigval)
- %disp(i)
- %  C0 = eigvec{i}(5,:,:); C0 = reshape(C0,size(C0,2),size(C0,3));
- %
- %  if strcmpi(sortType, 'none')
- %   is0 = 1;
- %  else
- %   [~,is0] = compareEigenmodes(C0,r0try);
- %  end
- %        val = [is0;val];
- %  if ~isempty(forcedeig)
- %   is0 = forcedeig;
- %  end
 
  eigposition(i) = is0(1);
- %        Lami = eigval{i}(5,is);
- %        if sum(Lami<0)<length(Lami)
- %           is(Lami<0) = [];
- %        end
  
- %rhotry = 0;
  isi=1;%for isi = 1:1 %length(is)
  if ~any(isnan(r0atl0(:))) && strcmp(sortType,'forwardJK')
   for k=1:sEig
    rj=eigvec{i}(evmiddle,:,:,k);
    rj = reshape(rj,numel(rj),1);
    rj=rj/norm(rj);
-   %rj = reshape(rj,length(rj),1);
-   %disp(['L443_forcedeig=',num2str(forcedeig),'; is0(isi)=',num2str(is0(isi)),'; k=',num2str(k),'; i=',num2str(i),'; norm(r0atl0-rj)=',num2str(norm(r0atl0-rj))])
    if norm(r0atl0-rj)<1 || norm(r0atl0+rj)<1 || norm(dot(r0atl0,rj))>0.33
     if is0(isi)~=k
      %warning('MyProgram:OderChange','The oder of %d eV %d changed to %d',forcedeig,is0(isi),k)
@@ -519,7 +501,7 @@ for i = 1:f %f = length(eigval)
   end
  end
  NrEw=is0(isi);
- if  strcmp(main.whichEV,'k0_11')
+ if  strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11')
   r02 = model.eigvec2023{i}(:,1,NrEw);
   r01 = model.eigvec2023{i}(:,2,NrEw);
   rm  = model.eigvec2023{i}(:,3,NrEw);
@@ -550,22 +532,22 @@ for i = 1:f %f = length(eigval)
  r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- if strcmp(main.Normierung,'k11') || strcmp(main.Normierung,'k0_11') ; eigvecH2i=model.eigvecH2{i}; end
+ %if strcmp(main.Normierung,'k11') || strcmp(main.Normierung,'k0_11') ; eigvecH2i=model.eigvecH2{i}; end
  if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
   %rkDRH=squeeze(model.eigvecDRH{i}(1,:,:,NrEw));
   %rlDRH=squeeze(model.eigvecDRH{i}(2,:,:,NrEw));
   %rmDRH=squeeze(model.eigvecDRH{i}(3,:,:,NrEw)); % DoFpNode x Nodes
   %rnDRH=squeeze(model.eigvecDRH{i}(4,:,:,NrEw));
   %roDRH=squeeze(model.eigvecDRH{i}(5,:,:,NrEw));
-  Kt02=StiffMtxs{max(i-2,1)};
+  %Kt02=StiffMtxs{max(i-2,1)};
   Kt01=StiffMtxs{max(i-1,1)};
   KT  =StiffMtxs{i};
   Kt11=StiffMtxs{i+1};
-  if numel(StiffMtxs)<i+2
-   Kt12=NaN*Kt11;
-  else
-   Kt12=StiffMtxs{i+2};
-  end
+%   if numel(StiffMtxs)<i+2
+%    Kt12=NaN*Kt11;
+%   else
+%    Kt12=StiffMtxs{i+2};
+%   end
  end
  
  
@@ -606,17 +588,17 @@ for i = 1:f %f = length(eigval)
   Nenner11=norm(r11);
   Nenner12=norm(r12);
  elseif strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
-  Nenner02=sqrt(dot(r02,diag(Kt02).*r02)+eigvecH2i(1,NrEw));
-  Nenner01=sqrt(dot(r01,diag(Kt01).*r01)+eigvecH2i(2,NrEw));
-  Nenner0 =sqrt(dot(rm ,diag(KT  ).*rm )+eigvecH2i(3,NrEw));
-  Nenner11=sqrt(dot(r11,diag(Kt11).*r11)+eigvecH2i(4,NrEw));
-  Nenner12=sqrt(dot(r12,diag(Kt12).*r12)+eigvecH2i(5,NrEw));
+  Nenner02=NaN;%sqrt(dot(r02,diag(Kt02).*r02)+eigvecH2i(1,NrEw));
+  Nenner01=NaN;%sqrt(dot(r01,diag(Kt01).*r01)+eigvecH2i(2,NrEw));
+  Nenner0 =NaN;%sqrt(dot(rm ,diag(KT  ).*rm )+eigvecH2i(3,NrEw));
+  Nenner11=NaN;%sqrt(dot(r11,diag(Kt11).*r11)+eigvecH2i(4,NrEw));
+  Nenner12=NaN;%sqrt(dot(r12,diag(Kt12).*r12)+eigvecH2i(5,NrEw));
  elseif strcmp(main.Normierung,'k0_11')
-  Nenner02=sqrt(dot(r02,diag(Kt0_0).*r02)+eigvecH2i(1,NrEw));
-  Nenner01=sqrt(dot(r01,diag(Kt0_0).*r01)+eigvecH2i(2,NrEw));
-  Nenner0 =sqrt(dot(rm ,diag(Kt0_0).*rm )+eigvecH2i(3,NrEw));
-  Nenner11=sqrt(dot(r11,diag(Kt0_0).*r11)+eigvecH2i(4,NrEw));
-  Nenner12=sqrt(dot(r12,diag(Kt0_0).*r12)+eigvecH2i(5,NrEw));
+  Nenner02=NaN;%sqrt(dot(r02,diag(Kt0_0).*r02)+eigvecH2i(1,NrEw));
+  Nenner01=NaN;%sqrt(dot(r01,diag(Kt0_0).*r01)+eigvecH2i(2,NrEw));
+  Nenner0 =NaN;%sqrt(dot(rm ,diag(Kt0_0).*rm )+eigvecH2i(3,NrEw));
+  Nenner11=NaN;%sqrt(dot(r11,diag(Kt0_0).*r11)+eigvecH2i(4,NrEw));
+  Nenner12=NaN;%sqrt(dot(r12,diag(Kt0_0).*r12)+eigvecH2i(5,NrEw));
  elseif strcmp(main.Normierung,'R1')
   Nenner02=norm(r02);
   Nenner01=norm(r01);
@@ -647,15 +629,7 @@ for i = 1:f %f = length(eigval)
  r11 = r11/Nenner11;
  r12 = r12/Nenner12;
 
- 
- 
- %  if (lambda0(kstability)-2*epsilon)<=lambda0(i) && (lambda0(i)<lambda0(kstability))
- %   r11 = NaN*r11; r12 = NaN*r12; r13 = NaN*r13; r14 = NaN*r14;
- %  elseif (lambda0(kstability)<lambda0(i))&&(lambda0(i)<=(lambda0(kstability)+2*epsilon))
- %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
- %  elseif lambda0(i)<2*epsilon
- %   r01 = NaN*r01; r02 = NaN*r02; r03 = NaN*r03; r04 = NaN*r04;
- %  end
+
  if strcmp(main.rho,'A0R1')
   Mr02=Kt0_0*r02;
   Mr01=Kt0_0*r01;

@@ -45,7 +45,7 @@ end
 
 
 %% inizializing
-if strcmp(modelprops.whichEV,'k0_11')
+if strcmp(modelprops.whichEV,'k0_11') || strcmp(modelprops.whichEV,'k11')
  dofs=model.dofs([1 2]);
  HybridNodes=model.inDOF(2)-model.inDOF(1)+1;
 end
@@ -533,6 +533,17 @@ for i = 1:f
   end
    eigvec2023{i}(aktiveDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);
   eigvec{i} = sqrt(diag(Kt0_0)).*R(5,:)+0;
+ elseif strcmp(modelprops.whichEV,'k11')
+  
+   akDOF=dofs(1)*dofs(2)-numel(BC);%aktive DOFs
+   eigvec2023{i}(1:akDOF,1)=sqrt(full(diag(Kt02(1:akDOF,1:akDOF)))).'.*R(3,1:akDOF);
+   eigvec2023{i}(1:akDOF,2)=sqrt(full(diag(Kt01(1:akDOF,1:akDOF)))).'.*R(4,1:akDOF);
+   eigvec2023{i}(1:akDOF,3)=sqrt(full(diag(  KT(1:akDOF,1:akDOF)))).'.*R(5,1:akDOF);
+   eigvec2023{i}(1:akDOF,4)=sqrt(full(diag(Kt11(1:akDOF,1:akDOF)))).'.*R(6,1:akDOF);
+   eigvec2023{i}(1:akDOF,5)=sqrt(full(diag(Kt12(1:akDOF,1:akDOF)))).'.*R(7,1:akDOF);
+   eigvec2023{i}(akDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);
+  eigvec{i} = sqrt(diag(KT)).*R(5,:)+0;
+  
  else
   eigvec{i} = (R);%single precission might be dangerous for postprocessing
  end
@@ -862,18 +873,19 @@ if ~strcmp(modelprops.whichEV,'skip')
  if sum(strcmp(fieldnames(modelprops), 'rho')) == 0
   modelprops.rho=[];
  end
- if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1') ||  strcmp(modelprops.whichEV,'sqrtK0_r')
+ if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1') ...
+   ||  strcmp(modelprops.whichEV,'sqrtK0_r')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace
  elseif strcmp(modelprops.whichEV,'sqrtK_r')
   model.stiffnessMatrices = StiffMtxs;% very much diskspace
  elseif strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split')
   model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
- elseif strcmp(modelprops.whichEV,'k11') || strcmp(modelprops.Normierung,'k11')
-  model.stiffnessMatrices = StiffMtxs(:,1);% very much diskspace
-  %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
-  model.eigvecH2=eigvecH2;%only Hybrid-DOFs^2
- elseif strcmp(modelprops.Normierung,'k0_11') || strcmp(modelprops.whichEV,'k0_11')
-  model.stiffnessMatrices = StiffMtxs(1:2,1);% very much diskspace
+ elseif strcmp(modelprops.whichEV,'k11') || strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.Normierung,'k0_11') || strcmp(modelprops.whichEV,'k0_11')
+  if strcmp(modelprops.whichEV,'k11')
+   model.stiffnessMatrices = StiffMtxs(:,1);% very much diskspace
+  else
+   model.stiffnessMatrices = StiffMtxs(1:2,1);% very much diskspace
+  end
   %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
   model.eigvecDR=eigvecDR;%only Displacements and Rotations
   model.eigvecH=eigvecH;%only Hybrid-DOF
