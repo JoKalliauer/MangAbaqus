@@ -12,6 +12,7 @@
 % sortType ... should the eigenvectors be sorted (currently not really working)
 % forcedeig ... only plot a specific eigenvalue
 % main ... structure with parameters for post-processing Abaqus-results
+%   main.whichEV ... which eigenvector to use
 %   main.Normierung ... how the eivenvector should be normalized
 
 
@@ -62,7 +63,7 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 20;
+  modelprops.numofelm = 2;
   
   
   epsil = 0.005;%  0.01;
@@ -106,20 +107,15 @@
   %main.rstabil=0.9999999;
   main.rstabil=NaN;
   modelprops.MeterValue=1;%1000mm=1m=0.001km
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r'
-  main.Normierung='k11'; % 'skip' 'R1' 'rCT_K0_r' 'k11'
+  main.whichEV='k0_11'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r'
+  main.Normierung='k0_11'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
   main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;
   modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
   main.xBezug='n'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 
-%close all
-% %eltypes={'B32','B32H','B31','B31H','B33','B33H'}
-% % eltypes={'B32','B32H','B31','B33'} %B31H/B33H dofs aufpassen fuer rhoBungle
-%eltypes={'B32','B32H','B31','B33'}
-eltypes={'B32H'};
-%eltypes={'B32H'}
+eltypes={'B32'};
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));
  main.colorshift=3*i-3;

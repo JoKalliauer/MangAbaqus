@@ -1,6 +1,39 @@
 function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinpsi, ortCond2,ortCond3,ortCond4, t, N, B, r0,...
  ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
  = getQuantities(RS,~,DT,r0atl0,~,tatl0,main,EVatStability) %DT=epsilon
+%% run the the EigenProblem outer program
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
+
+%% Input
+% RS  ... eigenvalues
+% ~
+% DT ... timeincrement
+% r0atl0 ... rho at lambda=0 (outdated)
+% ~ ... 
+% tatl0 ... tau at lambda=0 (outdated)
+% main ... evaluation-settings from the start-file
+% EVatStability ... Eigenvector at stabilitylimit
+
+%% Output
+% v ... speed of r
+% a ... acceeration-vektor of r
+% dsdksi ... ds/d
+% accel norm of a
+% d2sdksi2
+% an .. normal accerlation
+% rho ... eigenvector-curvature (outdated)
+% tau
+% ortCond1 .. ortohongality check
+% rho2 ... high precission eigenvector-curvature
+% 
+
+
+%% Recent Changes
+%2023-02-21 JK: removed commented out lines
+
+%% Code
+
 assert(size(RS,2)==5,'size of RS not 5 vectors');
 
 rm2 = RS(:,1);%/norm(RS(:,1));
@@ -249,57 +282,22 @@ if ~isnan(ortCond2)
 end
 ortCond3 = t'*B;
 ortCond4 = N'*B;
-
- %    ortCond2 = drds'*d2rds2/norm(d2rds2);
- %    ortCond3 = drds'*d3rds3/norm(d3rds3);
- %    ortCond4 = d2rds2'*d3rds3/norm(d2rds2)/norm(d3rds3);
- 
- %      tau2 = -drhodksi/(speed*(1 - rho^2)^(0.5));
- %      tau2 = -drhods/(norm(v)*(1 - rho^2)^(0.5));
- %      tau2 = norm(dn + kappa*t);
- %      tau2 = -drhodksi/(speed*(1 - rho^2)^(0.5));
- %      tau2 = -drho2/(speed*(B'*r0));
- %       tau2 = -drhodksi/(speed*(B'*r0));
-
- 
- 
- 
- 
- %    ortCond1 = abs((v'*v)./(r0'*a));
  ortCond1 = abs((r0'*a) + (v'*v));
  
  drddr = v'*a/norm(v)/norm(a);
- 
- %cosmu = (r0'*a)/norm(a);
+
  cosmu = -((r0'*(rm1 - 2*r0 + rp1))/norm(rm1 - 2*r0 + rp1));
  cospsi = ((rp1 - rm1)'*(rp1 - 2*r0 + rm1))/(norm(rp1 - rm1)*norm(rp1 - 2*r0 + rm1));
- %sinpsi = sqrt(1 - (v'*a/norm(v)/norm(a)).^2);
  sinpsi = sqrt(1 - cospsi^2);
- %    rho = abs(cosmu/sinpsi);
- %R = r0;
- %V = v;
- %A = a;
- 
+
  %by JoKalliauer
  ortCond6=r0'*a+dsdksi^2;
  
  ortCond5=r0'*t;
- 
- % r=r0;
- % rdl=(r11-r01)/(2*DT);
- % rd2l=(r01-2*r0+r11)/(DT)^2;
- % ortCond6a=transpose(r)*rd2l+transpose(rdl)*rdl;
  ortCond7=2*transpose(r0)*(rm1+rp1)-transpose(rm1)*rp1-3;
  ortCond8=dot(r0,d2rds2)+1;
-
- 
- %tripJK=dot(r0,cross(T,N));
- %rr0=r0atl0'*r0;
 else
-% <<<<<<< HEAD
  warning('MyProgram:NaN','returning NaN')
-% =======
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
  v=NaN*r0;
  a=NaN*r0;
  dsdksi=NaN;

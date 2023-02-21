@@ -18,6 +18,7 @@ function res = sortEigenValuesAndGetQuantities(model,sortType,~,forcedeig,limit,
 
 %% Recent Changes
 %2023-02-16 JK: added explantation
+%2023-02-21 JK: added k0_11
 
 %% Code
 
@@ -32,13 +33,8 @@ if nargin<1
 end
 
 
- if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
+ if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11') || strcmp(main.whichEV,'k0_11')
   StiffMtxs=model.stiffnessMatrices;% very much diskspace
-  %eigvecDRH=cell2mat(model.eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
-  %eigvecDRHi=eigvecDRH(:,:,:,forcedeig);
-  %[a, b, c, d]=size(eigvecDRHi);
-  %assert(a==5 && 6<=b && b<=7 && 2<=c && d==1,'dimension mistake')
-  %eigvecH2=model.eigvecH2;
  end
 
 epsilon = model.lambda(2) - model.lambda(1);
@@ -183,8 +179,8 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
 end
 %model.filename
 eigvalTMP=model.eigenvalues;
-if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb')
- eigvecTMP = model.eigenvectors;
+if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb') || strcmp(main.whichEV,'k0_11')
+ eigvecTMP = model.eigenvectors; %defined in runEigenProblemSub
  realistic=false;
  evmiddle=5;
 elseif strcmp(main.whichEV,'Disp') ||  strcmp(main.whichEV,'Disp_rK0r')
@@ -459,7 +455,7 @@ r0atl0=NaN([s2,s3alt]);
  end
 rstabil=main.rstabil;
 
-if strcmp(main.rho,'KtR1') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'A0R1') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.Normierung,'rK0r')
+if strcmp(main.rho,'KtR1') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'A0R1') || strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.Normierung,'rK0r') || strcmp(main.Normierung,'k0_11')
  if sum(strcmp(fieldnames(model), 'stiffnessMatrices')) == 0
   error('MyPrgm:Missing','model.stiffnessMatrices missing, most likely main.whichEV changed, try modelprops.forcerun=1')
  end
@@ -523,26 +519,38 @@ for i = 1:f %f = length(eigval)
   end
  end
  NrEw=is0(isi);
- r02 = eigvec{i}(evmiddle-2,:,:,NrEw);
+ if  strcmp(main.whichEV,'k0_11')
+  r02 = model.eigvec2023{i}(:,1,NrEw);
+  r01 = model.eigvec2023{i}(:,2,NrEw);
+  rm  = model.eigvec2023{i}(:,3,NrEw);
+  r11 = model.eigvec2023{i}(:,4,NrEw);
+  r12 = model.eigvec2023{i}(:,5,NrEw);
+ else
+  r02 = eigvec{i}(evmiddle-2,:,:,NrEw);
+  r01 = eigvec{i}(evmiddle-1,:,:,NrEw);
+  rm = eigvec{i}(evmiddle,:,:,NrEw);
+  r11 = eigvec{i}(evmiddle+1,:,:,NrEw);
+  r12 = eigvec{i}(evmiddle+2,:,:,NrEw);
+ end
  r02 = reshape(r02,numel(r02),1);
  r02 = r02/norm(r02);
- r01 = eigvec{i}(evmiddle-1,:,:,NrEw); r01 = reshape(r01,numel(r01),1);
+ r01 = reshape(r01,numel(r01),1);
  r01 = r01/norm(r01);
  if r02'*r01<0;  r01 = -r01;  end
- rm = eigvec{i}(evmiddle,:,:,NrEw);
  rm = reshape(rm,numel(rm),1);
  if strcmp(main.Normierung,'R1')
   rm = rm/norm(rm);
  end
  eigvalSort=eigvalTMP{i}(evmiddle,NrEw);
  if r01'*rm<0;  rm = -rm;  end
- r11 = eigvec{i}(evmiddle+1,:,:,NrEw); r11 = reshape(r11,numel(r11),1);
+ 
+ r11 = reshape(r11,numel(r11),1);
  r11 = r11/norm(r11);
  if rm'*r11<0;  r11 = -r11;  end
- r12 = eigvec{i}(evmiddle+2,:,:,NrEw); r12 = reshape(r12,numel(r12),1);
+ r12 = reshape(r12,numel(r12),1);
  r12 = r12/norm(r12);
  if r11'*r12<0;  r12 = -r12;  end
- if strcmp(main.Normierung,'k11'); eigvecH2i=model.eigvecH2{i}; end
+ if strcmp(main.Normierung,'k11') || strcmp(main.Normierung,'k0_11') ; eigvecH2i=model.eigvecH2{i}; end
  if strcmp(main.whichEV,'bungle_rKr') || strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
   %rkDRH=squeeze(model.eigvecDRH{i}(1,:,:,NrEw));
   %rlDRH=squeeze(model.eigvecDRH{i}(2,:,:,NrEw));
@@ -559,6 +567,7 @@ for i = 1:f %f = length(eigval)
    Kt12=StiffMtxs{i+2};
   end
  end
+ 
  
  if strcmp(main.whichEV,'bungle_rK0r') || strcmp(main.whichEV,'Disp_rK0r') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.Normierung,'rK0r')
   Nenner02=sqrt(r02'*Kt0_0*r02);
@@ -602,6 +611,12 @@ for i = 1:f %f = length(eigval)
   Nenner0 =sqrt(dot(rm ,diag(KT  ).*rm )+eigvecH2i(3,NrEw));
   Nenner11=sqrt(dot(r11,diag(Kt11).*r11)+eigvecH2i(4,NrEw));
   Nenner12=sqrt(dot(r12,diag(Kt12).*r12)+eigvecH2i(5,NrEw));
+ elseif strcmp(main.Normierung,'k0_11')
+  Nenner02=sqrt(dot(r02,diag(Kt0_0).*r02)+eigvecH2i(1,NrEw));
+  Nenner01=sqrt(dot(r01,diag(Kt0_0).*r01)+eigvecH2i(2,NrEw));
+  Nenner0 =sqrt(dot(rm ,diag(Kt0_0).*rm )+eigvecH2i(3,NrEw));
+  Nenner11=sqrt(dot(r11,diag(Kt0_0).*r11)+eigvecH2i(4,NrEw));
+  Nenner12=sqrt(dot(r12,diag(Kt0_0).*r12)+eigvecH2i(5,NrEw));
  elseif strcmp(main.Normierung,'R1')
   Nenner02=norm(r02);
   Nenner01=norm(r01);
@@ -693,8 +708,6 @@ for i = 1:f %f = length(eigval)
   [v,a,speed,accel,at,an,rho,tau,ortCond1,rho2,drddr_,cosmu_,sinpsi_,ortCond2,ortCond3,ortCond4, t, ~, B, ~,...
    ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
    = getQuantities(RS,dksi,epsilon,r0atl0,rho2atl0,tatl0,main,EVatStability); % %DT=epsilon
-  %EWd1l= ( eigval{i}(4,is0(isi)) - eigval{i}(6,is0(isi)) ) / (2*epsilon);
-  %x1=eigvec{i}(5,:,1)*(model.stiffnessMatrices{i,2}-EWd1l*model.stiffnessMatrices{1,1})*r0;
   if isnan(rho2atl0) && i>1
    if abs(RHO2(i-1)-rho2)<.1
     rho2atl0=rho2;

@@ -1,5 +1,27 @@
-function [StifMatrices,num0,activeDofs,BC,inDOF] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
+function [StifMatrices,num0,activeDofs,BC,inDOF,dofs] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
+%% get the stiffnessMatrices from Abaqus
+%university:TU Wien
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
 
+
+%% Input
+% model ... struture containing data like filename or Abaqus-folder
+% lambdareq
+% typeofanalysis .. if ~strcmp(typeofanalysis,'Kg'), than some file don't need to exist
+
+
+%% Output
+% StifMatrices ... thats the stiffnessmatrix read out from Abauqusfiles
+% num0 .. numbers of the Stiff-files
+% activeDofs ... dofs that are not resticted like BoundaryConditions
+% BC ... Location and value of Boundary-condition
+
+
+
+%% Recent Changes
+%2023-02-21 JK: added explantations for dofs
+
+%% Code
 
 if usejava('jvm'); wb=waitbar(0,'getStiffnessMatrices','name','getStiffnessMatrices','WindowState','minimized');end
 %Loads = [];
@@ -79,7 +101,7 @@ for i = 1:steps
   waitbar(i/maxsteps,wb,fname,'interpreter','none');
  end
  mtxSparse = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname);
- dofs = max(mtxSparse(:,1:4));
+ dofs = max(mtxSparse(:,1:4)); % NrNodes(notHybrid), DegreesOfFreedomPerNode(inklWrapping), Nodes(notHybrid), DegreesOfFreedomPerNode(inklWrapping)
 
  %avoid internat degrees of freedom
  internalNodes = unique(mtxSparse(mtxSparse(:,1)<0,1));%list all negative Nodes
@@ -95,9 +117,12 @@ for i = 1:steps
     inDOFpNList(j) = max(mtxSparse(mtxSparse(:,1)==internalNodes(j),2));
    end
    inDOFpNa = max(mtxSparse(mtxSparse(:,1)==internalNodes(1),2));
+   assert(inDOFpNa==6);
    if NrInNod>1
     inDOFpNb = max(mtxSparse(mtxSparse(:,1)==internalNodes(2),2));
+   assert(inDOFpNb==6);
    else
+    warning('MyPrgm:DontKnowIfItIsStrange','please remove this warning it might not be important')
     inDOFpNb=NaN;
    end
    inDOFpN=[inDOFpNa inDOFpNb];

@@ -1,5 +1,26 @@
-%#!
+%#!/usr/bin/env octave -q
 %university:TU Wien
+%author of this script: Johannes Kalliauer(©2020-2023)
+%author of subprograms: Johannes Kalliauer(©2020-2023), Michał Malendowski (©2019-2020)
+%created: 2020
+
+%% Start pure-bending-beam on two supports
+
+%% Most important Parameters to set
+% modelprops ... parameters for running Abaqus
+% sortType ... should the eigenvectors be sorted (currently not really working)
+% forcedeig ... only plot a specific eigenvalue
+% main ... structure with parameters for post-processing Abaqus-results
+%   main.whichEV ... which eigenvector to use
+%   main.Normierung ... how the eivenvector should be normalized
+
+
+%% Recent Changes
+%2023-02-21 JK: added explanatation
+
+%% Define Setting for run
+
+
  %#ok<*NOPTS>
  %clear
  clear model
@@ -35,7 +56,7 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %modelprops.elementtype = 'xx'; %current
-  eltypes={'B32OS','B32OSH'};
+  eltypes={'B32OSH'};
  
   
   
@@ -77,17 +98,17 @@
   
   %modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=0; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+  modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
   main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=1;
+  main.check=0;
   %main.colorshift=5;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.whichEV='k11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb'
-  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r'
+  main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb'
+  main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r'
   main.rho='R1'; % KtR1 R1; 'A0R1'
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
    

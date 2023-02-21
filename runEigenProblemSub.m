@@ -21,11 +21,13 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,
 
 %% Recent Changes
 %2023-02-16 JK: added comments for explanation, added error-identifyer
+%2023-02-21 JK: added k0_11
 
 %% Code
  
 % [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
 
+%% Input-check
 %Displ = NodalResults2Displ(Nres);
 if numel(Displ)<1
  displacementsenable=false;
@@ -40,12 +42,20 @@ elseif numel(Displ)==1
 else
  displacementsenable=true;
 end
+
+
+%% inizializing
+if strcmp(modelprops.whichEV,'k0_11')
+ dofs=model.dofs([1 2]);
+ HybridNodes=model.inDOF(2)-model.inDOF(1)+1;
+end
 %Kg = EigRes;
 lambda0=model.lambda0';
 lenLam0=length(lambda0);
 lenMatch=length(matches);
 eigval = cell(lenLam0,1);
 eigvec = cell(lenLam0,1);
+eigvec2023 = cell(lenLam0,1);
 eigvec1 = cell(lenLam0,1);
 displacements = cell(lenLam0,1);
 darclengths = cell(lenLam0,1);
@@ -55,6 +65,8 @@ StiffMtxs = cell(lenLam0,3);
 DetKtx = NaN(lenLam0,1);
 %load0 = NaN(lenLam0,1);
 eigvecDRH = cell(lenLam0,1);% DRH...Displacement,Rotation,Hybrid(splitted)
+eigvecDR= cell(lenLam0,1);
+eigvecH= cell(lenLam0,1);
 eigvecH2 = cell(lenLam0,1);% DRH...Displacement,Rotation,Hybrid(splitted)
 
 
@@ -106,7 +118,6 @@ BC=find(ru);
 assert(all(BC==model.BC(:,1)),'ru does not agree with BC')
 Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
 newsizeKt0=size(Kt0_0,1);
-%[~ ,~ ,numofeigs0 ] = solveCLEforMinEigNew(Kt0_0,Kt0_0,Kg,Kt0_0,modelprops.typeofanalysis,matches(1),NaN,modelprops);
 Kt11= Kts{matches(1)+1,2};
 Kt11(ru,:) = []; Kt11(:,ru) = [];
 Ktprim0_0 = 1/(modelprops.epsilon)*(Kt11 - Kt0_0);
@@ -168,6 +179,7 @@ HNodes=model.inDOF(2)-model.inDOF(1)+1;
 %R_Hsize=[5,3,HNodes,size(r0t0,2)];
 R_DRHsize=R_DRsize+[0 -numel(model.RestrictedDOFs) HNodes 0]; % dl x DoFpNode(reducedRestricted) x Nodes(inkl.Hyb) x NrEigs
 R_DRH = NaN(R_DRHsize); % increments x DoFpNode x Nodes x NrEigs
+R_DRH2023 = NaN(R_DRHsize([2 3 1 4])); % DoFpNode x Nodes x increments x NrEigs
 R_DRHsizeIn=R_DRHsize(2:4);%+[0 inNr 0]; %DoFpNode x Nodes(inkl.Hyb) x NrEigs
 ReducedHybridDofa=model.inDOF(3)+1:R_DRHsizeIn(1);
 ReducedHybridDofb=model.inDOF(4)+1:R_DRHsizeIn(1);
@@ -447,6 +459,11 @@ for i = 1:f
   R_DRH(3,:,:,:)=RealEV(r0t ,BC,R_DRHsize,nA);
   R_DRH(4,:,:,:)=RealEV(r11t,BC,R_DRHsize,nA);
   R_DRH(5,:,:,:)=RealEV(r12t,BC,R_DRHsize,nA);
+  R_DRH2023(:,:,1,:)=RealEV(r02t,BC,R_DRHsize,nA);
+  R_DRH2023(:,:,2,:)=RealEV(r01t,BC,R_DRHsize,nA);
+  R_DRH2023(:,:,3,:)=RealEV(r0t ,BC,R_DRHsize,nA);
+  R_DRH2023(:,:,4,:)=RealEV(r11t,BC,R_DRHsize,nA);
+  R_DRH2023(:,:,5,:)=RealEV(r12t,BC,R_DRHsize,nA);
   if max(abs(imag(R)))>eps(0)
    warning('MyProgram:Complex','R is komplex');
   end
@@ -500,11 +517,25 @@ for i = 1:f
 
  eigval{i} = EV;
  %imagValues(i)=imagValuesi;
- eigvec{i} = (R);%single precission might be dangerous for postprocessing
  eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
- %eigvecDR{i}=R_DRH(:,:,1:R_DRsize(3),:);% DRH...[Displacement,Rotation,Hybrid](splitted)
- eigvecHi=R_DRH(:,1:3,R_DRsize(3)+1:end,:);% increments x DoFpNode x Nodes x NrEigs
- eigvecH2{i}=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
+ %eigvecDRH2023{i}=R_DRH2023;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
+ eigvecDRi=R_DRH2023(:,1:R_DRsize(3),:,:);% DRH...[Displacement,Rotation,Hybrid](splitted)
+ eigvecDR{i}=eigvecDRi;
+ eigvecHi=R_DRH2023(1:6,R_DRsize(3)+1:end,:,:);% DoFpNode x Nodes x increments x NrEigs
+ eigvecH{i}=eigvecHi;
+ eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
+ eigvecH2{i}=eigvecH2i;
+ if strcmp(modelprops.whichEV,'k0_11')
+  for incriment=3:7
+   DHtmp=sqrt(full(diag(Kt0_0))).'.*R(incriment,:);
+   aktiveDOF=dofs(1)*dofs(2)-numel(BC);
+   eigvec2023{i}(1:aktiveDOF,incriment-2)=DHtmp(1:aktiveDOF);
+  end
+   eigvec2023{i}(aktiveDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);
+  eigvec{i} = sqrt(diag(Kt0_0)).*R(5,:)+0;
+ else
+  eigvec{i} = (R);%single precission might be dangerous for postprocessing
+ end
  StiffMtxs{i,1} = KT;
  StiffMtxs{i,2} = Ktprim0;
  if modelprops.numofelm<=20 % skip DetKt for large, because it is slow
@@ -518,35 +549,6 @@ for i = 1:f
     Kt0=KT;
     Kt0inv=inv(Kt0);
     relative=true;
-    %     n=87;
-    %     passt=false;
-    %     while passt==false
-    %      res=1;
-    %      %n=1;
-    %      while res>0 && ~isinf(res)
-    %       n=n+1;
-    %       res=det(Kt0(1:n,1:n)*KTmult0);
-    %      end
-    %      m=n-1
-    %      res=det(Kt0(1:m,1:m)*KTmult0)
-    %      if isinf(res)
-    %       warning('MyPrgm:Nan','res is inf')
-    %       %res=det(Kt0(1:m,1:m)*KTmultAlt);
-    %      end
-    %      if res<1e10
-    %       res=res*1e50 %1e100->2813
-    % %1e50: 1931->2189->2486
-    %      end
-    %      Nenner=nthroot(res,m);
-    %      %KTmultAlt=KTmult0;
-    %      KTmultNeu=(KTmult0/Nenner+KTmult0)/2
-    %      KTmult=KTmultNeu;
-    %      KTmult0=KTmult;
-    %      detKtmult=det(Kt0*KTmult);
-    %      if detKtmult~=0 && ~isinf(detKtmult)
-    %       passt=true;
-    %      end
-    %     end
    else
     KTmult=KTmult0;
    end
@@ -620,9 +622,13 @@ for i = 1:f
     Nenner0=norm(Kt0_0*rm);
     Nenner11=NaN;
    elseif strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.whichEV,'k11')
-    Nenner01=sqrt(dot(r01,diag(Kt01).*r01));
-    Nenner0=sqrt(dot(rm,diag(KT).*rm));
-    Nenner11=sqrt(dot(r11',diag(Kt11).*r11));
+    Nenner01=sqrt(dot(r01,diag(Kt01).*r01)+eigvecH2i(2,forcedeig));
+    Nenner0=sqrt(dot(rm,diag(KT).*rm)+eigvecH2i(3,forcedeig));
+    Nenner11=sqrt(dot(r11',diag(Kt11).*r11)+eigvecH2i(4,forcedeig));
+   elseif strcmp(modelprops.Normierung,'k0_11')
+    Nenner01=sqrt(dot(r01 ,diag(Kt0_0).*r01)+eigvecH2i(2,forcedeig));
+    Nenner0 =sqrt(dot(rm  ,diag(Kt0_0).*rm )+eigvecH2i(3,forcedeig));
+    Nenner11=sqrt(dot(r11',diag(Kt0_0).*r11)+eigvecH2i(4,forcedeig));
    elseif strcmp(modelprops.Normierung,'R1')
     Nenner01=NaN;
     Nenner0=norm(rm);
@@ -672,6 +678,8 @@ for i = 1:f
   NormKt0r(i)=single(norm(Kt0_0*rm));
  elseif strcmp(modelprops.whichEV,'sqrtK_r') || strcmp(modelprops.whichEV,'sqrtK0_r')
   %everythings fine
+ elseif  strcmp(modelprops.whichEV,'k0_11')
+  r0t=NaN*r0t;
  else
   warning('MyPrgm:NotImplemented','modelprops.whichEV=%s unknown?',modelprops.whichEV)
  end%if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
@@ -701,6 +709,8 @@ for i = 1:f
      Nenner0=norm(rmj);
     elseif strcmp(modelprops.Normierung,'k11')
      Nenner0=sqrt(dot(rm,diag(KT).*rm));
+    elseif strcmp(modelprops.Normierung,'k0_11')
+     Nenner0=sqrt(dot(rm,diag(Kt0_0).*rm));
     elseif strcmp(modelprops.Normierung,'skip')
      warning('MyPrgm:runEigen:Inconsistent:Input','Normierung is set to skip, but whichEV is not skip')
      warning('off','MyPrgm:runEigen:Inconsistent:Input')
@@ -796,7 +806,7 @@ for i = 1:f
  
  if ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
   if ~exist('rmj','var')
-   if ~strcmp(modelprops.whichEV,'sqrtK0_r')
+   if ~strcmp(modelprops.whichEV,'sqrtK0_r') && ~strcmp(modelprops.whichEV,'k0_11')
     warning('MyPrgm:Unknown','modelprops.whichEV=%s might be unkown',modelprops.whichEV)
    end
    rmj=NaN*r0t(:,j);
@@ -862,6 +872,15 @@ if ~strcmp(modelprops.whichEV,'skip')
   model.stiffnessMatrices = StiffMtxs(:,1);% very much diskspace
   %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
   model.eigvecH2=eigvecH2;%only Hybrid-DOFs^2
+ elseif strcmp(modelprops.Normierung,'k0_11') || strcmp(modelprops.whichEV,'k0_11')
+  model.stiffnessMatrices = StiffMtxs(1:2,1);% very much diskspace
+  %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
+  model.eigvecDR=eigvecDR;%only Displacements and Rotations
+  model.eigvecH=eigvecH;%only Hybrid-DOF
+  model.eigvecH2=eigvecH2;%sum of Hybrid-DOFs^2
+  model.eigvec2023=eigvec2023;
+ else
+  model.stiffnessMatrices = StiffMtxs(1,1);
  end
 end
 

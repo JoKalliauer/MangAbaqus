@@ -80,7 +80,9 @@ function model = runEigenProblemDispJK(modelprops,model,Displ,~,~,matches,wbrEP)
     dl=(model.lambda(matches(i)+1)-model.lambda(matches(i)));
     d2ksi(i)=NaN;
    elseif numel(model.lambda)<matches(i)+1
-    warning('MyPrgm:Inputproblem','something went wrong try (i) reducing modelprops.numofeigs ;(ii) reducing modelprops.lambda (iii) modelprops.forcerun=true')
+    if numel(model.lambda)<matches(i)
+     warning('MyPrgm:Inputproblem','something went wrong try (i) reducing modelprops.numofeigs ;(ii) reducing modelprops.lambda (iii) modelprops.forcerun=true')
+    end
     %DisplMatip1=NaN;%*DisplMatip1;
     DisplAbs(i+1)=NaN;%*DisplAbs(i);
     dksiMat=NaN*dksiMat;
