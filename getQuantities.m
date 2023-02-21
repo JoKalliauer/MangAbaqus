@@ -1,36 +1,43 @@
 function [v,a,dsdksi,accel,d2sdksi2,an,rho,tau,ortCond1,rho2, drddr, cosmu, sinpsi, ortCond2,ortCond3,ortCond4, t, N, B, r0,...
  ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB,drhopds,rconst,Ebene,phiR,ortCond8,d2rds2] ...
  = getQuantities(RS,~,DT,r0atl0,~,tatl0,main,EVatStability) %DT=epsilon
-%% run the the EigenProblem outer program
+%% calulates tau, acceleration, rho, convergence-criterias
 %university:TU Wien
 %author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
 
 %% Input
-% RS  ... eigenvalues
-% ~
-% DT ... timeincrement
-% r0atl0 ... rho at lambda=0 (outdated)
-% ~ ... 
-% tatl0 ... tau at lambda=0 (outdated)
-% main ... evaluation-settings from the start-file
-% EVatStability ... Eigenvector at stabilitylimit
+% RS  ... Eigenvectors
+% dksi,~ ... removed
+% DT ... epsilon-step-size, timeincrement
+% r0atl0 ... rho at lambda=0 (not used in the current approach)
+% ~ ...  removed
+% tatl0 ... tau at lambda=0 (not used in the current approach)
+% main ... structure with evaluation-settings from the start-file
+% EVatStability ... Eigenvector at stabilitylimit  (not used in the current approach)
+
 
 %% Output
-% v ... speed of r
-% a ... acceeration-vektor of r
-% dsdksi ... ds/d
-% accel norm of a
+% v ... Speed-vector of the eigenvector r
+% a ... accelration-vector of the eigenvector r
+% dsdksi ... ds/dlambda
+% accel norm of  accerartion a
 % d2sdksi2
 % an .. normal accerlation
 % rho ... eigenvector-curvature (outdated)
-% tau
-% ortCond1 .. ortohongality check
-% rho2 ... high precission eigenvector-curvature
-% 
-
+% tau .. torque of the vector-path
+% ortCond1 .. orhogonalcodition check
+% rho2 ... high precission eigenvector-curvature (better convergence)
+% drddr 
+% cosmu
+% sinpsi
+% ...
 
 %% Recent Changes
+%2023-02-17 JK: removed old comments and explained in/output
 %2023-02-21 JK: removed commented out lines
+
+
+
 
 %% Code
 
@@ -83,25 +90,6 @@ if (~any(isnan(r0)) && ~any(isnan(rm1))) || main.check==false
  v = (rp1 - rm1)/(2*DT); %(10)
  a = (rm1 - 2*r0 + rp1)/(DT)^2; %(11)
  da = 1/(DT)^3*(-1/2*rm2 + 1*rm1 - 1*rp1 + 1/2*rp2);%(12)
- %da=da/3;
- %      v = (r11 - r01)/(2);
- %      a = (r01 - 2*r0 + r11);
- %      da = (-1/2*r02 + 1*r01 - 1*r11 + 1/2*r12);
- 
- %t02 = r01 - r03; %t02 = t02/norm(t02);
- %t01 = r0 - r02; %t01 = t01/norm(t01);
- %t0 = v/norm(v);
- %t11 = r12 - r0; %t11 = t11/norm(t11);
- %t12 = r13 - r11; %t12 = t12/norm(t12);
- 
- %n01 = (t0 - t02);  %n01 = n01/norm(n01);
- %n0 = (t11 - t01);
- %n0 = n0/norm(n0);
- %n11 = (t12 - t0);  %n11 = n11/norm(n11);
- 
- %t = t0;
- %n = n0;
-
 
 accel = norm(a);
 
@@ -322,13 +310,10 @@ else
  x3=NaN;
  x4=NaN;
  RxB=NaN;
-% <<<<<<< HEAD
-drhopds=NaN;
-rconst=NaN;
-phiR=NaN;
-Ebene=NaN;
-% =======
-% >>>>>>> c8d007979d050d2fdcd2c9ed43fa8f6b3bcff9d2
+ drhopds=NaN;
+ rconst=NaN;
+ phiR=NaN;
+ Ebene=NaN;
  
  rho2=NaN;
  ortCond1=NaN;

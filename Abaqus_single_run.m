@@ -1,5 +1,5 @@
 function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,numofelm,ecc,elementtype)
-%% Outermost function to call
+%% Thats the function to call, which calls all the required subfunctions
 %Outermost function that calls all programs, but Input must be provieded by a skript
 % modelprops.* enter runEigenProblem, hoever main.* does not enter runEigenProblem and is for postprocess, model.* is created by Matlabfunctions, not by the user.
 % e.g. [model] = runEigenProblem(modelprops)

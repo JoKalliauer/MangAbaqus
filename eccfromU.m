@@ -1,5 +1,21 @@
 function [sectiondata,yecc,zecc]=eccfromU(UBpUges)
+%% calulates the excentricity for a given Energy-ratio
+%university:TU Wien
+%author: Johannes Kalliauer
+%created: ~2021
 
+%% Input
+% UBpUges .. Bening-Energy-ratio
+
+%% Output
+% sectiondata ... structure containing the cross-section-data
+% yecc ... exzentriciy around the weak axis
+% zecc ... excentricity around the strong axis
+
+%% recent-change
+%2023-02-17 JK: adding input-output-variables
+
+%% Code
 
  % A=80.678; %cm^2
  % Iyy=21876.5; %cm^4
