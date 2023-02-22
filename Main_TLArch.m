@@ -108,7 +108,7 @@
   main.rstabil=NaN;
   modelprops.MeterValue=1;%1000mm=1m=0.001km
   main.whichEV='k0_11'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r' 'k11' 'k0_11'
-  main.Normierung='R1'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
+  main.Normierung='k0_11'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
   main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;

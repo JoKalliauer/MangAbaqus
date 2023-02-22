@@ -587,19 +587,15 @@ for i = 1:f %f = length(eigval)
   Nenner0=norm(rm);
   Nenner11=norm(r11);
   Nenner12=norm(r12);
- elseif strcmp(main.Normierung,'k11')
-  Nenner02=NaN;%sqrt(dot(r02,diag(Kt02).*r02)+eigvecH2i(1,NrEw));
-  Nenner01=NaN;%sqrt(dot(r01,diag(Kt01).*r01)+eigvecH2i(2,NrEw));
-  Nenner0 =NaN;%sqrt(dot(rm ,diag(KT  ).*rm )+eigvecH2i(3,NrEw));
-  Nenner11=NaN;%sqrt(dot(r11,diag(Kt11).*r11)+eigvecH2i(4,NrEw));
-  Nenner12=NaN;%sqrt(dot(r12,diag(Kt12).*r12)+eigvecH2i(5,NrEw));
- elseif strcmp(main.Normierung,'k0_11')
-  Nenner02=NaN;%sqrt(dot(r02,diag(Kt0_0).*r02)+eigvecH2i(1,NrEw));
-  Nenner01=NaN;%sqrt(dot(r01,diag(Kt0_0).*r01)+eigvecH2i(2,NrEw));
-  Nenner0 =NaN;%sqrt(dot(rm ,diag(Kt0_0).*rm )+eigvecH2i(3,NrEw));
-  Nenner11=NaN;%sqrt(dot(r11,diag(Kt0_0).*r11)+eigvecH2i(4,NrEw));
-  Nenner12=NaN;%sqrt(dot(r12,diag(Kt0_0).*r12)+eigvecH2i(5,NrEw));
- elseif strcmp(main.Normierung,'R1')
+ elseif strcmp(main.Normierung,'R1') ||  strcmp(main.Normierung,'k11') || strcmp(main.Normierung,'k0_11')
+  if strcmp(main.Normierung,'k11')
+   assert(strcmp(main.whichEV,'k11'),'this feature is not implemented')
+  elseif strcmp(main.Normierung,'k0_11')
+   assert(strcmp(main.whichEV,'k0_11'),'this feature is not implemented')
+  else
+   assert(~strcmp(main.whichEV,'k11'),'this feature is not implemented')
+   assert(~strcmp(main.whichEV,'k0_11'),'this feature is not implemented')
+  end
   Nenner02=norm(r02);
   Nenner01=norm(r01);
   Nenner0=norm(rm);
