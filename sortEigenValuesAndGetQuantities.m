@@ -587,7 +587,7 @@ for i = 1:f %f = length(eigval)
   Nenner0=norm(rm);
   Nenner11=norm(r11);
   Nenner12=norm(r12);
- elseif strcmp(main.Normierung,'k11') || strcmp(main.whichEV,'k11')
+ elseif strcmp(main.Normierung,'k11')
   Nenner02=NaN;%sqrt(dot(r02,diag(Kt02).*r02)+eigvecH2i(1,NrEw));
   Nenner01=NaN;%sqrt(dot(r01,diag(Kt01).*r01)+eigvecH2i(2,NrEw));
   Nenner0 =NaN;%sqrt(dot(rm ,diag(KT  ).*rm )+eigvecH2i(3,NrEw));
