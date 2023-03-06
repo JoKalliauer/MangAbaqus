@@ -371,6 +371,6 @@ disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),
   %sound when finished (easter egg)
   beep
   load handel y
-  sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
+  %sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
 
 end

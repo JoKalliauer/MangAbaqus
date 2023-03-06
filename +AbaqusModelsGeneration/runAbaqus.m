@@ -59,9 +59,9 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
     else
      %/home/jkalliau/ownCloud/Linux/bin/imwsrun
      if modelprops.ask_delete==false || ~usejava('desktop')
-      reply=system(['exec /usr/bin/imwsrun abaqus cpus=1 interactive ask_delete=OFF job=',filename]);
+      reply=system(['exec abaqus cpus=1 interactive ask_delete=OFF job=',filename]);
      else
-      reply=system(['exec /usr/bin/imwsrun abaqus cpus=1 interactive job=',filename]);
+      reply=system(['exec abaqus cpus=1 interactive job=',filename]);
      end
     end
     if reply==1
@@ -146,7 +146,8 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
  end %if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
 
  if isunix %linux-PC
-   cd ~/ownCloud/Post/MangAbaqus/ %cd ..
+   %cd ~/ownCloud/Post/MangAbaqus/ %cd ..
+   cd(oldpwd)
  elseif ispc %windows
    cd(oldpwd)
    %cd 'C:\Users\jokal\OneDrive\Dokumente\GitHub\MangAbaqus\' %cd ..
