@@ -56,7 +56,7 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %modelprops.elementtype = 'xx'; %current
-  eltypes={'B32OS', 'B32OSH'};
+  eltypes={'B32OS', 'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
  
   
   
@@ -73,7 +73,7 @@
   %modelprops.typeofanalysisA = 'KNoLinear';
   %modelprops.typeofanalysis=strcat(modelprops.typeofanalysisA,modelprops.typeofanalysisB);
   
-  modelprops.numofelm = 2;%20
+  modelprops.numofelm = 20;
   %BB5-B31OSH2048-l5-f1-eps0.001-u1
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [2,3,7,14,15,16,21,211,23,26,28,29]; %#ok<*NBRAK>
@@ -103,7 +103,7 @@
   modelprops.allowComplex=false;
   main.closall=0;
   main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=0;
+  main.check=true;
   %main.colorshift=5;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1; %1000mm=1m=0.001km

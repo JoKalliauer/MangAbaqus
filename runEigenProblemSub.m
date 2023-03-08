@@ -526,13 +526,13 @@ for i = 1:f
  eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
  eigvecH2{i}=eigvecH2i;
  if strcmp(modelprops.whichEV,'k0_11')
-  for incriment=3:7
-   DHtmp=sqrt(full(diag(Kt0_0))).'.*R(incriment,:);
-   aktiveDOF=dofs(1)*dofs(2)-numel(BC);
-   eigvec2023{i}(1:aktiveDOF,incriment-2)=DHtmp(1:aktiveDOF);
+  for incriment=3:7% 3... lambda-2*dlambda; 4 ... previous loadstep; 5 ... current loadstep; 6 next loadstep; 7 second next loadstep
+   DHtmp=sqrt(full(diag(Kt0_0))).'.*R(incriment,:);% sqrt(k_ii)*r_i
+   aktiveDOF=dofs(1)*dofs(2)-numel(BC);% which dofs are displacements and Rotations
+   eigvec2023{i}(1:aktiveDOF,incriment-2)=DHtmp(1:aktiveDOF);%save only the displacements and Rotations (no hybrid)
   end
-   eigvec2023{i}(aktiveDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);
-  eigvec{i} = sqrt(diag(Kt0_0)).*R(5,:)+0;
+  eigvec2023{i}(aktiveDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);% add hybrid DOFs
+  eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
  elseif strcmp(modelprops.whichEV,'k11')
   
    akDOF=dofs(1)*dofs(2)-numel(BC);%aktive DOFs

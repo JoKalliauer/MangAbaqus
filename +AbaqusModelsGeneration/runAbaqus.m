@@ -39,25 +39,21 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
  assert(isfile(strcat(filename,'.inp')),'input-file does not exist in %s',AbaqusRunsFolder)
  if ~(exist([filename,'.sta'], 'file') == 2) || modelprops.forceAbaqus==true
   if isunix
-   %[~, name] = system('hostname');
-   %if strcmp(name(1:6),'fedora') ||strcmp(name(1:17),'jkalliau-Z87M-D3H') || strcmp(name(1:21),'localhost.localdomain') ||strcmp(name(1:22),'dhcp46.imws.tuwien.ac.') ||strcmp(name(1:29),'e250-200.eduroam.tuwien.ac.at')
-       if modelprops.forceAbaqus==true && modelprops.ask_delete==false;   system(['rm -f ',[filename,'.sta ',filename,'_STIF*.mtx']]); end
-       disp(AbaqusRunsFolder)
-       %mesJK=strcat('imwsrun abaqus:2020 cpus=1 interactive job=',filename);disp(mesJK)
-    reply0=system(['exec abq2020hf5 cpus=1 interactive job=',filename]) %#ok<NOPRT>
-     if modelprops.ask_delete==false || ~usejava('desktop')
-      reply21=system(['exec abq2021hf5 cpus=1 interactive ask_delete=OFF job=',filename]) %#ok<NOPRT>
-     else
-      reply21=system(['exec abq2021hf5 cpus=1 interactive job=',filename]) %#ok<NOPRT>
-     end
+   if modelprops.forceAbaqus==true && modelprops.ask_delete==false;   system(['rm -f ',[filename,'.sta ',filename,'_STIF*.mtx']]); end
+   disp(AbaqusRunsFolder)
+   if modelprops.ask_delete==false || ~usejava('desktop')
+    reply0=system(['exec abq cpus=1 interactive ask_delete=OFF job=',filename]) %#ok<NOPRT>
+   else
+    reply0=system(['exec abq cpus=1 interactive job=',filename]) %#ok<NOPRT>
+   end
 
-    %reply is 127 if abq2020hf5: not found, otherwise use the reply
+    %reply is 127 if abq: not found, otherwise use the reply
     if reply0~=127 
      reply=reply0;  
-    elseif reply21~=127
-     reply=reply21;
+    elseif reply0~=127
+     reply=reply0;
     else
-     %/home/jkalliau/ownCloud/Linux/bin/imwsrun
+     %/home/jkalliau/ownCloud/Linu aufgrund von Fig33x/bin/imwsrun
      if modelprops.ask_delete==false || ~usejava('desktop')
       reply=system(['exec abaqus cpus=1 interactive ask_delete=OFF job=',filename]);
      else
@@ -165,7 +161,7 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
   if ~exist([AbaqusRunsFolder,filename,'_STIF7.mtx'],'file')
    AbaqusRunsFolder %#ok<NOPRT>
    %warning('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true or switch on VPN',AbaqusRunsFolder)
-   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true or switch on VPN',AbaqusRunsFolder)
+   error('MyProgramm:Missing','_STIF*.mtx missing in %s , try rerunning forceAbaqus=true or switch on VPN or comand "abaqus" not found',AbaqusRunsFolder)
    %return
   else
    warning('MyProgram:Abaqus','only few stif existing, maybe abaqus failed?')

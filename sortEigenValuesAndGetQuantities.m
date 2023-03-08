@@ -502,11 +502,11 @@ for i = 1:f %f = length(eigval)
  end
  NrEw=is0(isi);
  if  strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11')
-  r02 = model.eigvec2023{i}(:,1,NrEw);
-  r01 = model.eigvec2023{i}(:,2,NrEw);
-  rm  = model.eigvec2023{i}(:,3,NrEw);
-  r11 = model.eigvec2023{i}(:,4,NrEw);
-  r12 = model.eigvec2023{i}(:,5,NrEw);
+  r02 = model.eigvec2023{i}(:,1,NrEw);% r~(lambda-2*dlambda)
+  r01 = model.eigvec2023{i}(:,2,NrEw);% r~ of previous loadstep
+  rm  = model.eigvec2023{i}(:,3,NrEw);% r~ of current loadstep
+  r11 = model.eigvec2023{i}(:,4,NrEw);% r~ of next loadstep
+  r12 = model.eigvec2023{i}(:,5,NrEw);% r~ of second next loadstep
  else
   r02 = eigvec{i}(evmiddle-2,:,:,NrEw);
   r01 = eigvec{i}(evmiddle-1,:,:,NrEw);
