@@ -82,13 +82,16 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  
  %900 detKt
  %901 sqrt[N]{detKt}
- %902 \xiJK
+ %902 \xiJK u_{ave}
  %905 model.dxidl
  %906 dl/dxi
  %908 v [m]
  %909 d\lambda/dw
+ %911 w_{max}
  %913 det/det0
  %914 det/max(det)
+ %916 u_{max}
+ %917 d\lambda / dv
  %918 model.displacementsJK{step}(1,:)
  
  %943 model.rddotKtr
@@ -101,6 +104,8 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  %952 t_KB1_t
  %953 -2*model.t_KB1_t
  %958 model.rKt0r
+ %963 \phi_{max}
+ %969 u(l/2)
  %972 model.rdotKtr / model.rKt0r
  
  %% Code
@@ -678,7 +683,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
  
  %fignr=14;
- if ismember(14,plotfig)
+ if ismember(14,plotfig) && isstruct(res)
   figure(14);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on

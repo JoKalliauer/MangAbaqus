@@ -55,7 +55,7 @@
   %plotfig=[15,45,35,19,52];%EW
   plotfig=[14,15,45,35,19];%EW
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r';
+  main.whichEV='skip'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r';
  
  
   

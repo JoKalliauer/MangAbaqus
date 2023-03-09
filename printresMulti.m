@@ -51,7 +51,7 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
    writematrix(m07,filename,'Delimiter',';')
    %system(['exec sed -i "s/\./,/g" ',filename]);
   end
-  if ismember(14,plotfig)
+  if ismember(14,plotfig) && isstruct(res)
    m14(:,1+i)=res(k3).RHO2;
    filename=strcat('Output/Figures/CSV/',model.filename,'_rho14.csv');
    writematrix(m14,filename,'Delimiter',';')
