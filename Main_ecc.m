@@ -1,8 +1,15 @@
 %#!
 %university:TU Wien
+%author of this script: Johannes Kalliauer(2020-2023)
+%author of subprograms: Johannes Kalliauer(2020-2023), Michal Malendowski (2019-2020)
+%created: ~2020
+
+%% Last changes
+%2023-03-13 JK: main.Normierung='R1';
+
  %#ok<*NOPTS>
  %clear
- %close all
+ close all
 % format shortG
 format longG
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
@@ -116,8 +123,8 @@ format longG
   main.rsame=NaN;%0.8;
   main.rstabil=NaN;%0.99999;
   modelprops.allowComplex=true;
-  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'; 'k11'
-  main.Normierung='k11'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip'
+  main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'; 'k11' 'k0_11'
+  main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
   main.rho='R1'; % KtR1 R1 'A0R1' 
   
   %modelprops.MeterValue=1; %1000mm=1m=0.001km ; 0.0101-999

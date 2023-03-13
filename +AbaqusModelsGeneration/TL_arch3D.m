@@ -1,6 +1,34 @@
-function [filename,lambda,BC,Nodes,Elements,load,dofpNode,rpLeft,leftnodes,rpRight,rightnodes,razem] ...
+function [filename,lambda,BC,Nodes,Elements,load,dofpNode,rpLeft,leftnodes,rpRight,rightnodes] ...
 = TL_arch3D(~,numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops)
-razem = [];
+%university:TU Wien
+%author: Michal Malendowski (2019-2020), Johannes Kalliauer(2020-2023)
+
+%% Input
+% ~ ... length (not used, since it is fixed)
+% numofelm ... number of elements
+% lambda ... load steps
+% loadFactor .. Load factor to multiply the load
+% eltype ... type of the Element
+% AbaqusRunsFolder .. where is the folder to run Abaqus
+% modelprops ... input-properties such as the youngs modulus or the length
+
+%% Output 
+% filename ... name of the abaqus-file
+% lambda ... load steps (same as input?)
+% BC ... boundary conditions
+% Nodes .. nodenumber and coordinates
+% Elements ... which nodes to which element
+% load .. load-values for each lambda
+% dofpNode ... number of dof per Node
+% rpLeft .. left support (currently not used)
+% leftnodes ... left support (currently not used)
+% rpRight ... right support (currently not used)
+% rightnodes ... right support (currently not used)
+
+%% Last changes
+% 2023-03-13 JK: removed useless razem -Output, added comments, added modelprops.length-check
+
+%% Input-Check and default values
 if nargin<1
     lambda = 0.01:0.01:1;
 %     lambda = 0.1;
@@ -16,6 +44,8 @@ if length(eltype)>=5
   warning('MyProgram:Input','TL_arch3D only with rect tested')
  end
 end
+
+assert(isempty(modelprops.length),'modelprops.length is not implemented, it a fixed span of 6m and a height of 2.4m');
 
 elmtype=eltype;
 
