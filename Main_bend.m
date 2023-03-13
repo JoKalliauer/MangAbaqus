@@ -56,7 +56,7 @@
   %modelprops.elementtype = 'B32OS'; %Timoshenko 
   %modelprops.elementtype = 'B32OSH'; %Timoshenko 
   %modelprops.elementtype = 'xx'; %current
-  eltypes={'B32OS', 'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
+  eltypes={'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
  
   
   
@@ -84,7 +84,7 @@
   %plotfig=[14,15,16];
   %plotfig=[2,14,30,35,42,47,48,50:51,53];%EV-Normierung
   %plotfig=35;
-  plotfig=[14,33,35];
+  plotfig=[14,35];
   %plotfig=[15,35,945,958,972];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
@@ -98,17 +98,17 @@
   
   %modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+  modelprops.forcerun=false; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
-  main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
+  main.savefigures=false; % false.. dont safe figures(faster), true safe figures (slow)
   main.check=true;
   %main.colorshift=5;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
-  main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
+  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
+  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
   main.rho='R1'; % KtR1 R1; 'A0R1'
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
    
@@ -174,3 +174,17 @@ end
 %  res.stability_limit
 %  
 % end
+
+
+% close all
+cfig = containers.Map;
+cfig('outputformats')='p'
+
+numofelm=modelprops.numofelm;
+ xdata=(0:numofelm)*modelprops.length/numofelm
+ 
+for Dir=1:6
+ ydata=model.eigvecDR{20}(Dir,1:numofelm+1,3)
+ myylabel=strcat('Eigenvectorcomponent',num2str(Dir));
+ plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100) 
+end
