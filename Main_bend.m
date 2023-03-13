@@ -1,7 +1,7 @@
 %#!/usr/bin/env octave -q
 %university:TU Wien
-%author of this script: Johannes Kalliauer(©2020-2023)
-%author of subprograms: Johannes Kalliauer(©2020-2023), Michał Malendowski (©2019-2020)
+%author of this script: Johannes Kalliauer(2020-2023)
+%author of subprograms: Johannes Kalliauer(2020-2023), Michal Malendowski (2019-2020)
 %created: 2020
 
 %% Start pure-bending-beam on two supports
