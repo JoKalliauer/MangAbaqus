@@ -186,5 +186,5 @@ numofelm=modelprops.numofelm;
 for Dir=1:6
  ydata=model.eigvecDR{20}(Dir,1:numofelm+1,3)
  myylabel=strcat('Eigenvectorcomponent',num2str(Dir));
- plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100) 
+ %plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100) 
 end

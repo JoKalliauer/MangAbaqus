@@ -368,9 +368,9 @@ if main.savefigures==true %&& ~strcmp(main.whichEV,'skip')
 end
 disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),'.mat']);
 
-  %sound when finished (easter egg)
+  %sound when finished
   beep
-  load handel y
+  %load handel y
   %sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
 
 end

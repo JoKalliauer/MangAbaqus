@@ -149,10 +149,11 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
    %lamMax=NaN;
  if export && isfield(model,'load')
   lengthlam=min(lengthlam,numel(model.load)+1);
-  if strcmp(model.filename(1),'p') %%#ok<UNRCH>%pureBending
+  if strcmp(model.filename(1),'p')%pureBendingBeam_Malendowski
    xlabelload='bending moment $M$'; % [kN\,m]
    xValload=model.load(1:lengthlam-1);%/1000;
    xValload0=model.load0;%/1000;
+   warning('MyPrgm:Outdated','pure Bending should be BB, only used to gain old results by Malendwoski')
   elseif strcmp(model.filename(1),'T')%Stuetlinienbogen
    xlabelload='line load $p$ [kN/cm]';
    xValload=model.load(1:lengthlam-1);%/100000;
@@ -186,8 +187,11 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
    xValload0=model.load0;
    lamMin=-1.5;
    %lamMax=1.5;
-  elseif strcmp(model.filename(1),'B')%BendC...BendingCantilever
+  elseif strcmp(model.filename(1),'B')%Bending
    xValfulllambda0Mult=1/0.57280;%/0.57280;
+   if ~strcmp(model.filename(1:6),'BB5-B3')
+    warning('MyPrgm:Check','please check if xValfulllambda0Mult is correct')
+   end
   elseif strcmp(model.filename(1),'c')%canti
    xlabelload='point load [N]';
   elseif strcmp(model.filename(1),'K')%Kreis_arch3D
