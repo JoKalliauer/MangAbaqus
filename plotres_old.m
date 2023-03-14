@@ -1,4 +1,7 @@
 function plotres(res,model,plotfig,colJK,markJK)
+%% Plot Graphs
+%author:Michal Malendowski (2019-2020) and Johannes Kalliauer(2020-2021),
+%later replaced by plotresMulti.m
  % 2...rho
  % 1...chi
  % 3..._velocity

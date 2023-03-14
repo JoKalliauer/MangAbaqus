@@ -20,12 +20,6 @@ format longG
 
 
   % there are following predefined test cases:
-  %modelprops.testcase = 'TL_arch';
-  %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
-  %testcase = 'TL_arch_Hinge';
-  %testcase = 'TL_arch3D_Hinge';
-  %modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
-  %modelprops.testcase = 'cantilever';
   %modelprops.ecc = 0.164669;
   %modelprops.ecc=(81*sqrt(64373/403390))/800;
   %modelprops.ecc=0.5;

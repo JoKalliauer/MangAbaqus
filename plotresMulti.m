@@ -1,6 +1,6 @@
 function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 %% Plot Graphs
-%author:Johannes Kalliauer(©2020-2023) based on Michał Malendowski (©2019-2020)
+%author:Johannes Kalliauer(2020-2023) based on Michal� Malendowski (2019-2020)
 
 %% Input
 % res ... results from sortEigenValuesAndGetQuantities
@@ -324,7 +324,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  end
  NrFulllambda0=numel(model.fulllambda);
 
- if strcmp(xBezug,'n')%lambda nachträglich normalisiert
+ if strcmp(xBezug,'n')%lambda nachtraeglich normalisiert
   xPlot0=lambda0(1:end)*xValfulllambda0Mult; %xValfullload0
   xPlot=model.fulllambda(2:end-3)*xValfulllambda0Mult; %xValfullload0
   FullxPlot0=model.fulllambda(1:end-3)*xValfulllambda0Mult;%different from xPlot0 if lambda(1)>>epsil
