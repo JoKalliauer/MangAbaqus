@@ -1,4 +1,4 @@
-^function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,AnalysisResultsFolder)
+function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,AnalysisResultsFolder)
 %#!/usr/bin/env octave -q
 %university:TU Wien
 %author:Johannes Kalliauer(©2020-2023), Michał Malendowski (©2019-2020)
