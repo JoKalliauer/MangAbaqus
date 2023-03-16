@@ -19,7 +19,7 @@ git config core.eol lf
 git pull
 #git status
 git add .
-git reset -- AbaqusRuns/* AnalysisResults/*  Output/* *.mat *.m~ *.mtx *.png *.eps *.asv
+git reset -- AbaqusRuns/* AnalysisResults/*  Output/* *.mat *.m~ *.mtx *.png *.eps *.asv *.svg
 git status
 
 

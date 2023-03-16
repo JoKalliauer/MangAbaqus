@@ -1,4 +1,4 @@
-function [StifMatrices,num0,activeDofs,BC,inDOF,dofs] = getStiffnessMatrices(model,lambdareq,typeofanalysis)
+function [StifMatrices,num0,activeDofs,BC,inDOF,dofs] = getStiffnessMatrices(model,lambdareq,typeofanalysis,elementtype)
 %% get the stiffnessMatrices from Abaqus
 %university:TU Wien
 %author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
@@ -20,6 +20,18 @@ function [StifMatrices,num0,activeDofs,BC,inDOF,dofs] = getStiffnessMatrices(mod
 
 %% Recent Changes
 %2023-02-21 JK: added explantations for dofs
+%2023-03-16 JK: assert(inDOFpNa==6); leaded to an error for TL_arch3D-B33-20-f1-eps0.005-u1-E210000000000-KNL2-1
+
+%% input check
+%EulerBernulli=false;
+if ~exist('elementtype','var')
+ elementtype='unknown';
+ isB32=true; %assuming it is one of the B32 elements
+elseif strcmp(elementtype,'B33') || strcmp(elementtype,'B33H') || strcmp(elementtype,'B31H')
+ isB32=false;
+else
+ isB32=true;
+end
 
 %% Code
 
@@ -117,10 +129,21 @@ for i = 1:steps
     inDOFpNList(j) = max(mtxSparse(mtxSparse(:,1)==internalNodes(j),2));
    end
    inDOFpNa = max(mtxSparse(mtxSparse(:,1)==internalNodes(1),2));
-   assert(inDOFpNa==6);
-   if NrInNod>1
+   if ~isB32
+    warning('MyPrgm:NoCheckImplemented','no check for B33 implemented')
+    if strcmp(elementtype,'B33H') || strcmp(elementtype,'B31H')
+     assert(inDOFpNa==3);%dont know why it is three
+    elseif strcmp(elementtype,'B33')
+     assert(inDOFpNa==2);%dont know why it is two
+    else
+     error('MyPrgm:Unknown','not implemted')
+    end
+   else
+    assert(inDOFpNa==6);
+   end
+   if NrInNod>1 && isB32
     inDOFpNb = max(mtxSparse(mtxSparse(:,1)==internalNodes(2),2));
-   assert(inDOFpNb==6);
+    assert(inDOFpNb==6);
    else
     warning('MyPrgm:DontKnowIfItIsStrange','please remove this warning it might not be important')
     inDOFpNb=NaN;

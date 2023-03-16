@@ -203,6 +203,11 @@ if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem');end
 
 taktuell=5;
 f=length(matches);
+if strcmp(modelprops.elementtype,'B33') || strcmp(modelprops.elementtype,'B33H') || strcmp(modelprops.elementtype,'B31H')
+ isB32=false;
+else
+ isB32=true;
+end
 
 for i = 1:f
  if usejava('jvm'); waitbar(i/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
@@ -454,16 +459,22 @@ for i = 1:f
   R(taktuell+2,:,:) = r12t;
   %R(8,:,:) = r13t;
   %R(9,:,:) = r14t;
-  R_DRH(1,:,:,:)=RealEV(r02t,BC,R_DRHsize,nA);
-  R_DRH(2,:,:,:)=RealEV(r01t,BC,R_DRHsize,nA);
-  R_DRH(3,:,:,:)=RealEV(r0t ,BC,R_DRHsize,nA);
-  R_DRH(4,:,:,:)=RealEV(r11t,BC,R_DRHsize,nA);
-  R_DRH(5,:,:,:)=RealEV(r12t,BC,R_DRHsize,nA);
-  R_DRH2023(:,:,1,:)=RealEV(r02t,BC,R_DRHsize,nA);
-  R_DRH2023(:,:,2,:)=RealEV(r01t,BC,R_DRHsize,nA);
-  R_DRH2023(:,:,3,:)=RealEV(r0t ,BC,R_DRHsize,nA);
-  R_DRH2023(:,:,4,:)=RealEV(r11t,BC,R_DRHsize,nA);
-  R_DRH2023(:,:,5,:)=RealEV(r12t,BC,R_DRHsize,nA);
+  if isB32
+   R_DRH(1,:,:,:)=RealEV(r02t,BC,R_DRHsize,nA);
+   R_DRH(2,:,:,:)=RealEV(r01t,BC,R_DRHsize,nA);
+   R_DRH(3,:,:,:)=RealEV(r0t ,BC,R_DRHsize,nA);
+   R_DRH(4,:,:,:)=RealEV(r11t,BC,R_DRHsize,nA);
+   R_DRH(5,:,:,:)=RealEV(r12t,BC,R_DRHsize,nA);
+   R_DRH2023(:,:,1,:)=RealEV(r02t,BC,R_DRHsize,nA);
+   R_DRH2023(:,:,2,:)=RealEV(r01t,BC,R_DRHsize,nA);
+   R_DRH2023(:,:,3,:)=RealEV(r0t ,BC,R_DRHsize,nA);
+   R_DRH2023(:,:,4,:)=RealEV(r11t,BC,R_DRHsize,nA);
+   R_DRH2023(:,:,5,:)=RealEV(r12t,BC,R_DRHsize,nA);
+  else
+   %keeping them NaN (not implemented)
+   %R_DRH=NaN(5,?,?,?);
+   %R_DRH2023=NaN(DoFpNode,Nodes,5,NrEigs); %DoFpNode x Nodes x increments x NrEigs
+  end
   if max(abs(imag(R)))>eps(0)
    warning('MyProgram:Complex','R is komplex');
   end
@@ -873,6 +884,7 @@ if ~strcmp(modelprops.whichEV,'skip')
  if sum(strcmp(fieldnames(modelprops), 'rho')) == 0
   modelprops.rho=[];
  end
+ model.eigvecDR=eigvecDR;
  if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1') ...
    ||  strcmp(modelprops.whichEV,'sqrtK0_r')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace
@@ -887,7 +899,7 @@ if ~strcmp(modelprops.whichEV,'skip')
    model.stiffnessMatrices = StiffMtxs(1:2,1);% very much diskspace
   end
   %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
-  model.eigvecDR=eigvecDR;%only Displacements and Rotations
+  %model.eigvecDR=eigvecDR;%only Displacements and Rotations
   model.eigvecH=eigvecH;%only Hybrid-DOF
   model.eigvecH2=eigvecH2;%sum of Hybrid-DOFs^2
   model.eigvec2023=eigvec2023;

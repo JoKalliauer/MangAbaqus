@@ -230,7 +230,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  %% get Stiffness
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem get Stiffness');end
  %[StifMatrices,num0,activeNodes,activeDofs,unactiveDofs,BC,Loads]  = AbaqusModelsGeneration.getStiffnessMatrices(model)
- [Kts,num,~,BC,model.inDOF,model.dofs]  = AbaqusModelsGeneration.getStiffnessMatrices(model,[],modelprops.typeofanalysis);
+ [Kts,num,~,BC,model.inDOF,model.dofs]  = AbaqusModelsGeneration.getStiffnessMatrices(model,[],modelprops.typeofanalysis,modelprops.elementtype);
  
  if exist('retryload','var')
   if retryload==true
