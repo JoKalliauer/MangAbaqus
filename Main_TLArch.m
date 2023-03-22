@@ -34,7 +34,7 @@
   
   epsil = 0.005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig=[2,14,35];
+  plotfig=[2,3,6,14,35,59];
   forcedeig = []; %1; % forced eigenvector number
   
   
@@ -47,11 +47,11 @@
   [~,modelprops.profil] =Profil('MalendowskiTLArch');
   modelprops.lambda = 0:epsil:.335;%
   modelprops.forceAbaqus=0; 
-  modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
+  modelprops.forcerun=false; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   main.closall=false;
-  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
+  main.savefigures=false; % false... no figures, true... figures, 2 for TeX
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;

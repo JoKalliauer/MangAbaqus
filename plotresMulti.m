@@ -76,6 +76,7 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  %43 EVal LAM=chi-lambda
  %44 EWd1l
  %45 abs(model.fullEV)
+ %59 res.drddr = dot(v,a)/(norm(a)*norm(v))
  
  
  
@@ -466,9 +467,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   %set(gca,'FontSize',FontSize*Faktor,'FontName',FontName,'Position',gcaPosition,'XAxisLocation',XAxisLocation)
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]); 
   hold on
-  plot(lambda(2:end),S(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
+  NrValues=min(numel(lambda),numel(S));
+  plot(lambda(2:NrValues),S(2:NrValues),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
   xlabel('lambda');
-  ylabel('velocity');
+  ylabel('velocity $\|\frac{d\mathbf{r}}{d\lambda}\|$','interpreter','latex');
   title('velocity');
   if k3==resEWs(1) && main.colorshift==0
    grid on
@@ -535,9 +537,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  if ismember(6,plotfig)
   figure(6)
   hold on
-  plot(lambda(2:end),A0(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
+  NrValues=min(numel(lambda),numel(A0));
+  plot(lambda(2:NrValues),A0(2:NrValues),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
   xlabel('lambda');
-  ylabel('total acceleration');
+  ylabel('total acceleration $\|\frac{d^2\mathbf{r}}{(d\lambda)^2}\|$','interpreter','latex');
   title('total acceleration');
   grid on
   if model.savefigures==true
@@ -2142,6 +2145,44 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
     print('-dpdf',strcat('Output/Figures/PDF/',modelfilename,'_X1.pdf'),'-fillpage')
    end
   end
+ 
+  fignr=59;
+  if ismember(fignr,plotfig) && isstruct(res)
+   figure(fignr);
+   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+   hold on
+   if k3==resEWs(1) && main.colorshift==0
+    grid on
+   end
+   xlabel(myxlabelload,'Interpreter','latex');
+   ylabelJK='res.drddr = dot(v,a)/(norm(a)*norm(v))';
+   ylabel(ylabelJK,'Interpreter','latex');
+   if main.closall==true
+    title(modelfilename,'Interpreter','none')%title only if not several graphs are plotted
+   end
+   if all(isnan(res(k3).drddr)) % from sortEigenValuesAndGetQuantities.m and getQuantities.m
+    warning('MyPrgm:Plot:NaN','drddr is NaN')
+   else
+    Values=min(numel(xPlot)-1,numel(res(k3).drddr)-1);
+    plot(xPlot(2:Values),res(k3).drddr(2:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+   end
+   dianame=strcat(modelfilename,'_drddr',num2str(fignr));
+   if savefigures==true
+    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+    print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+    print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+   else
+    title(dianame)%show additional info if not saved
+   end
+   %disp(median(res(k3).RHO2(2:lamlast),'omitnan'));
+  end
+  
+  
+  
+  
+  
+  
+  
  
  end %for k3
  

@@ -29,18 +29,18 @@
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
  
   sortType = 'none';  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards','forwardJK'
-  plotfig=[14,15];
+  plotfig=[3,6,14,15,59];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
   modelprops.loadfactor = 1;
   
   modelprops.profil.tw= 8.6e-3;
-  modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
+  modelprops.forceAbaqus=-1; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
+  modelprops.forcerun=false; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
   main.closall=0;
-  main.savefigures=1;
+  main.savefigures=false;
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;

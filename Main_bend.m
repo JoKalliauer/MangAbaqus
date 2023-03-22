@@ -39,7 +39,7 @@
   
   modelprops.numofelm = 20;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig=[14,35];
+  plotfig=[3,6,14,35,59];
   
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   
@@ -47,7 +47,7 @@
   %
   
   modelprops.forceAbaqus=false; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=true; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+  modelprops.forcerun=false; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
   main.closall=0;
@@ -63,7 +63,7 @@
   modelprops.followsigma=true;
   
   
-epsils={.02}
+epsils={.02};
 for j=1:numel(epsils)
     modelprops.epsilon = cell2mat(epsils(j));
     modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);
@@ -86,5 +86,5 @@ numofelm=modelprops.numofelm;
 for Dir=1:6
  ydata=model.eigvecDR{20}(Dir,1:numofelm+1,3)
  myylabel=strcat('Eigenvectorcomponent',num2str(Dir));
- plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100) 
+ %plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100) 
 end

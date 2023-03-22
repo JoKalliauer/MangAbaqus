@@ -93,7 +93,7 @@ if (~any(isnan(r0)) && ~any(isnan(rm1))) || main.check==false
 
 accel = norm(a);
 
-dsdksi = norm(v); %sd(13)
+dsdksi = norm(v); %sd; (13) in Report-January-2020.pdf; and (13) in Notes.pdf
 diff=abs(sqrt(v'*v)-dsdksi);
 limit=3e-14;
 if ~isnan(diff) && diff>limit
@@ -178,8 +178,8 @@ end
 % end
 
 absaXabsv=norm(a)*norm(v);
-cosgamma=dot(v,a)/absaXabsv;
-singamma=sqrt(1-cosgamma^2);
+
+%cosgamma=dot(v,a)/absaXabsv;
 
 %rdxrdd=singamma*absaXabsv;
 
@@ -257,22 +257,23 @@ Ebene=norm(r0-(tatl0(:)'*r0)*tatl0(:)-(r0'*r0atl0(:))*r0atl0(:));
  x3=norm(rho2*d3rds3+t);
  x4=abs(dot(r0,d2rds2)+1);
 
-Hypo=rho2*(1+tau);
-if imag(Hypo)~=0
- Hypo=NaN;
-end
-
-ortCond2 = t'*N;
-if ~isnan(ortCond2)
- if abs(ortCond2)>1e-12
-  %assert(abs(ortCond2)<=1e-12,'ortCond2 not fullfiled by %d',abs(ortCond2))
+ Hypo=rho2*(1+tau);
+ if imag(Hypo)~=0
+  Hypo=NaN;
  end
-end
-ortCond3 = t'*B;
-ortCond4 = N'*B;
+ 
+ ortCond2 = t'*N;
+ if ~isnan(ortCond2)
+  if abs(ortCond2)>1e-12
+   %assert(abs(ortCond2)<=1e-12,'ortCond2 not fullfiled by %d',abs(ortCond2))
+  end
+ end
+ ortCond3 = t'*B;
+ ortCond4 = N'*B;
  ortCond1 = abs((r0'*a) + (v'*v));
  
- drddr = v'*a/norm(v)/norm(a);
+ drddr = dot(v,a)/(absaXabsv);
+ singamma=sqrt(1-drddr^2);
 
  cosmu = -((r0'*(rm1 - 2*r0 + rp1))/norm(rm1 - 2*r0 + rp1));
  cospsi = ((rp1 - rm1)'*(rp1 - 2*r0 + rm1))/(norm(rp1 - rm1)*norm(rp1 - 2*r0 + rm1));
