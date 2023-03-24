@@ -1180,12 +1180,13 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
+ %fignr=28;
  if ismember(28,plotfig)
   figure(28);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
-  plot(lambda(2:end),abs(res(k3).Rconst(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
-  xlabel('$\lambda$','Interpreter','latex');
+  plot(xPlot(2:end),abs(res(k3).Rconst(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  xlabel(myxlabelload,'Interpreter','latex');
   ylabel('$|\mathbf{r}(0)\cdot\mathbf{r}(\lambda)|$','Interpreter','latex');
   title(modelfilename,'Interpreter','none')
   if k3==resEWs(1) && main.colorshift==0

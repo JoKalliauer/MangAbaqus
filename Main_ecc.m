@@ -29,7 +29,7 @@
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
  
   sortType = 'none';  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards','forwardJK'
-  plotfig=[3,6,14,15,59];
+  plotfig=[3,6,14,15,45,59];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
@@ -38,9 +38,9 @@
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=-1; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=false; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
-  modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
-  main.closall=0;
-  main.savefigures=false;
+  modelprops.allowComplex=2;%0..no complex, 1 also complex, 2 only complex
+  main.closall=true;
+  main.savefigures=true;
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=true;
@@ -55,14 +55,14 @@
   main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
   main.flipAxis=false;
   
-  modelprops.sigma=0;
+  modelprops.sigma=-1;
   modelprops.followsigma=true;
   modelprops.sortJKeigval=-1; %1..closest to zero, -1 ..most negative one
   
 numofelms={2,20};
 
 
-Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=14;%min 7 EV
 
 epsils={.02,0.005}%
 

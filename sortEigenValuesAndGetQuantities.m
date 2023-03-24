@@ -256,11 +256,7 @@ if DimsEVtmp>3 %Wenn man den aufgespalteten Eigenvektor in Knoten *Freiheitsgrad
     warning('MyPrgm:Input','relNodes undefined')
    end
    eigveci=eigvecTMP{i}(:,relDofs,relNodes,:);
-   h=model.sectiondata.houtside;
-   eigveci(:,4:6,:)=h/2.*eigveci(:,4:6,:);
-%    if model.dofpNode==7 % If OpenSection-Element
-%     eigveci(:,7,:)=1.*eigveci(:,7,:);
-%    end
+   %eigveci(:,4:6,:)=(model.sectiondata.houtside/2).*eigveci(:,4:6,:); %try to everything to a length
    eigvec{i}=eigveci;
   else
    eigvec{i}=NaN*eigvecTMP{i};
