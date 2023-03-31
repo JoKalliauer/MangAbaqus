@@ -46,7 +46,7 @@
   modelprops.loadfactor = 1;
   %
   
-  modelprops.forceAbaqus=false; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
+  modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
   modelprops.forcerun=true; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
   modelprops.numofeigs=1;
   modelprops.allowComplex=false;
@@ -55,7 +55,7 @@
   main.check=false;
   modelprops.ask_delete=true;
   modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.whichEV='Hyb'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
+  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
   main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
   main.rho='R1'; % KtR1 R1; 'A0R1'
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert

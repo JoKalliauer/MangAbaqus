@@ -21,6 +21,8 @@ function [StifMatrices,num0,activeDofs,BC,inDOF,dofs] = getStiffnessMatrices(mod
 %% Recent Changes
 %2023-02-21 JK: added explantations for dofs
 %2023-03-16 JK: assert(inDOFpNa==6); leaded to an error for TL_arch3D-B33-20-f1-eps0.005-u1-E210000000000-KNL2-1
+%2023-03-31 JK: added comments for Stiffnesmatrix, deleted outcommented lines
+%2023-03-31 JK: removed that the rows of the boundary conditions are set to zero
 
 %% input check
 %EulerBernulli=false;
@@ -106,29 +108,28 @@ maxsteps=max(steps,stepsAbaqus);
 BCAbaqus=[];
 for i = 1:steps
  if usejava('jvm'); waitbar(i/maxsteps,wb,'getStiffnessMatrices ...');end
- fname = [model.AbaqusRunsFolder,filename,'_STIF',num2str(num(i)),'.mtx'];
- %disp(fname);
+ fname_i = [model.AbaqusRunsFolder,filename,'_STIF',num2str(num(i)),'.mtx'];
  if usejava('jvm')
-  %wb.Children.Title.Interpreter = 'none'; %https://de.mathworks.com/matlabcentral/answers/78895-how-do-i-make-interpreter-none-work-inside-the-waitbar-text#answer_298200
-  waitbar(i/maxsteps,wb,fname,'interpreter','none');
+  waitbar(i/maxsteps,wb,fname_i,'interpreter','none');
  end
- mtxSparse = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname);
- dofs = max(mtxSparse(:,1:4)); % NrNodes(notHybrid), DegreesOfFreedomPerNode(inklWrapping), Nodes(notHybrid), DegreesOfFreedomPerNode(inklWrapping)
-
- %avoid internat degrees of freedom
- internalNodes = unique(mtxSparse(mtxSparse(:,1)<0,1));%list all negative Nodes
- internalNodesNewFirst=1+dofs(1);
- internalNodesNewLast=length(internalNodes)+dofs(1);
- internalNodesNew=ctranspose(internalNodesNewFirst:internalNodesNewLast);%internalNodesNew = ctranspose(1:length(internalNodes)) + dofs(1);% assign negative Nodes a pos Node-Value
+ mtxSparse_i = AbaqusModelsGeneration.translateStiffnessMtxFormatFromAbq(fname_i);
  if i==1
-  dofsinv = min(mtxSparse(:,1:4)); %#ok<NASGU>
+  dofs = max(mtxSparse_i(:,1:4)); % NrNodes(notHybrid), DegreesOfFreedomPerNode(inklWrapping), Nodes(notHybrid), DegreesOfFreedomPerNode(inklWrapping)
+  
+  %avoid internat degrees of freedom
+  internalNodes = unique(mtxSparse_i(mtxSparse_i(:,1)<0,1));%list all negative Nodes
+  internalNodesNewFirst=1+dofs(1);
+  internalNodesNewLast=length(internalNodes)+dofs(1);
+  internalNodesNew=ctranspose(internalNodesNewFirst:internalNodesNewLast);%internalNodesNew = ctranspose(1:length(internalNodes)) + dofs(1);% assign negative Nodes a pos Node-Value
+  
+  dofsinv = min(mtxSparse_i(:,1:4)); %#ok<NASGU>
   NrInNod=numel(internalNodes);
   if NrInNod>0
    inDOFpNList=NaN(NrInNod,1);
    for j=1:NrInNod
-    inDOFpNList(j) = max(mtxSparse(mtxSparse(:,1)==internalNodes(j),2));
+    inDOFpNList(j) = max(mtxSparse_i(mtxSparse_i(:,1)==internalNodes(j),2));
    end
-   inDOFpNa = max(mtxSparse(mtxSparse(:,1)==internalNodes(1),2));
+   inDOFpNa = max(mtxSparse_i(mtxSparse_i(:,1)==internalNodes(1),2));
    if ~isB32
     warning('MyPrgm:NoCheckImplemented','no check for B33 implemented')
     if strcmp(elementtype,'B33H') || strcmp(elementtype,'B31H')
@@ -142,7 +143,7 @@ for i = 1:steps
     assert(inDOFpNa==6);
    end
    if NrInNod>1 && isB32
-    inDOFpNb = max(mtxSparse(mtxSparse(:,1)==internalNodes(2),2));
+    inDOFpNb = max(mtxSparse_i(mtxSparse_i(:,1)==internalNodes(2),2));
     assert(inDOFpNb==6);
    else
     warning('MyPrgm:DontKnowIfItIsStrange','please remove this warning it might not be important')
@@ -153,10 +154,10 @@ for i = 1:steps
    inDOFpN=[0 0];
   end
   inDOF = [internalNodesNewFirst internalNodesNewLast inDOFpN];
- end
+ end %if i==1
  for j = 1:length(internalNodes)
-  mtxSparse(mtxSparse(:,1)==internalNodes(j),1) = internalNodesNew(j);
-  mtxSparse(mtxSparse(:,3)==internalNodes(j),3) = internalNodesNew(j);
+  mtxSparse_i(mtxSparse_i(:,1)==internalNodes(j),1) = internalNodesNew(j);
+  mtxSparse_i(mtxSparse_i(:,3)==internalNodes(j),3) = internalNodesNew(j);
  end
  
  %activeNodes = unique(mtxSparse(:,1));
@@ -169,30 +170,23 @@ for i = 1:steps
   StifMatrices{i,1} = lambda(i-1);
  end
  
- mtx = zeros(size(mtxSparse,1),3);
- %n = 0;
- for j = 1:size(mtxSparse,1)
-  row = (mtxSparse(j,1)-1)*dofs(2) + mtxSparse(j,2);
-  col = (mtxSparse(j,3)-1)*dofs(4) + mtxSparse(j,4);
-  %             n = n+1;
-  mtx(j,1) = row;
-  mtx(j,2) = col;
-  mtx(j,3) = mtxSparse(j,5);
+ mtx_i = zeros(size(mtxSparse_i,1),3);
+ for j = 1:size(mtxSparse_i,1) %loop over all entries in Sparsematrix
+  row = (mtxSparse_i(j,1)-1)*dofs(2) + mtxSparse_i(j,2);
+  col = (mtxSparse_i(j,3)-1)*dofs(4) + mtxSparse_i(j,4);
+  mtx_i(j,1) = row;
+  mtx_i(j,2) = col;
+  mtx_i(j,3) = mtxSparse_i(j,5);
   if (row==col)&&(i==1)
    dofslist(row) = row;
-   if mtx(j,3)==1e+36
+   if mtx_i(j,3)==1e+36
     BCAbaqus=[BCAbaqus;row]; %#ok<AGROW>
    end
   end
-  %                n = n+1;
-  %                mtx(n,1) = col;
-  %                mtx(n,2) = row;
-  %                mtx(n,3) = mtxSparse(j,5);
-  %             end
- end
+ end %for j = 1:size(mtxSparse,1)
  
- BCsort=unique(BCMatlab(:,1));
  if i==1
+  BCsort=unique(BCMatlab(:,1));
   assert(dofs(2)==dofs(4),'insconsistent freedoms')
   if sum(strcmp(fieldnames(model), 'dofpNode')) == 0
    warning('MyProgram:notExist','model.dofpNode does not exist')
@@ -201,57 +195,38 @@ for i = 1:steps
   end
   assert(dofs(1)==dofs(3),'insconsistent nr of nodes')
   assert(dofs(1)==size(model.Nodes,1),'nr of nodes do not agree with Abaqus')
- end
- assert(numel(BCsort)==numel(BCAbaqus),'number of BC does not agree')
- if all(BCsort==BCAbaqus)
-  BC=BCMatlab;
- else
-  warning('MyProgram:Problem','Check BC')
-  error('MyProgram:Problem','Check BC')
-  BC=BCMatlab; %#ok<UNRCH>
- end
-
- 
- %mtx2 = sparse(mtx(:,1),mtx(:,2),mtx(:,3));
- %diagmtx2 = speye(size(mtx2,1)).*diag(mtx2);
- %mtx2 = mtx2+mtx2'-diagmtx2;
- 
- if i==1
+  assert(numel(BCsort)==numel(BCAbaqus),'number of BC does not agree')  
+  if all(BCsort==BCAbaqus)
+   BC=BCMatlab;
+  else
+   warning('MyProgram:Problem','Check BC')
+   error('MyProgram:Problem','Check BC')
+   BC=BCMatlab; %#ok<UNRCH>
+  end
   dofslist(dofslist==0) = [];
-  %             for k = 1:size(BC,1)
-  %                dofslist(dofslist==BC(k,1)) = [];
-  %             end
   dofslist = [dofslist,ctranspose(1:length(dofslist))]; %#ok<AGROW>
   dofslist2 = zeros(max(dofslist(:,1)),2);
   dofslist2(dofslist(:,1),:) = dofslist;
- end
- %unactiveDofs = find(dofslist2(:,1)==0);
- %numofDofs = size(Nodes,1)*dofs(2);
- activeDofs = find(dofslist2(:,1)~=0);
-%  if length(unactiveDofs)+length(activeDofs) < numofDofs
-%   %unactiveDofs = [unactiveDofs; ctranspose((numofDofs-dofs(2)+1):numofDofs)];
-%  end
- for k = 1:length(dofslist)
-  BC(BC2(:,1)==dofslist(k,1),1) = dofslist(k,2);
- end
+  activeDofs = find(dofslist2(:,1)~=0);
+  for k = 1:length(dofslist)
+   BC(BC2(:,1)==dofslist(k,1),1) = dofslist(k,2);
+  end
+ end % if i==1
  
- for k = 1:size(mtx,1)
-  mtx(k,1) = dofslist2(mtx(k,1),2);
-  mtx(k,2) = dofslist2(mtx(k,2),2);
+ for k = 1:size(mtx_i,1)
+  mtx_i(k,1) = dofslist2(mtx_i(k,1),2);
+  mtx_i(k,2) = dofslist2(mtx_i(k,2),2);
  end
  
- mtx = sparse(mtx(:,1),mtx(:,2),mtx(:,3));
- diagmtx = speye(size(mtx,1)).*diag(mtx);
- mtx = mtx+mtx'-diagmtx;
+ mtx_i = sparse(mtx_i(:,1),mtx_i(:,2),mtx_i(:,3)); %lower trianular matrix
+ diagmtx = speye(size(mtx_i,1)).*diag(mtx_i); %temporary value for mirrowing the matrix
+ mtx_i = mtx_i+mtx_i'-diagmtx; % adding the values for the upper trianular
  
- %         mtx = applyStiffBeam(mtx,rpLeft,leftnodes,Nodes);
- %         mtx = applyStiffBeam(mtx,rpRight,rightnodes,Nodes);
+ %mtx_i(BC(:,1),:) = 0;
+ %mtx_i(:,BC(:,1)) = 0;
+ mtx_i(BC(:,1),BC(:,1)) = inf*speye(size(BC,1),size(BC,1)); %1e36*speye(size(BC,1),size(BC,1));
  
- mtx(BC(:,1),:) = 0;
- mtx(:,BC(:,1)) = 0;
- mtx(BC(:,1),BC(:,1)) = inf*speye(size(BC,1),size(BC,1)); %1e36*speye(size(BC,1),size(BC,1));
- 
- StifMatrices{i,2} = mtx;
-end
+ StifMatrices{i,2} = mtx_i;
+end %for i = 1:steps
 if usejava('jvm'); waitbar(1,wb,'getStiffnessMatrices finish'); close(wb);end
 end
