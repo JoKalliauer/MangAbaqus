@@ -63,7 +63,7 @@
   modelprops.followsigma=true;
   
   
-epsils={.02};
+epsils={.002};
 for j=1:numel(epsils)
     modelprops.epsilon = cell2mat(epsils(j));
     modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);

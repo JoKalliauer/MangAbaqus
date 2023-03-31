@@ -14,6 +14,7 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
 
 %% Recent Changes
 %2023-02-16 JK: cd(oldpwd)
+%2023-03-31 JK: removed duplicate reply0~=127
 
 %% Code
 
@@ -50,8 +51,6 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
     %reply is 127 if abq: not found, otherwise use the reply
     if reply0~=127 
      reply=reply0;  
-    elseif reply0~=127
-     reply=reply0;
     else
      %/home/jkalliau/ownCloud/Linu aufgrund von Fig33x/bin/imwsrun
      if modelprops.ask_delete==false || ~usejava('desktop')
