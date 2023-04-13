@@ -22,6 +22,7 @@ function [model] = runEigenProblem(modelprops)
 
 %% Recent Changes
 %2023-02-16 JK: datetime("today") instead of date and added warning-idenfifyer, deleted solcheck by Malendowski
+%2023-04-13 JK: changed name from model.lambda0 to model.lambdainput
 
 %% Code
 

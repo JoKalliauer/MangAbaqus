@@ -1,4 +1,15 @@
 function model=mergeModel(modelP1,modelM1)
+% this function merges the solution for \lambda>0 with the solution of \lambda<0
+
+%% Input
+% modelP1 ... results with modelprops.loadfactor=+1;
+% modelM1 ... results with modelprops.loadfactor=-1;
+
+%% Output
+% model has the results of modelP1 and modelM1 merged into one model.
+
+%% Recent changes
+% 2023-04-13 JK: if main.whichEV='skip' there might not be an eigenvector
 
 model=modelP1;
 

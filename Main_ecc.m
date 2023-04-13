@@ -7,6 +7,7 @@
 %% Last changes
 %2023-03-13 JK: main.Normierung='R1';
 %2023-03-16 JK: removed old comments
+%2023-04-13 JK: modelprops.allowComplex was defined twice, leading to ignoring of the first definition
 
 %% Code
 
@@ -14,7 +15,6 @@
  %clear
  close all
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
-  %#ok<*NBRAK>
   
  
   [~,modelprops.ecc]=eccfromU(0.5);

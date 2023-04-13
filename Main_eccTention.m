@@ -2,11 +2,12 @@
 %university:TU Wien
 %author of this script: Johannes Kalliauer(2020-2023)
 %author of subprograms: Johannes Kalliauer(2020-2023), Michal Malendowski (2019-2020)
-%created: ~2020
+%created: 2023-04-13
 
 %% Last changes
 %2023-03-13 JK: main.Normierung='R1';
 %2023-03-16 JK: removed old comments
+%2023-04-13 JK: created based on "Main_ecc.m"
 
 %% Code
 
@@ -14,7 +15,6 @@
  %clear
  close all
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
-  %#ok<*NBRAK>
   
  
   [~,modelprops.ecc]=eccfromU(0.5);

@@ -34,7 +34,7 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
 % * plotresMulti ... Plots the requested graphs
 
 %% recent-change
-%2023-02-16 JK: enabling sound
+%2023-04-13 JK: model.fulllambda allowing negative values for modelprops.loadfactor = 0;
 
 %% Code
 

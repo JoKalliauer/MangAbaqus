@@ -22,6 +22,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,
 %% Recent Changes
 %2023-02-16 JK: added comments for explanation, added error-identifyer
 %2023-02-21 JK: added k0_11
+%2023-04-13 JK: changed name from model.lambda0 to model.lambdainput
 
 %% Code
  

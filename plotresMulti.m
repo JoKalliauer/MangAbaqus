@@ -27,6 +27,8 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 
 %% recent-change
 %2023-02-16 JK: if main.savefigures missing, setting default value to false
+%2023-04-13 JK: replaced some main.savefigures with savefigures, that it does not get printed to disk every time (slow)
+%2023-04-13 JK: if modelprops.loadfactor=0, than the last and the first Eigenvector have the same colour
 
 %% plotfig
  % 1...LAM=chi-lambda (old, used by Malendowski)
