@@ -50,7 +50,7 @@ if strcmp(modelprops.whichEV,'k0_11') || strcmp(modelprops.whichEV,'k11')
  HybridNodes=model.inDOF(2)-model.inDOF(1)+1;
 end
 %Kg = EigRes;
-lambda0=model.lambda0';
+lambda0=model.lambdainput';
 lenLam0=length(lambda0);
 lenMatch=length(matches);
 eigval = cell(lenLam0,1);

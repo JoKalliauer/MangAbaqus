@@ -34,7 +34,7 @@
   
   epsil = 0.005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig=[2,3,6,14,35,59];
+  plotfig=[2,3,6,14,35,36,45,59];
   forcedeig = []; %1; % forced eigenvector number
   
   

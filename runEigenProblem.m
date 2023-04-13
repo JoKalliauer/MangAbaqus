@@ -325,7 +325,9 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem EigvalueProblem'); end
  
- model.lambda0 = lambda0';
+ model.lambda0input = lambda0';%current name
+ %model.lambda0=model.lambda0input;%original name
+ model.lambdainput=model.lambda0input;%better name
  %modelDisp=model;
  model.BC=sort(BC);
  model.fullload0=[0;model.fullload];
@@ -384,4 +386,5 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
 %   model.fullEV(:,all(isnan(real(model.fullEV)), 1)) = [];
 %  end
  
+
 end %fucntion

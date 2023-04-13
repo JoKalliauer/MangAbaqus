@@ -29,8 +29,8 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 %2023-02-16 JK: if main.savefigures missing, setting default value to false
 
 %% plotfig
+ % 1...LAM=chi-lambda (old, used by Malendowski)
  % 2...rho
- % 1...chi
  % 3..._velocity
  % 4_tanacceleration
  % 5_noracceleration
@@ -371,15 +371,21 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
 
  stepNR=numel(xPlot0);
  lambda = reshape(lambda,numel(lambda),1);
+ lastEW=resEWs(end);
  for k3=resEWs
   %k3 %#ok<NOPRT>
-  if k3==resEWs(end)
+  if k3==lastEW
    savefigures=main.savefigures;
   else
    savefigures=false;
   end
   Nr=k3+main.colorshift-1;
-  colJK=MyColours{mod(Nr,19)+1};
+  if any(FullxPlot0<0) && lastEW>=56
+   ColNr=min(Nr,lastEW-Nr-1);
+  else
+   ColNr=Nr;
+  end
+  colJK=MyColours{mod(ColNr,19)+1};  %colJK=MyColours{mod(Nr,19)+1}; % colJK='black';
   cfig('lineColor')=colJK;
 %   lineStyleJK=MyLines{mod(Nr,4)+1};
   %lambda1 = res.lambdaorg;
@@ -402,9 +408,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    sinpsi = res(k3).sinpsi;
    LAM = res(k3).LAM;
    LAM = reshape(LAM,length(LAM),1);
+  else
+   LAM = [];
   end
 
- if ismember(1,plotfig)
+ if ismember(1,plotfig) && ~strcmp(main.whichEV,'skip')
   figure(1);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]); 
   hold on
@@ -534,6 +542,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
  
+ %plotfig=006;
  if ismember(6,plotfig)
   figure(6)
   hold on
@@ -543,9 +552,9 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   ylabel('total acceleration $\|\frac{d^2\mathbf{r}}{(d\lambda)^2}\|$','interpreter','latex');
   title('total acceleration');
   grid on
-  if model.savefigures==true
-  print('-dsvg',strcat('Output/Figures/',modelfilename,'_totacceleration.svg'))
-  print('-dpng',strcat('Output/Figures/',modelfilename,'_totacceleration.png'))
+  if savefigures==true
+   print('-dsvg',strcat('Output/Figures/',modelfilename,'_totacceleration.svg'))
+   print('-dpng',strcat('Output/Figures/',modelfilename,'_totacceleration.png'))
   end
  end
  
@@ -734,7 +743,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   hold on
   y4=real(model.fullEV(k3,:));
   stepNRtmp=min(stepNR,numel(y4));
-  plot(xPlot0(1:stepNRtmp),y4(1:stepNRtmp),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(FullxPlot0(1:stepNRtmp),y4(1:stepNRtmp),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   title(modelfilename)
   if k3==resEWs(1) && main.colorshift==0
    %plot(xPlot0(1:stepNRtmp),zeros(stepNRtmp),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
@@ -789,7 +798,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   hold on
   Xlength=min(numel(xValload0),numel(res(k3).EWd2l));
   firstVal=5;
-  y4=res(k3).EWd2l(firstVal:end);%real(model.fullEV(k3,1:numel(FullxPlot0)));%y4=real(model.fullEV(k3,1:end-3));
+  y4=res(k3).EWd2l(firstVal:end);
   resLamimag=imag(res(k3).LAM(firstVal:Xlength));
   if main.allowComplex==2
    y4(resLamimag==0)=NaN;
@@ -1409,6 +1418,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
  end
 
+ %fignr=036;
  if ismember(36,plotfig)
   lastValue=min(size(model.fullEV,2),numel(xValfullload0));
   y4=real(model.fullEV(k3,1:lastValue));
@@ -1441,7 +1451,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
      bbb.YLim = [0,obergrenze];
     end
    end
-   if model.savefigures==true
+   if savefigures==true
     print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')%dianame=strcat(modelfilename,figname);
    end
   end
@@ -1674,7 +1684,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
 %   end
  end
  
- %fignr=45
+ %fignr=045;
  if ismember(45,plotfig)
   figure(45);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -2342,7 +2352,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
   %disp([xPlot,yPlot])
   %format longG
-  %[~,lami]=InterpolateJK(1-xPlot,yPlot)%#ok<NOPRT,ASGLU> %fullEV=1-xPlot,lambda0=yPlot
+  %[~,lami]=InterpolateJK(1-xPlot,yPlot)%#ok<NOPRT,ASGLU> %lambda0=yPlot
  end
 
  if ismember(9021,plotfig)

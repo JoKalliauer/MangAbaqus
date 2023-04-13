@@ -9,18 +9,20 @@ model.fullEV=[modelP1.fullEV,NaN(Zeilen,1),modelM1.fullEV];
 model.DetKtx=[modelP1.DetKtx;NaN;modelM1.DetKtx];
 model.arclengthuJK=[modelP1.arclengthuJK;NaN;modelM1.arclengthuJK];
 model.dxidl=[modelP1.dxidl;NaN;modelM1.dxidl];
-model.lambda0=[modelP1.lambda0;NaN;-modelM1.lambda0];
+model.lambdainput=[modelP1.lambdainput;NaN;-modelM1.lambdainput];
 model.load=[modelP1.load;NaN;-modelM1.load];
 model.load0=[modelP1.load0;NaN;-modelM1.load0];
 model.fullload0=[modelP1.fullload0;NaN;-modelM1.fullload0];
 model.eigenvalues=[modelP1.eigenvalues;NaN*modelP1.eigenvalues{1};modelM1.eigenvalues];
-NanEV=NaN*modelP1.eigenvectors{1};
-if numel(NanEV)==0
- model.eigenvectors=[];
- model.eigvecDRH=[];
-else
- model.eigenvectors=[modelP1.eigenvectors;NaN*modelP1.eigenvectors{1};modelM1.eigenvectors];
- model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
+if sum(strcmp(fieldnames(modelP1), 'eigenvectors')) ~= 0 %skip it main.whichEV='skip'
+ NanEV=NaN*modelP1.eigenvectors{1};
+ if numel(NanEV)==0
+  model.eigenvectors=[];
+  model.eigvecDRH=[];
+ else
+  model.eigenvectors=[modelP1.eigenvectors;NanEV;modelM1.eigenvectors];
+  model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
+ end
 end
 model.arclengths=[modelP1.arclengths;NaN*modelP1.arclengths{1};modelM1.arclengths];
 model.arclengthurHM=[modelP1.arclengthurHM;NaN*modelP1.arclengthurHM{1};modelM1.arclengthurHM];

@@ -190,7 +190,6 @@ end
 %  main.numofeigs=modelprops.numofeigs;
 model.check=main.check;
 model.filename=strcat(model.filename,'-',modelprops.typeofanalysis,'-',char(main.whichEV));
-model.lambdainput=model.lambda0;
 main.allowComplex=modelprops.allowComplex;
 for i=1:numel(model.eigenvalues)
  if numel(model.eigenvalues{i})==0
@@ -316,7 +315,11 @@ if any(toonegativ)
  model.fulllambda(toonegativ)=NaN;
  model.fullload0(toonegativ)=NaN;
 end
-toostart=model.fulllambda<min(modelprops.lambda);
+if modelprops.loadfactor == 0
+ toostart=abs(model.fulllambda)<min(modelprops.lambda);
+else
+ toostart=model.fulllambda<min(modelprops.lambda);
+end
 if any(toostart)
  model.fulllambda(toostart)=NaN;
 end
@@ -344,16 +347,14 @@ if usejava('desktop')
  end
  lengthInput=size(model.fulllambda,1);
  if lengthInput>lengthAbaqus
-  warning('MyProgram:Input','lamdalengh differs, try modelprops.forcerun=true')
-  model.fulllambda=model.fulllambda(1:lengthAbaqus);
+  if modelprops.loadfactor ~= 0
+   warning('MyProgram:Input','lamdalengh differs, try modelprops.forcerun=true')
+   model.fulllambda=model.fulllambda(1:lengthAbaqus);
+  end
  elseif lengthInput<lengthAbaqus
   warning('MyProgram:Input','lamdalengh differs, try modelprops.forceAbaqus=true')
   model.fullEV=model.fullEV(:,1:lengthInput);
  end
-%  if any(all(isnan(real(model.fullEV)))) %wenn es Spalten gibt die in jeder Zeile immer NaN sind
-%   model.fulllambda(all(isnan(real(model.fullEV)), 1)) = [];
-%   %model.fullEV(:,all(isnan(real(model.fullEV)), 1)) = [];
-%  end
  tooLarge= (model.fulllambda>lastLambda+eps(lastLambda));
  if any(tooLarge)
   model.fulllambda(tooLarge)=NaN;
