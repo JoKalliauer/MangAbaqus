@@ -10,6 +10,7 @@ function model=mergeModel(modelP1,modelM1)
 
 %% Recent changes
 % 2023-04-13 JK: if main.whichEV='skip' there might not be an eigenvector
+% 2023-04-14 JK: only merge eigvecDRH if available
 
 model=modelP1;
 
@@ -32,7 +33,9 @@ if sum(strcmp(fieldnames(modelP1), 'eigenvectors')) ~= 0 %skip it main.whichEV='
   model.eigvecDRH=[];
  else
   model.eigenvectors=[modelP1.eigenvectors;NanEV;modelM1.eigenvectors];
-  model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
+  if sum(strcmp(fieldnames(model), 'eigvecDRH'))
+   model.eigvecDRH=[modelP1.eigvecDRH;NaN*modelP1.eigvecDRH{1};modelM1.eigvecDRH];
+  end
  end
 end
 model.arclengths=[modelP1.arclengths;NaN*modelP1.arclengths{1};modelM1.arclengths];
