@@ -22,56 +22,61 @@
 %% Define Setting for run
 
 
- %#ok<*NOPTS>
- clear model
- close all
- format longG
- delete(findall(0,'type','figure','tag','TMWWaitbar'))
- set(0, 'DefaultFigureWindowState', 'normal');
+%#ok<*NOPTS>
+clear model
+close all
+format longG
+delete(findall(0,'type','figure','tag','TMWWaitbar'))
+set(0, 'DefaultFigureWindowState', 'normal');
 
-  modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
-  
-  modelprops.length = 5;%m
-  
-  eltypes={'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
- 
-  modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
-  
-  modelprops.numofelm = 20;
-  sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig=[3,6,14,28,35,59];
-  
-  forcedeig = []; %1; % forced eigenvector number 'none' sorting
-  
-  modelprops.loadfactor = 1;
-  %
-  
-  modelprops.forceAbaqus=0; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-  modelprops.forcerun=true; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
-  modelprops.numofeigs=1;
-  modelprops.allowComplex=false;
-  main.closall=0;
-  main.savefigures=false; % false.. dont safe figures(faster), true safe figures (slow)
-  main.check=false;
-  modelprops.ask_delete=true;
-  modelprops.MeterValue=1; %1000mm=1m=0.001km
-  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
-  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
-  main.rho='R1'; % KtR1 R1; 'A0R1'
-  main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
-   
-  modelprops.followsigma=true;
-  
-  
-epsils={.002};
-for j=1:numel(epsils)
-    modelprops.epsilon = cell2mat(epsils(j));
-    modelprops.lambda = 0:modelprops.epsilon:max(.8,30*modelprops.epsilon);
- for i=1:numel(eltypes)
-  elementtype = char(eltypes(i));
-  main.colorshift=(i-1)+(j-1)*numel(eltypes);
-  [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,[],elementtype);
-  res.stability_limit
+modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
+
+modelprops.length = 5;%m
+
+
+modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
+
+%modelprops.numofelm = 20; %replaced by numofelms
+sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
+plotfig=[3,6,14,16,35,59];
+
+forcedeig = []; %1; % forced eigenvector number 'none' sorting
+
+modelprops.loadfactor = 1;
+%
+
+modelprops.forceAbaqus=-1; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
+modelprops.forcerun=0; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+modelprops.numofeigs=1;
+modelprops.allowComplex=false;
+main.closall=false;
+main.savefigures=true; % false.. dont safe figures(faster), true safe figures (slow)
+main.check=true;
+modelprops.ask_delete=true;
+modelprops.MeterValue=1; %1000mm=1m=0.001km
+main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
+main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
+main.rho='R1'; % KtR1 R1; 'A0R1'
+main.xBezug='s'; %n..normalisiert; d..differenz zut Refwert
+
+modelprops.followsigma=true;
+
+
+epsils={0.02,0.01,0.005,0.002};
+numofelms={20};
+eltypes={'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
+
+for l=1:numel(epsils)
+ modelprops.epsilon = cell2mat(epsils(l));
+ modelprops.lambda = 0:modelprops.epsilon:max(.8,1600*modelprops.epsilon);
+ for j=1:numel(numofelms)
+  modelprops.numofelm = cell2mat(numofelms(j));
+  for i=1:numel(eltypes)
+   elementtype = char(eltypes(i));
+   main.colorshift=(i-1)+(j-1)*numel(eltypes)+(l-1)*numel(eltypes)*numel(numofelms);
+   [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,[],elementtype);
+   res.stability_limit
+  end
  end
 end
   

@@ -340,8 +340,9 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   myxlabelload='$\lambda gem Abaqusinput$';
  elseif strcmp(xBezug,'s') %Lastscrhittnumber
   xPlot=1:NrFulllambda0; 
-  xPlot0=[0 xPlot];
+  xPlot0=[0 xPlot];%adding a zero in front of the vector
   myxlabelload='$Stepnumber$';
+  FullxPlot0=0:numel(model.fulllambda(1:end-3));
  elseif strcmp(xBezug,'d')%lambda differenz
   xPlot0=(lambda0(1:end)*xValfulllambda0Mult)-1; %xValfullload0
   xPlot=(model.fulllambda(1:end)*xValfulllambda0Mult)-1; %xValfullload0
@@ -443,8 +444,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   figure(2);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]); 
   hold on
-  Values=min(numel(lambda)-1,numel(res(k3).RHO)-1);
-  plot(lambda(2:Values),RHO(2:Values),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  NrValues=min(numel(lambda)-1,numel(res(k3).RHO)-1);
+  plot(lambda(2:NrValues),RHO(2:NrValues),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   
   %        plot(lambda(2:end),RHO2(2:end),'LineStyle','none','Marker','.','Color',colo);
   %        plot(lambda,RHO3,'LineStyle','none','Marker','o','Color',colo);
@@ -547,6 +548,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  %plotfig=006;
  if ismember(6,plotfig)
   figure(6)
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   NrValues=min(numel(lambda),numel(A0));
   plot(lambda(2:NrValues),A0(2:NrValues),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
@@ -700,7 +702,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  
  
  
- %fignr=14;
+ %fignr=014; %=14
  if ismember(14,plotfig) && isstruct(res)
   figure(14);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -721,8 +723,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if all(isnan(res(k3).RHO2)) % from sortEigenValuesAndGetQuantities.m
    warning('MyPrgm:Plot:Rho2:NaN','RHO2 is NaN')
   else
-   Values=min(numel(xPlot)-1,numel(res(k3).RHO2)-1);
-   plot(xPlot(2:Values),res(k3).RHO2(2:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+   NrValues=min(numel(xPlot)-1,numel(res(k3).RHO2)-1);
+   plot(xPlot(2:NrValues),res(k3).RHO2(2:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   end
   if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_rho14.svg'))
@@ -1388,8 +1390,9 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    grid on
    grid minor
   end
-  y4=real(model.fullEV(k3,1:numel(FullxPlot0)));%y4=real(model.fullEV(k3,1:end-3));
-   y19imag=imag(model.fullEV(k3,1:numel(xPlot0)));
+  NrValues=min(numel(FullxPlot0),numel(model.fullEV));
+  y4=real(model.fullEV(k3,1:NrValues));%y4=real(model.fullEV(k3,1:end-3));
+  y19imag=imag(model.fullEV(k3,1:NrValues));
   if main.allowComplex==2
    y4(y19imag==0)=NaN;
   elseif main.allowComplex==0
@@ -1619,8 +1622,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   %end
   %bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
-  Values=min(numel(xValload0)-1,numel(res(k3).NormR)-1);
-  plot(xValload0(2:Values),(res(k3).NormR(2:Values)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  NrValues=min(numel(xValload0)-1,numel(res(k3).NormR)-1);
+  plot(xValload0(2:NrValues),(res(k3).NormR(2:NrValues)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   if savefigures==true
    dianame=strcat(modelfilename,'NormR_42');
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
@@ -1811,10 +1814,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.NormeigvecA0r(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -1837,10 +1840,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.NormR1(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -1863,10 +1866,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.rKt0rij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -1888,10 +1891,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.rCTKt0rij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -1913,10 +1916,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.rNCTKt0rij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -2003,10 +2006,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.cosphirij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   %set(gca, 'YScale', 'log')%also enable the negative one
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   %plot(xPlot(1:Values),-yData(1:Values),'LineStyle','-','Marker','none','LineWidth',0.5,'Color',colJK);
   %xlim([-.65 -.6])
   %xlim([-.8 -.5])
@@ -2031,11 +2034,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.cosphirij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   set(gca, 'YScale', 'log')%also enable the negative one
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
-  plot(xPlot(1:Values),-yData(1:Values),'LineStyle','-','Marker','none','LineWidth',0.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),-yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',0.5,'Color',colJK);
   %xlim([-.8 -.4])
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
@@ -2058,10 +2061,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.RerNCTKt0Rerij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   %set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   dianame=strcat(modelfilename,'_normR',num2str(fignr));
   if savefigures==true
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
@@ -2084,10 +2087,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.RerCTKt0Rerij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   %set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   bbb=gca;
   myylim=ylim;
   if myylim(2)>10
@@ -2119,10 +2122,10 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    title(modelfilename,'Interpreter','none')
   end
   yData=model.RerARerij(:,k3);
-  Values=min(numel(xPlot),numel(yData));%-3 because fulllamdba
+  NrValues=min(numel(xPlot),numel(yData));%-3 because fulllamdba
   %set(gca, 'YScale', 'log')
   title(modelfilename,'Interpreter','none')
-  plot(xPlot(1:Values),yData(1:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  plot(xPlot(1:NrValues),yData(1:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   bbb=gca;
   myylim=ylim;
   if myylim(2)>10
@@ -2176,8 +2179,8 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
    if all(isnan(res(k3).drddr)) % from sortEigenValuesAndGetQuantities.m and getQuantities.m
     warning('MyPrgm:Plot:NaN','drddr is NaN')
    else
-    Values=min(numel(xPlot)-1,numel(res(k3).drddr)-1);
-    plot(xPlot(2:Values),res(k3).drddr(2:Values),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+    NrValues=min(numel(xPlot)-1,numel(res(k3).drddr)-1);
+    plot(xPlot(2:NrValues),res(k3).drddr(2:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
    end
    dianame=strcat(modelfilename,'_drddr',num2str(fignr));
    if savefigures==true

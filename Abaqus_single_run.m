@@ -41,6 +41,7 @@ function [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,m
 warning('on','MyProgramm:lowPrecission:RhoOne')
 
 %% Inputkontrolle
+
 if exist('ecc','var')
  modelprops.ecc=ecc;
 end
@@ -76,6 +77,9 @@ end
 %   modelprops.lambda=sort(modelprops.lambda(modelprops.lambda>=3*modelprops.epsilon));
 %  end
 %assert(all(modelprops.lambda>=4*modelprops.epsilon),'first lamdavalue must be four times epsilon or larger')
+if sum(strcmp(fieldnames(modelprops), 'lambda')) == 0
+ modelprops.lambda = 0:modelprops.epsilon:2;
+end
 if numel(modelprops.lambda)>301
  warning('MyProgram:Input','using %f>201 lambda-values takes much resources',numel(modelprops.lambda))
  if numel(modelprops.lambda)>=331
@@ -108,6 +112,9 @@ if sum(strcmp(fieldnames(modelprops), 'forceAbaqus')) == 0
  modelprops.forceAbaqus=false;
 elseif modelprops.forceAbaqus==true
  %modelprops.forcerun=true;
+end
+if ~exist('main','var')
+ main.rstabil=0.9999;
 end
 if sum(strcmp(fieldnames(main), 'rstabil')) == 0
  main.rstabil=0.9999;
@@ -158,8 +165,27 @@ end
 if sum(strcmp(fieldnames(main), 'flipAxis')) == 0
  main.flipAxis=false;
 end
-
-
+if sum(strcmp(fieldnames(modelprops), 'loadfactor')) == 0
+ modelprops.loadfactor=1;
+end
+if sum(strcmp(fieldnames(modelprops), 'allowComplex')) == 0
+ modelprops.allowComplex=true;
+end
+if sum(strcmp(fieldnames(main), 'check')) == 0
+ main.check=true;
+end
+if sum(strcmp(fieldnames(main), 'closall')) == 0
+ main.closall=true;
+end
+if sum(strcmp(fieldnames(main), 'colorshift')) == 0
+ main.colorshift=0;
+end
+if sum(strcmp(fieldnames(modelprops), 'elementtype')) == 0
+ modelprops.elementtype = 'B32H';
+end
+if sum(strcmp(fieldnames(modelprops), 'typeofanalysis')) == 0
+ modelprops.typeofanalysis = 'KNL2';
+end
 
 %%% Setting default values
 

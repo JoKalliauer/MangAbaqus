@@ -886,7 +886,7 @@ if ~strcmp(modelprops.whichEV,'skip')
   modelprops.rho=[];
  end
  model.eigvecDR=eigvecDR;
- splitDRH = (strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split') || strcmp(modelprops.whichEV,'Rot')  || strcmp(modelprops.whichEV,'Hyb'))
+ splitDRH = (strcmp(modelprops.whichEV,'Disp_rK0r') || strcmp(modelprops.whichEV,'Disp') || strcmp(modelprops.whichEV,'corrected') || strcmp(modelprops.whichEV,'split') || strcmp(modelprops.whichEV,'Rot')  || strcmp(modelprops.whichEV,'Hyb'));
  if strcmp(modelprops.rho,'KtR1') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'KtR1') || strcmp(modelprops.Normierung,'A0R1') ...
    ||  strcmp(modelprops.whichEV,'sqrtK0_r')
   model.stiffnessMatrices = (StiffMtxs(1:2,1:2));%much diskspace

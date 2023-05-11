@@ -23,7 +23,7 @@
   
   modelprops.length = 5;
   
-  eltypes={'B32OS','B32OSH'};
+  eltypes={'B32OS'};
  
 
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
