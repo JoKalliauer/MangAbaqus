@@ -10,10 +10,12 @@
 %% Define Settings for run
 modelprops.testcase = 'Kreis_arch3D';
 modelprops.numofelm = 100;
-modelprops.epsilon = 0.0005;
+modelprops.epsilon = 0.002;
+modelprops.lambda = 0:0.002:.335;
 modelprops.length=19.074/2;% [m] 
 modelprops.sectiondata_material_E = 210e9; %[N/m^2]
 [~,modelprops.profil] =Profil('MalendowskiTLArch');
 modelprops.numofeigs=3;
-[res,model] = Abaqus_single_run(modelprops,'none',35,[]);
+main.xBezug='1'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
+[res,model] = Abaqus_single_run(modelprops,'none',35,[],main);
 

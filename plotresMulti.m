@@ -1380,7 +1380,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   disp(median(abs(res(k3).DrhopDs(2:end)),'omitnan'));
  end
  
- %plotfig=35;
+ %plotfig=035; =35
  if ismember(35,plotfig)
   figure(35);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);

@@ -88,6 +88,9 @@ if numel(modelprops.lambda)>301
  %assert(numel(modelprops.lambda)<=1001,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
  %  assert(numel(modelprops.lambda)<=2195,'using %f>401 lambda-values takes much resources',numel(modelprops.lambda))
 end
+if ~exist('forcedeig','var')
+ forcedeig=[];
+end
 assert(max([forcedeig 0])<=min(modelprops.numofeigs),'forceeig must be smaler or equal that number of calculated ones')
 modelprops.forcedeig=forcedeig;
 [sl1, sl2]=size(modelprops.lambda);
@@ -133,7 +136,7 @@ if modelprops.numofelm*numel(modelprops.lambda)>=131070
  assert(numel(modelprops.lambda)<671,'Matlab will need more than 32GB')
 end
 if sum(strcmp(fieldnames(main), 'whichEV')) == 0
- main.whichEV='split';
+ main.whichEV='skip';
 end
 modelprops.whichEV=main.whichEV;
 if sum(strcmp(fieldnames(main), 'Normierung')) == 0
@@ -141,6 +144,7 @@ if sum(strcmp(fieldnames(main), 'Normierung')) == 0
 end
 modelprops.Normierung=main.Normierung;
 if strcmp(main.whichEV,'split')
+ warning('MyPrgm:Outdated','this code might be outdated')
  main.whichEV={'Disp'};
 elseif modelprops.numofeigs==0
  main.whichEV='split';
