@@ -61,11 +61,18 @@ elmtype=eltype;
  W=215/360;% [-] Umdrehungen
  Emodul=2e+11/MV; % [N/m^2]
  nu=.25;
- h=modelprops.profil.h;
- b=modelprops.profil.b;
+ if sum(strcmp(fieldnames(modelprops.profil), 'h')) || sum(strcmp(fieldnames(modelprops.profil), 'b'))
+  h=modelprops.profil.h;
+  b=modelprops.profil.b;
+ else
+  warning('MyPrgm:Outdated','assuming h=0.2m and b=0.1m');
+  h = 20e-2*MV;
+  b = 10e-2*MV;
+ end
+
  
 
- filename = ['Kreis_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-h',num2str(h),'-b',num2str(b)];
+ filename = ['Kreis_arch3D-',eltype,'-',num2str(numofelm(end)),'-f',num2str(loadFactor),'-eps',num2str(modelprops.epsilon),'-u',num2str(MV),'-h',num2str(h),'-b',num2str(b),'-R',num2str(R)];
  
  %EA=Emodul*b*h;
  %EI=Emodul*b*h^3/12;
