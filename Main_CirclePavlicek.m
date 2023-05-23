@@ -72,8 +72,8 @@
   %plotfig=[45,35,19];%EW
   %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
   %plotfig=[15,35,945,958,972];
-  plotfig=[14,35];
-  forcedeig = []; %1; % forced eigenvector number
+  plotfig=[14,19,35,45];
+  forcedeig = 1; %1; % forced eigenvector number
   
   
   %modelprops.lambda = 0:epsil:.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)

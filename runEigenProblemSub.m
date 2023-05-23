@@ -561,7 +561,7 @@ for i = 1:f
  end
  StiffMtxs{i,1} = KT;
  StiffMtxs{i,2} = Ktprim0;
- if modelprops.numofelm<=20 % skip DetKt for large, because it is slow
+ if modelprops.numofelm<=20 % dont calculate DetKt for large, because it is slow
   if i==1
    %    KTmult0=5*10^-11;
    KTmult0=1.1e-11;

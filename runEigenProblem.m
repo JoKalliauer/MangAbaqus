@@ -1,6 +1,5 @@
 function [model] = runEigenProblem(modelprops)
 %% run the the EigenProblem outer program
-%#!/usr/bin/env octave -q
 %university:TU Wien
 %author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
 
@@ -135,7 +134,6 @@ function [model] = runEigenProblem(modelprops)
    warning('MyProgram:OS','AbaqusRunsFolder does not exist, try creating it on at %s',AbaqusRunsFolder)
    mkdir(AbaqusRunsFolder);
    warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder did not exist, this program was written for Linux')
-   %warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
    %return
   end
  end
