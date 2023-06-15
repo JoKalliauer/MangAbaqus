@@ -47,8 +47,8 @@
   [~,modelprops.profil] =Profil('MalendowskiTLArch');
   modelprops.lambda = 0:epsil:.335;%
   modelprops.forceAbaqus=0; 
-  modelprops.forcerun=false; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
-  modelprops.numofeigs=1;
+  modelprops.forcerun=true; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
+  modelprops.numofeigs=2;
   modelprops.allowComplex=true;
   main.closall=false;
   main.savefigures=false; % false... no figures, true... figures, 2 for TeX
@@ -57,15 +57,15 @@
   modelprops.ask_delete=false;
   main.rstabil=NaN;
   modelprops.MeterValue=1;%1000mm=1m=0.001km
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r' 'k11' 'k0_11'
-  main.Normierung='R1'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
+  main.whichEV='k0_11'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r' 'k11' 'k0_11'
+  main.Normierung='k0_11'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
   main.rho='R1'; % KtR1 R1 'skip'
   
   modelprops.followsigma=false;
   modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
   main.xBezug='n'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 
-eltypes={'B31','B32','B32H','B33','B33H'};
+eltypes={'B31','B32','B32H'};
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));
  main.colorshift=3*i-3;

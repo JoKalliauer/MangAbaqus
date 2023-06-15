@@ -280,6 +280,7 @@ end
 if realistic
  EVdofs=prod(EVsize(2:3));
 else
+ %assert(EVsize(1)==EVsize(2),'maybe should be symmetiric?')
  EVdofs=EVsize(2);
 end
 if forcedeig>EVsize(end)

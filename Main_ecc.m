@@ -36,7 +36,7 @@
   modelprops.loadfactor = 0;
   
   modelprops.profil.tw= 8.6e-3;
-  modelprops.forceAbaqus=-1; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
+  modelprops.forceAbaqus=false; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=2;%0..no complex, 1 also complex, 2 only complex
   main.closall=true;

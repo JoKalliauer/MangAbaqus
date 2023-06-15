@@ -92,7 +92,7 @@
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
-  modelprops.numofeigs=1;
+  modelprops.numofeigs=14;
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;

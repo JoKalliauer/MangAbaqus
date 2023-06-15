@@ -18,13 +18,13 @@ modelprops.lambda = 0:0.002:.335;
 modelprops.length=19.074;% [m] 
 modelprops.sectiondata_material_E = 210e9; %[N/m^2]
 [~,modelprops.profil] =Profil('MalendowskiTLArch');
-modelprops.numofeigs=3;
-modelprops.allowComplex=false;
+modelprops.numofeigs=14;
+modelprops.allowComplex=true;
 modelprops.forcerun=true;
 main.whichEV='bungle';
 main.Normierung='R1';
 main.savefigures=true;
 main.xBezug='n'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 main.check=false;
-[res,model] = Abaqus_single_run(modelprops,'none',[14,19,35,45],1,main);
+[res,model] = Abaqus_single_run(modelprops,'none',[14,19,35,45],[],main);
 

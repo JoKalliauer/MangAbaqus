@@ -11,7 +11,7 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
     warning('MyProgram:OS','Mac not tested try unix')
    end
   end
-  
+
  if numel(resEWs)>0 && ~strcmp(mainwhichEV,'skip')
   lambda = res(min(resEWs)).lambda;
  else
@@ -27,18 +27,18 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
  %m15=m14;%actually it is fulllenght and not lengthlam
  m20=m14;
  m34=m14;
- 
+
  loadlen=min(lengthlam-1,numel(model.load));
  m30=NaN(loadlen+1,1+numel(resEWs));
- 
- 
+
+
  [tmp1,tmp2]=size(model.load);
  if tmp1==1 && tmp2>1
   model.load=transpose(model.load);
  end
  m30(:,1)=[0;model.load(1:loadlen)];
  m32=m30;
- 
+
    xPlot15=model.fulllambda(1:end);
    m15=NaN(numel(xPlot15),1+numel(resEWs));
    m15(:,1)=xPlot15;
@@ -54,7 +54,7 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
   if ismember(14,plotfig) && isstruct(res)
    m14(:,1+i)=res(k3).RHO2;
    filename=strcat('Output/Figures/CSV/',model.filename,'_rho14.csv');
-   writematrix(m14,filename,'Delimiter',';')
+   %writematrix(m14,filename,'Delimiter',';')
    system(['exec sed -i "s/\./,/g" ',filename]);
   end
   if ismember(15,plotfig)
@@ -92,5 +92,5 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
    writematrix(m34,filename,'Delimiter',';')
   end
  end
- 
+
 end

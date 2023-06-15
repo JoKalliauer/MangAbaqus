@@ -138,6 +138,7 @@ end
 newra = transpose(1:newsizeKt0);
 fullEV=NaN(numofeigs,size(model.fulllambda,1));
 RR0 = NaN(newsizeKt0,numofeigs);
+DHtmp=NaN(newsizeKt0,numofeigs);
 %eigvecA0r = cell(lenLam0,numofeigs);
 NormeigvecA0r = NaN(lenLam0,numofeigs);
 NormR1= NaN(lenLam0,numofeigs);
@@ -538,13 +539,23 @@ for i = 1:f
  eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
  eigvecH2{i}=eigvecH2i;
  if strcmp(modelprops.whichEV,'k0_11')
+  aktiveDOF=dofs(1)*dofs(2)-numel(BC);% which dofs are displacements and Rotations
   for incriment=3:7% 3... lambda-2*dlambda; 4 ... previous loadstep; 5 ... current loadstep; 6 next loadstep; 7 second next loadstep
-   DHtmp=sqrt(full(diag(Kt0_0))).'.*R(incriment,:);% sqrt(k_ii)*r_i
-   aktiveDOF=dofs(1)*dofs(2)-numel(BC);% which dofs are displacements and Rotations
-   eigvec2023{i}(1:aktiveDOF,incriment-2)=DHtmp(1:aktiveDOF);%save only the displacements and Rotations (no hybrid)
+   for EVNri=1:numofeigs
+    DHtmp(:,EVNri)=sqrt(full(diag(Kt0_0))).'.*R(incriment,:,EVNri);% sqrt(k_ii)*r_i
+   end
+   eigvec2023{i}(1:aktiveDOF,incriment-2,:)=DHtmp(1:aktiveDOF,:);%save only the displacements and Rotations (no hybrid)
   end
-  eigvec2023{i}(aktiveDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);% add hybrid DOFs
-  eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
+  if strcmp(modelprops.elementtype,'B33') || strcmp(modelprops.elementtype,'B33H')
+   error('MyPrgm:Missing','elementtype not implemented')
+  else
+   eigvec2023{i}(aktiveDOF+1:newsizeKt0,:,:)=reshape(eigvecHi,[HybridNodes*6 5 numofeigs]);% add hybrid DOFs
+  end
+  if numofeigs>1
+   eigvec{i} = NaN*(R); % dl x DoF x NrEigs % vector not used for this normalization any more therfore saved with NaN
+  else
+   eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
+  end
  elseif strcmp(modelprops.whichEV,'k11')
   
    akDOF=dofs(1)*dofs(2)-numel(BC);%aktive DOFs
@@ -554,10 +565,14 @@ for i = 1:f
    eigvec2023{i}(1:akDOF,4)=sqrt(full(diag(Kt11(1:akDOF,1:akDOF)))).'.*R(6,1:akDOF);
    eigvec2023{i}(1:akDOF,5)=sqrt(full(diag(Kt12(1:akDOF,1:akDOF)))).'.*R(7,1:akDOF);
    eigvec2023{i}(akDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);
-  eigvec{i} = sqrt(diag(KT)).*R(5,:)+0;
+   if numofeigs>1
+    error('MyPrgm:Missing','not implemented')
+   else
+    eigvec{i} = sqrt(diag(KT)).*R(5,:)+0;
+   end
   
  else
-  eigvec{i} = (R);%single precission might be dangerous for postprocessing
+  eigvec{i} = (R); % dl x DoF x NrEigs %single precission might be dangerous for postprocessing
  end
  StiffMtxs{i,1} = KT;
  StiffMtxs{i,2} = Ktprim0;
@@ -841,6 +856,10 @@ for i=f+1:min(f+3,lenLam0)
 StiffMtxs{i}=StiffMtxs{i-1}*NaN;
 end
 
+ EVsize=size(eigvec{1});
+ assert(EVsize(1)==7,'dl should be 7')
+ assert(EVsize(3)==numofeigs,'numofeigs does not match')
+ %assert(EVsize(1)==EVsize(2),'maybe should be symmetiric?')
 
 if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end
 
@@ -872,7 +891,7 @@ model.RrA0Rr=single(RrA0Rr);
 model.RrARr=single(RrARr);
 if ~strcmp(modelprops.whichEV,'skip')
  model.NormKt0r=single(NormKt0r);
- model.eigenvectors = (eigvec);%much diskspace
+ model.eigenvectors = (eigvec); % dl x DoF x NrEigs %much diskspace
  model.eigvec1=eigvec1;
  model.NormeigvecA0r=(NormeigvecA0r);%single leads to jumps in function
  model.rKt0rij=single(rKt0rij);%outdated thats NaN

@@ -27,7 +27,7 @@ clear model
 close all
 format longG
 delete(findall(0,'type','figure','tag','TMWWaitbar'))
-set(0, 'DefaultFigureWindowState', 'normal');
+%set(0, 'DefaultFigureWindowState', 'normal');
 
 modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
 
@@ -45,26 +45,26 @@ forcedeig = []; %1; % forced eigenvector number 'none' sorting
 modelprops.loadfactor = 1;
 %
 
-modelprops.forceAbaqus=-1; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
-modelprops.forcerun=0; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
-modelprops.numofeigs=1;
+modelprops.forceAbaqus=false; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
+modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
+modelprops.numofeigs=2;
 modelprops.allowComplex=false;
 main.closall=false;
 main.savefigures=true; % false.. dont safe figures(faster), true safe figures (slow)
 main.check=true;
 modelprops.ask_delete=true;
 modelprops.MeterValue=1; %1000mm=1m=0.001km
-main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
-main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
+main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
+main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
 main.rho='R1'; % KtR1 R1; 'A0R1'
 main.xBezug='s'; %n..normalisiert; d..differenz zut Refwert
 
 modelprops.followsigma=true;
 
 
-epsils={0.02,0.01,0.005,0.002};
+epsils={0.02};
 numofelms={20};
-eltypes={'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
+eltypes={'B32OS','B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
@@ -79,7 +79,7 @@ for l=1:numel(epsils)
   end
  end
 end
-  
+
 
 % close all
 cfig = containers.Map;
@@ -87,9 +87,9 @@ cfig('outputformats')='sep'%svg,eps,pdf
 
 numofelm=modelprops.numofelm;
  xdata=(0:numofelm)*modelprops.length/numofelm
- 
+
 for Dir=1:6
  ydata=model.eigvecDR{20}(Dir,1:numofelm+1,3);
  myylabel=strcat('Eigenvectorcomponent',num2str(Dir));
- %plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100) 
+ %plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100)
 end

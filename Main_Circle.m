@@ -59,7 +59,7 @@
   %plotfig=[15,943:945,948:949];main.savefigures=1
   %plotfig=[15,947,949,952,955:956,16,943,953,943,16];
   %plotfig=[15,45,35,19,52];%EW
-  plotfig=[45,35];%EW
+  plotfig=[14,45,35];%EW
   forcedeig = []; %1; % forced eigenvector number
   
   
@@ -73,7 +73,7 @@
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; 
-  modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
+  modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
   modelprops.numofeigs=18;
   modelprops.allowComplex=true;
