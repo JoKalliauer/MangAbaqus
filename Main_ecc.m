@@ -23,7 +23,7 @@
   
   modelprops.length = 5;
   
-  eltypes={'B31','B31H','B32','B32H','B32OS','B32OSH'};
+  eltypes={'B32OS','B32OSH'};
  
 
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
@@ -33,7 +33,7 @@
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
-  modelprops.loadfactor = 0;
+  modelprops.loadfactor = 1;
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=false; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
@@ -46,8 +46,8 @@
   modelprops.ask_delete=true;
   main.rsame=NaN;%0.8;
   main.rstabil=NaN;%0.99999;
-  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'; 'k11' 'k0_11'
-  main.Normierung='R1'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
+  main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'; 'k11' 'k0_11'
+  main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
   main.rho='R1'; % KtR1 R1 'A0R1' 
   
   %modelprops.MeterValue=1; %1000mm=1m=0.001km ;
@@ -58,12 +58,12 @@
   modelprops.followsigma=true;
   modelprops.sortJKeigval=-1; %1..closest to zero, -1 ..most negative one
   
-numofelms={2,20};
+numofelms={20};
 
 
-Exz={modelprops.ecc};modelprops.numofeigs=14;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
 
-epsils={.02,0.005}%
+epsils={.02}%
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));

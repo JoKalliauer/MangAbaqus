@@ -54,8 +54,14 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
   if ismember(14,plotfig) && isstruct(res)
    m14(:,1+i)=res(k3).RHO2;
    filename=strcat('Output/Figures/CSV/',model.filename,'_rho14.csv');
-   %writematrix(m14,filename,'Delimiter',';')
-   system(['exec sed -i "s/\./,/g" ',filename]);
+   if verLessThan('matlab','9.6')
+    % -- Code to run in MATLAB R2019a and earlier here --
+    warning('MyPrgm:old','Matlab is too old for writematrix')
+   else
+    % -- Code to run in MATLAB R2019b and later here --
+    writematrix(m14,filename,'Delimiter',';')
+    system(['exec sed -i "s/\./,/g" ',filename]);
+   end
   end
   if ismember(15,plotfig)
    y4=real(model.fullEV(k3,1:numel(xPlot15)));
