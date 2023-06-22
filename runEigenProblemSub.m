@@ -857,8 +857,10 @@ StiffMtxs{i}=StiffMtxs{i-1}*NaN;
 end
 
  EVsize=size(eigvec{1});
- assert(EVsize(1)==7,'dl should be 7')
- assert(EVsize(3)==numofeigs,'numofeigs does not match')
+ if numel(EVsize)>2
+  assert(EVsize(1)==7,'dl should be 7')
+  assert(EVsize(3)==numofeigs,'numofeigs does not match')
+ end
  %assert(EVsize(1)==EVsize(2),'maybe should be symmetiric?')
 
 if usejava('jvm'); waitbar(1,wbrEP,'runEigenProblem EigvalueProblem finsih');end

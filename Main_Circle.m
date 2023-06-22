@@ -79,15 +79,15 @@
   modelprops.allowComplex=true;
   %main.closall=true;
   main.closall=false;
-  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
+  main.savefigures=0; % false... no figures, true... figures, 2 for TeX
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
   main.rstabil=0.9999999960;%TL_arch3D-B31H-10-loadfac-1-eps0.01-KNL2-1.mat (strengstens)
   %main.rstabil=0.9999999;
   modelprops.MeterValue=1;
-  main.whichEV='bungle'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
-  main.Normierung='R1';
+  main.whichEV='k0_11'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr';
+  main.Normierung='k0_11';
   main.rho='R1'; % KtR1 R1
   
   modelprops.followsigma=false;

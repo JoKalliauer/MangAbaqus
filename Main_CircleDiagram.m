@@ -22,6 +22,7 @@ modelprops.numofeigs=7;
 modelprops.allowComplex=true;
 modelprops.forcerun=true;
 modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
+modelprops.elementtype = 'B32H';
 main.whichEV='k0_11'; % 'bungle' 'k0_11'
 main.Normierung='k0_11'; % 'R1' 'k0_11'
 main.savefigures=true;

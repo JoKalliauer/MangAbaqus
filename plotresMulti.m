@@ -473,6 +473,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   disp([lambda(2:end),RHO(2:end)])
  end
  
+ %plotfig=003;
  if ismember(3,plotfig)
   figure(3)
   %set(gca,'FontSize',FontSize*Faktor,'FontName',FontName,'Position',gcaPosition,'XAxisLocation',XAxisLocation)
@@ -559,6 +560,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   if savefigures==true
    print('-dsvg',strcat('Output/Figures/',modelfilename,'_totacceleration.svg'))
    print('-dpng',strcat('Output/Figures/',modelfilename,'_totacceleration.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',modelfilename,'_totAcc6.pdf'),'-dpdf')
   end
  end
  

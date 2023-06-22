@@ -29,7 +29,7 @@ format longG
 delete(findall(0,'type','figure','tag','TMWWaitbar'))
 %set(0, 'DefaultFigureWindowState', 'normal');
 
-modelprops.testcase = 'pureBendingBeamJK'; %orderchange at lambda~.8
+modelprops.testcase = 'pureBendingBeamJK10'; %orderchange at lambda~.8
 
 modelprops.length = 5;%m
 
@@ -38,11 +38,11 @@ modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
 
 %modelprops.numofelm = 20; %replaced by numofelms
 sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-plotfig=[3,6,14,16,35,59];
+plotfig=[3,6,14,35];
 
 forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
-modelprops.loadfactor = 10;
+modelprops.loadfactor = 1;
 %
 
 modelprops.forceAbaqus=false; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
@@ -58,17 +58,18 @@ main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rN
 main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
 main.rho='R1'; % KtR1 R1; 'A0R1'
 main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert
+main.closall=true;
 
 modelprops.followsigma=true;
 
 
-epsils={0.02};
-numofelms={20};
+epsils={0.002};
+numofelms={10};
 eltypes={'B32OS'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max(1.1,1600*modelprops.epsilon);
+ modelprops.lambda = 0:modelprops.epsilon:max(.1);
  for j=1:numel(numofelms)
   modelprops.numofelm = cell2mat(numofelms(j));
   for i=1:numel(eltypes)
