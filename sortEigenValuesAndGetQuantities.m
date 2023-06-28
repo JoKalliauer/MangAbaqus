@@ -180,7 +180,7 @@ end
 %model.filename
 eigvalTMP=model.eigenvalues;
 if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || ...
-  strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb') || strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11')
+  strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb') || strcmp(main.whichEV,'k0_11')
  eigvecTMP = model.eigenvectors; %defined in runEigenProblemSub
  realistic=false;
  evmiddle=5;
@@ -220,7 +220,7 @@ elseif strcmp(main.whichEV,'Hyb')
  evmiddle=3;
  relDofs=1:model.inDOF(3);
  relNodes=model.inDOF(1):model.inDOF(2);
-elseif strcmp(main.whichEV,'all') || strcmp(main.whichEV,'corrected') || strcmp(main.whichEV,'k11')
+elseif strcmp(main.whichEV,'all') || strcmp(main.whichEV,'corrected')
  eigvecTMP = model.eigvecDRH;
  realistic=true;
  evmiddle=3;
