@@ -23,7 +23,7 @@
   
   modelprops.length = 5;
   
-  eltypes={'B32OS','B32OSH'};
+  eltypes={'B32OSH'};
  
 
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
@@ -61,7 +61,7 @@
 numofelms={20};
 
 
-Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=1;%min 7 EV
 
 epsils={.02}%
 
