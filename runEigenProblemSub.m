@@ -544,12 +544,12 @@ for i = 1:f
    for EVNri=1:numofeigs
     DHtmp(:,EVNri)=sqrt(full(diag(Kt0_0))).'.*R(incriment,:,EVNri);% sqrt(k_ii)*r_i
    end
-   eigvec2023{i}(1:aktiveDOF,incriment-2,:)=DHtmp(1:aktiveDOF,:);%save only the displacements and Rotations (no hybrid)
+   eigvec2023{i}(1:aktiveDOF,incriment-2,:)=modelprops.alphaDRW*DHtmp(1:aktiveDOF,:);%save only the displacements and Rotations (no hybrid)
   end
   if strcmp(modelprops.elementtype,'B33') || strcmp(modelprops.elementtype,'B33H')
    error('MyPrgm:Missing','elementtype not implemented')
   else
-   eigvec2023{i}(aktiveDOF+1:newsizeKt0,:,:)=reshape(eigvecHi,[HybridNodes*6 5 numofeigs]);% add hybrid DOFs
+   eigvec2023{i}(aktiveDOF+1:newsizeKt0,:,:)=modelprops.alphaH*reshape(eigvecHi,[HybridNodes*6 5 numofeigs]);% add hybrid DOFs
   end
   if numofeigs>1
    eigvec{i} = NaN*(R); % dl x DoF x NrEigs % vector not used for this normalization any more therfore saved with NaN

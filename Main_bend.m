@@ -54,17 +54,19 @@ main.savefigures=true; % false.. dont safe figures(faster), true safe figures (s
 main.check=0;
 modelprops.ask_delete=true;
 modelprops.MeterValue=1; %1000mm=1m=0.001km
-main.whichEV='Rot'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
-main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
+main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
+main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
 main.rho='R1'; % KtR1 R1; 'A0R1'
 main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert
+modelprops.alphaDRW=1;
+modelprops.alphaH=0;
 
 modelprops.followsigma=true;
 
 
 epsils={0.02};
 numofelms={20};
-eltypes={'B32OSH'};%  eltypes={'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
+eltypes={'B32OSH'};%  eltypes=k0_11{'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
