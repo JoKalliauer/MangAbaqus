@@ -61,13 +61,13 @@
 numofelms={20};
 
 
-Exz={modelprops.ecc};modelprops.numofeigs=1;%min 7 EV
+Exz={modelprops.ecc};modelprops.numofeigs=3;%min 7 EV
 
-epsils={.02}%
+epsils={.01}%
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max([2,20*modelprops.epsilon])
+ modelprops.lambda = 0:modelprops.epsilon:max([1,20*modelprops.epsilon])
  for k=1:numel(Exz)
   for j=1:numel(numofelms)
    modelprops.numofelm = cell2mat(numofelms(j));

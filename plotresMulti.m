@@ -2,7 +2,7 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 %% Plot Graphs
 %author:Johannes Kalliauer(2020-2023) based on Michal‚ Malendowski (2019-2020)
 
-%% Input
+% %% Input
 % res ... results from sortEigenValuesAndGetQuantities
 % model ... reults from runEigenProblem
 % plotfig ... which figures to plot

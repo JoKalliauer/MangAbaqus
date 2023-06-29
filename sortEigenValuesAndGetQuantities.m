@@ -255,9 +255,7 @@ if DimsEVtmp>3 %Wenn man den aufgespalteten Eigenvektor in Knoten *Freiheitsgrad
    else
     warning('MyPrgm:Input','relNodes undefined')
    end
-   eigveci=eigvecTMP{i}(:,relDofs,relNodes,:);
-   %eigveci(:,4:6,:)=(model.sectiondata.houtside/2).*eigveci(:,4:6,:); %try to everything to a length
-   eigvec{i}=eigveci;
+   eigvec{i}=eigvecTMP{i}(:,relDofs,relNodes,:);
   else
    eigvec{i}=NaN*eigvecTMP{i};
    %error('myprgm:outdate','this chose is no longer maintained')
@@ -501,13 +499,13 @@ for i = 1:f %f = length(eigval)
  if  strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11')
   r02 = model.eigvec2023{i}(:,1,NrEw);% r~(lambda-2*dlambda)
   r01 = model.eigvec2023{i}(:,2,NrEw);% r~ of previous loadstep
-  rm  = model.eigvec2023{i}(:,3,NrEw);% r~ of current loadstep
+  rm  = model.eigvec2023{i}(:,3,NrEw);% r~ of current loadstep % DoFs x dlambda x NumberEigenValues
   r11 = model.eigvec2023{i}(:,4,NrEw);% r~ of next loadstep
   r12 = model.eigvec2023{i}(:,5,NrEw);% r~ of second next loadstep
  else
   r02 = eigvec{i}(evmiddle-2,:,:,NrEw);
   r01 = eigvec{i}(evmiddle-1,:,:,NrEw);
-  rm = eigvec{i}(evmiddle,:,:,NrEw);
+  rm = eigvec{i}(evmiddle,:,:,NrEw); % dlambda x Nodes x DoF-per-Node X NumberEigenvalues
   r11 = eigvec{i}(evmiddle+1,:,:,NrEw);
   r12 = eigvec{i}(evmiddle+2,:,:,NrEw);
  end

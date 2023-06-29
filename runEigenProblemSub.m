@@ -46,8 +46,8 @@ end
 
 
 %% inizializing
+dofs=model.dofs([1 2]);
 if strcmp(modelprops.whichEV,'k0_11') || strcmp(modelprops.whichEV,'k11')
- dofs=model.dofs([1 2]);
  HybridNodes=model.inDOF(2)-model.inDOF(1)+1;
 end
 %Kg = EigRes;
@@ -116,6 +116,7 @@ ru36 = diag(Kt0_0==1e36);% remove boundary conditions
 ruinf = diag(Kt0_0==inf);
 ru=logical(ru36+ruinf);
 BC=find(ru);
+aktiveDOF=dofs(1)*dofs(2)-numel(BC);% which dofs are displacements and Rotations
 assert(all(BC==model.BC(:,1)),'ru does not agree with BC')
 Kt0_0(ru,:) = []; Kt0_0(:,ru) = [];
 newsizeKt0=size(Kt0_0,1);
@@ -539,7 +540,6 @@ for i = 1:f
  eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
  eigvecH2{i}=eigvecH2i;
  if strcmp(modelprops.whichEV,'k0_11')
-  aktiveDOF=dofs(1)*dofs(2)-numel(BC);% which dofs are displacements and Rotations
   for incriment=3:7% 3... lambda-2*dlambda; 4 ... previous loadstep; 5 ... current loadstep; 6 next loadstep; 7 second next loadstep
    for EVNri=1:numofeigs
     DHtmp(:,EVNri)=sqrt(full(diag(Kt0_0))).'.*R(incriment,:,EVNri);% sqrt(k_ii)*r_i
@@ -556,23 +556,10 @@ for i = 1:f
   else
    eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
   end
- elseif strcmp(modelprops.whichEV,'k11')
-  
-   akDOF=dofs(1)*dofs(2)-numel(BC);%aktive DOFs
-   eigvec2023{i}(1:akDOF,1)=sqrt(full(diag(Kt02(1:akDOF,1:akDOF)))).'.*R(3,1:akDOF);
-   eigvec2023{i}(1:akDOF,2)=sqrt(full(diag(Kt01(1:akDOF,1:akDOF)))).'.*R(4,1:akDOF);
-   eigvec2023{i}(1:akDOF,3)=sqrt(full(diag(  KT(1:akDOF,1:akDOF)))).'.*R(5,1:akDOF);
-   eigvec2023{i}(1:akDOF,4)=sqrt(full(diag(Kt11(1:akDOF,1:akDOF)))).'.*R(6,1:akDOF);
-   eigvec2023{i}(1:akDOF,5)=sqrt(full(diag(Kt12(1:akDOF,1:akDOF)))).'.*R(7,1:akDOF);
-   eigvec2023{i}(akDOF+1:newsizeKt0,:)=reshape(eigvecHi,[HybridNodes*6 5]);
-   if numofeigs>1
-    error('MyPrgm:Missing','not implemented')
-   else
-    eigvec{i} = sqrt(diag(KT)).*R(5,:)+0;
-   end
-  
  else
   eigvec{i} = (R); % dl x DoF x NrEigs %single precission might be dangerous for postprocessing
+  eigvec{i}(:,1:aktiveDOF,:)=modelprops.alphaDRW*eigvec{i}(:,1:aktiveDOF,:);
+  eigvec{i}(:,aktiveDOF+1:newsizeKt0,:)=modelprops.alphaH*eigvec{i}(:,aktiveDOF+1:newsizeKt0,:);
  end
  StiffMtxs{i,1} = KT;
  StiffMtxs{i,2} = Ktprim0;

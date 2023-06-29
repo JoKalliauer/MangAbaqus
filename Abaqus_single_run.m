@@ -144,8 +144,8 @@ if sum(strcmp(fieldnames(main), 'Normierung')) == 0
 end
 modelprops.Normierung=main.Normierung;
 if strcmp(main.whichEV,'split')
- warning('MyPrgm:Outdated','this code might be outdated')
- main.whichEV={'Disp'};
+ error('MyPrgm:Outdated','this code might be outdated')
+ %main.whichEV={'Disp'};
 elseif modelprops.numofeigs==0
  main.whichEV='split';
 end
@@ -190,6 +190,13 @@ end
 if sum(strcmp(fieldnames(modelprops), 'typeofanalysis')) == 0
  modelprops.typeofanalysis = 'KNL2';
 end
+if sum(strcmp(fieldnames(modelprops), 'alphaDRW')) == 0
+ modelprops.alphaDRW=1;
+end
+if sum(strcmp(fieldnames(modelprops), 'alphaH')) == 0
+ modelprops.alphaH=1;
+end
+
 
 %%% Setting default values
 
