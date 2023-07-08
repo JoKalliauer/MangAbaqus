@@ -237,7 +237,7 @@ if check1 && check2
  relevantRel=(abs(diffs./diageval(1:end-1))<3.962e-10);%1.0e-06
  relevant=logical(relevantAbs+relevantRel); %sobald min einer 1 ist ist relevant ungleich 0
  if any(relevant)
-  %warning('MyProgram:Precission','close eigenvalues, setting eigenvectors to NaN')
+  warning('MyProgram:Precission','close eigenvalues, setting eigenvectors to NaN')
   %diageval([relevant;false])=NaN;
   %diageval([false;relevant])=NaN;
   evec(:,[relevant;false])=NaN;

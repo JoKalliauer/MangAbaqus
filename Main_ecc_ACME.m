@@ -86,7 +86,7 @@
   %plotfig=[15,19,43,45];
   %plotfig=[15,16,943,953];
   %plotfig=[902,908,916,9021,9022,913,900];
-  plotfig=[15,35,945,958,972];
+  %plotfig=[15,35,945,958,972];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   

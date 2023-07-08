@@ -112,7 +112,7 @@ end
      numofelm=numofelm(1);
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.eccenCompressionBeam64(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'eccenCompressionBeam2D'
-     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.eccenCompressionBeam2D(L,numofelm,lambda,loadFactor,eltype,ecc);
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode,model.sectiondata.houtside] = AbaqusModelsGeneration.eccenCompressionBeam2D(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'twoBeams'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.twoBeams(L,numofelm,lambda,loadFactor,eltype,ecc,modelprops,AbaqusRunsFolder);
     case 'detKt2D'

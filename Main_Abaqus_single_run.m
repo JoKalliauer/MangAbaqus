@@ -8,12 +8,12 @@
   %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
   %testcase = 'TL_arch_Hinge';
   %testcase = 'TL_arch3D_Hinge';
-  modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
+  %modelprops.testcase = 'pureBendingBeam'; %orderchange at lambda~.8
   %modelprops.testcase = 'cantilever';
   %modelprops.testcase = 'eccenCompressionBeam'; modelprops.ecc = 0.164669;
   %testcase = 'eccenCompressionBeam2D';
-  %modelprops.testcase = 'twoBeams';
-  %[~,modelprops.ecc]=eccfromU(.978);
+  modelprops.testcase = 'twoBeams';
+  [~,modelprops.ecc]=eccfromU(.5);
   %BpM=(modelprops.ecc)^2*0.0080678/1.319847665625e-05
   %BpGes=BpM/(1+BpM)
   
@@ -34,8 +34,8 @@
   %eltype = 'B31OSH'; %Timoshenko 
   %eltype = 'B32' %Timoshenko 
   %eltype = 'B32H' %Timoshenko 
-  eltype = 'B32OS'; %Timoshenko 
-  %eltype = 'B32OSH'; %Timoshenko 
+  %eltype = 'B32OS'; %Timoshenko 
+  eltype = 'B32OSH'; %Timoshenko 
  
   
   
@@ -47,7 +47,7 @@
   %modelprops.typeofanalysis = 'KNL3'; modelprops.sigma=1; %[ Kt0 + EW * (Kts+Ktu) ]
   %modelprops.typeofanalysis = 'KNL4'; modelprops.sigma=0;-1.1; %[ Kt0 - EW * (Kts+Ktu) ]
   
-  modelprops.numofelm = 2;%
+  modelprops.numofelm = 10;%
   
   epsil = .2;  % finite difference step %epsil = 0.005;
   sortType = 'forwardJK'; % eigenvectors sorting type: 'none', 'forwards', 'backwards',  'forwardJK'

@@ -29,10 +29,15 @@ function [StifMatrices,num0,activeDofs,BC,inDOF,dofs] = getStiffnessMatrices(mod
 if ~exist('elementtype','var')
  elementtype='unknown';
  isB32=true; %assuming it is one of the B32 elements
+ elNr=NaN;
 elseif strcmp(elementtype,'B33') || strcmp(elementtype,'B33H') || strcmp(elementtype,'B31H')
  isB32=false;
+ elNr=33;
+elseif strcmp(elementtype(2:3),'21') || strcmp(elementtype,'B21H') 
+ elNr=21;
 else
  isB32=true;
+ elNr=32;
 end
 
 %% Code
@@ -130,7 +135,9 @@ for i = 1:steps
     inDOFpNList(j) = max(mtxSparse_i(mtxSparse_i(:,1)==internalNodes(j),2));
    end
    inDOFpNa = max(mtxSparse_i(mtxSparse_i(:,1)==internalNodes(1),2));
-   if ~isB32
+   if elNr==32
+    assert(inDOFpNa==6);
+   elseif elNr==33
     warning('MyPrgm:NoCheckImplemented','no check for B33 implemented')
     if strcmp(elementtype,'B33H') || strcmp(elementtype,'B31H')
      assert(inDOFpNa==3);%dont know why it is three
@@ -139,8 +146,10 @@ for i = 1:steps
     else
      error('MyPrgm:Unknown','not implemted')
     end
+   elseif elNr==21
+    assert(inDOFpNa==2);%dont know why it is two
    else
-    assert(inDOFpNa==6);
+    error('MyPrgm:Missing','check not implemented')
    end
    if NrInNod>1 && isB32
     inDOFpNb = max(mtxSparse_i(mtxSparse_i(:,1)==internalNodes(2),2));

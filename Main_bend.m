@@ -65,8 +65,8 @@ modelprops.followsigma=true;
 
 
 epsils={0.05};
-numofelms={2};
-eltypes={'B32OSH'};%  eltypes=k0_11{'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
+numofelms={1};
+eltypes={'B32H'};%  eltypes=k0_11{'B31','B31H','B31OS', 'B31OSH','B32','B32H','B32OS', 'B32OSH','B33','B33H'};
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
@@ -90,8 +90,8 @@ cfig('outputformats')='sep'%svg,eps,pdf
 numofelm=modelprops.numofelm;
  xdata=(0:numofelm)*modelprops.length/numofelm
 
-for Dir=1:6
- ydata=model.eigvecDR{20}(Dir,1:numofelm+1,3);
- myylabel=strcat('Eigenvectorcomponent',num2str(Dir));
- %plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100)
-end
+% for Dir=1:6
+%  ydata=model.eigvecDR{20}(Dir,1:numofelm+1,3);
+%  myylabel=strcat('Eigenvectorcomponent',num2str(Dir));
+%  %plotitJK(xdata,ydata,'./','x-axis of beam [m]',myylabel,myylabel,cfig,Dir+100)
+% end

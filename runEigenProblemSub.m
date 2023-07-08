@@ -535,10 +535,12 @@ for i = 1:f
  %eigvecDRH2023{i}=R_DRH2023;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
  eigvecDRi=R_DRH2023(:,1:R_DRsize(3),:,:);% DRH...[Displacement,Rotation,Hybrid](splitted)
  eigvecDR{i}=eigvecDRi;
- eigvecHi=R_DRH2023(1:6,R_DRsize(3)+1:end,:,:);% DoFpNode x Nodes x increments x NrEigs
- eigvecH{i}=eigvecHi;
- eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
- eigvecH2{i}=eigvecH2i;
+ if ~strcmp(modelprops.elementtype,'B21H')
+  eigvecHi=R_DRH2023(1:6,R_DRsize(3)+1:end,:,:);% DoFpNode x Nodes x increments x NrEigs
+  eigvecH{i}=eigvecHi;
+  eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
+  eigvecH2{i}=eigvecH2i;
+ end
  if strcmp(modelprops.whichEV,'k0_11')
   for incriment=3:7% 3... lambda-2*dlambda; 4 ... previous loadstep; 5 ... current loadstep; 6 next loadstep; 7 second next loadstep
    for EVNri=1:numofeigs
@@ -556,10 +558,17 @@ for i = 1:f
   else
    eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
   end
+ elseif  strcmp(modelprops.whichEV,'g_durch_k')%möglicher name, kannst auch was anderes nehmen
+  %2023-08-07: @Antionia hier würde ich die neue Normierung mit gll und sqrt(kll) vom 2023-08-07 einfügen.
  else
-  eigvec{i} = (R); % dl x DoF x NrEigs %single precission might be dangerous for postprocessing
-  eigvec{i}(:,1:aktiveDOF,:)=modelprops.alphaDRW*eigvec{i}(:,1:aktiveDOF,:);
-  eigvec{i}(:,aktiveDOF+1:newsizeKt0,:)=modelprops.alphaH*eigvec{i}(:,aktiveDOF+1:newsizeKt0,:);
+  eigvec{i} = R; % dl x DoF x NrEigs
+  if ~strcmp(modelprops.elementtype,'B21H')
+   eigvec{i}(:,1:aktiveDOF,:)=modelprops.alphaDRW*eigvec{i}(:,1:aktiveDOF,:);
+   eigvec{i}(:,aktiveDOF+1:newsizeKt0,:)=modelprops.alphaH*eigvec{i}(:,aktiveDOF+1:newsizeKt0,:);
+  else
+   warning('MyPrgm:Missing','not implemnted')
+   eigvec{i}=eigvec{i}*NaN;
+  end
  end
  StiffMtxs{i,1} = KT;
  StiffMtxs{i,2} = Ktprim0;
@@ -910,8 +919,10 @@ if ~strcmp(modelprops.whichEV,'skip')
   end
   %model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
   %model.eigvecDR=eigvecDR;%only Displacements and Rotations
-  model.eigvecH=eigvecH;%only Hybrid-DOF
-  model.eigvecH2=eigvecH2;%sum of Hybrid-DOFs^2
+  if ~strcmp(modelprops.elementtype,'B21H')
+   model.eigvecH=eigvecH;%only Hybrid-DOF
+   model.eigvecH2=eigvecH2;%sum of Hybrid-DOFs^2
+  end
   model.eigvec2023=eigvec2023;
  else
   model.stiffnessMatrices = StiffMtxs(1,1);

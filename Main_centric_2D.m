@@ -18,12 +18,12 @@
   
  
   [~,modelprops.ecc]=eccfromU(0);
-  modelprops.testcase = 'eccenCompressionBeam'; 
+  modelprops.testcase = 'eccenCompressionBeam2D'; 
 
   
   modelprops.length = 5;
   
-  eltypes={'B32OSH'};
+  eltypes={'B21H'};
  
 
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
@@ -36,7 +36,7 @@
   modelprops.loadfactor = 1;
   
   modelprops.profil.tw= 8.6e-3;
-  modelprops.forceAbaqus=false; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
+  modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
   modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=2;%0..no complex, 1 also complex, 2 only complex
   main.closall=true;
@@ -46,8 +46,8 @@
   modelprops.ask_delete=true;
   main.rsame=NaN;%0.8;
   main.rstabil=NaN;%0.99999;
-  main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'; 'k11' 'k0_11'
-  main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
+  main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'bungle_rKr'; 'skip' ; 'bungle_rK0r'; 'bungle_K0r1';'rNCT_K0_r';'rCT_K0_r'; 'k11' 'k0_11'
+  main.Normierung='R1'; % 'R1'; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
   main.rho='R1'; % KtR1 R1 'A0R1' 
   
   %modelprops.MeterValue=1; %1000mm=1m=0.001km ;
@@ -58,7 +58,7 @@
   modelprops.followsigma=true;
   modelprops.sortJKeigval=-1; %1..closest to zero, -1 ..most negative one
   
-numofelms={20};
+numofelms={1};
 
 
 Exz={modelprops.ecc};modelprops.numofeigs=3;%min 7 EV
