@@ -559,7 +559,7 @@ for i = 1:f
    eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
   end
  elseif  strcmp(modelprops.whichEV,'g_durch_k')%möglicher name, kannst auch was anderes nehmen
-  %2023-08-07: @Antionia hier würde ich die neue Normierung mit gll und sqrt(kll) vom 2023-08-07 einfügen.
+  %2023-08-07: @Antonia hier würde ich die neue Normierung mit gll und sqrt(kll) vom 2023-08-07 einfügen.
  else
   eigvec{i} = R; % dl x DoF x NrEigs
   if ~strcmp(modelprops.elementtype,'B21H')
