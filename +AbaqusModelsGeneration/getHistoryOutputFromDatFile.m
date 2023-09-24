@@ -195,5 +195,5 @@ fclose(u);
 
 EigRes.eigenvalues = EigValList;
 EigRes.eigenvectors = EIGVECres;
-ELres=[];
+%ELres=[];
 end

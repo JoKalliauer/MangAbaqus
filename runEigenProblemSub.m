@@ -23,6 +23,7 @@ function model = runEigenProblemSub(modelprops,model,Displ,Kts,Kg,matches,wbrEP,
 %2023-02-16 JK: added comments for explanation, added error-identifyer
 %2023-02-21 JK: added k0_11
 %2023-04-13 JK: changed name from model.lambda0 to model.lambdainput
+%2023-09-09 JK: added r_dotKB1_r
 
 %% Code
  
@@ -82,10 +83,15 @@ rKt0r = NaN(lenMatch,1);
 RerKt0Imr = NaN(lenMatch,1);
 NormKt0r = NaN(lenMatch,1);
 KB1Klammer = cell(lenMatch,1);
+dotKB1 = cell(lenMatch,1);
+ddotKB1 = cell(lenMatch,1);
 t_KB1_t = NaN(lenMatch,1);
 imagValues= NaN(lenMatch,1);
 RrA0Rr = NaN(lenMatch,1);
 RrARr = NaN(lenMatch,1);
+r_dotKB1_r = NaN(lenMatch,1);
+r_dotKB1_t = NaN(lenMatch,1);
+r_ddotKB1_r = NaN(lenMatch,1);
 
 %  matches = NaN(0);
 %  n = 0;
@@ -212,6 +218,8 @@ else
  isB32=true;
 end
 
+dotKB1{1}=NaN*Kt0_0;
+ddotKB1{1}=NaN*Kt0_0;
 for i = 1:f
  if usejava('jvm'); waitbar(i/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
  %disp('Lambda:');
@@ -408,16 +416,21 @@ for i = 1:f
    r12_=NaN*r11_;
    eigval12_=NaN*eigval11_;
   else
-   if ~any(Kt12)
+   if ~any(Kt12) % Check if there are still values to process
     if i~=length(matches)
      warning('MyPrgm:Zero','Kt12 is zero')
     end
     r12_=NaN*r11_;
     eigval12_=NaN*eigval11_;
-   else
+   else %there are still values to process
     [r12_,eigval12_,~,KB1Klammer{i+2},imagValues(i+2)] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+    %if any(Kt01(:)) && i>1
+     dotKB1{i+1}=1/(2*modelprops.epsilon)*(KB1Klammer{i+2}-KB1Klammer{i});
+     ddotKB1{i+1}=1/(modelprops.epsilon^2)*(KB1Klammer{i+2}-2*KB1Klammer{i+1}+KB1Klammer{i});
+    %end
    end
   end
+  
 
 
 
@@ -551,6 +564,9 @@ for i = 1:f
   if strcmp(modelprops.elementtype,'B33') || strcmp(modelprops.elementtype,'B33H')
    error('MyPrgm:Missing','elementtype not implemented')
   else
+   if isnan(modelprops.alphaH) && numofeigs==1
+    modelprops.alphaH=norm(DHtmp(1:aktiveDOF,:))/norm(eigvecHi(:,:,4,1));% 
+   end
    eigvec2023{i}(aktiveDOF+1:newsizeKt0,:,:)=modelprops.alphaH*reshape(eigvecHi,[HybridNodes*6 5 numofeigs]);% add hybrid DOFs
   end
   if numofeigs>1
@@ -619,7 +635,7 @@ for i = 1:f
  end % if strcmp(modelprops.whichEV,'NoHyb')
  
  
- if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb')
+ if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb') || strcmp(modelprops.whichEV,'k0_11')
   if ~isfield(modelprops,'forcedeig')
    modelprops.forcedeig=1;
   end
@@ -629,11 +645,11 @@ for i = 1:f
    forcedeig=modelprops.forcedeig(1);
   end
   rm=r0t(:,forcedeig);
-  if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') ||  strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'NoHyb')
+  if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') ||  strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'NoHyb') || strcmp(modelprops.whichEV,'k0_11')
    r01=r01t(:,forcedeig);
    r11=r11t(:,forcedeig);
 
-   if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rCT_K_r')
+   if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rCT_K_r') || strcmp(modelprops.whichEV,'k0_11')
     if strcmp(modelprops.whichEV,'bungle_rKr')
      warning('MyProgram:UnclearInput','please use bungle_r.K0r or bungle_rTK0r instead of bungle_rK0r')
     end
@@ -699,6 +715,9 @@ for i = 1:f
    t_KB1_t(i)=transpose(v)*KB1Klammer{i}*v;
    RrA0Rr(i)=transpose(real(rm))*Kt0_0*real(rm);%2022-05-09
    RrARr(i)=transpose(real(rm))*KT*real(rm);%2022-05-09
+   r_dotKB1_r(i)=transpose(rm)*dotKB1{i}*rm;%2023-09-09
+   r_dotKB1_t(i)=(transpose(rm)*dotKB1{i}*v+transpose(v)*dotKB1{i}*rm)/2;%2023-09-09
+   r_ddotKB1_r(i)=transpose(rm)*ddotKB1{i}*rm;%2023-09-09
   elseif strcmp(modelprops.whichEV,'bungle')
    if ~isnan(rm)
     assert(abs(norm(rm)-1)<1e-7,'rm not 1')
@@ -758,14 +777,6 @@ for i = 1:f
     end
 
     rmj = rmj/(Nenner0);
-%     
-%     if 1==0
-%      rmj_oldN=rmj_old;
-%      rmjN=rmj;
-%      rmj_oldN(abs(rmj_oldN)<.01)=0;
-%      rmjN(abs(rmjN)<.01)=0; 
-%      tmpJK=[rmj_oldN rmjN]; %#ok<NASGU>
-%     end
 
     eigvecA0rij=Kt0_0*(rmj);
     NormeigvecA0rij=norm(eigvecA0rij);
@@ -887,6 +898,9 @@ model.RerKt0Imr=single(RerKt0Imr);
 model.t_KB1_t=single(t_KB1_t);
 model.RrA0Rr=single(RrA0Rr);
 model.RrARr=single(RrARr);
+model.r_dotKB1_r=single(r_dotKB1_r);
+model.r_dotKB1_t=single(r_dotKB1_t);
+model.r_ddotKB1_r=single(r_ddotKB1_r);
 if ~strcmp(modelprops.whichEV,'skip')
  model.NormKt0r=single(NormKt0r);
  model.eigenvectors = (eigvec); % dl x DoF x NrEigs %much diskspace
@@ -911,7 +925,8 @@ if ~strcmp(modelprops.whichEV,'skip')
   model.stiffnessMatrices = StiffMtxs;% very much diskspace
  elseif splitDRH
   model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
- elseif strcmp(modelprops.whichEV,'k11') || strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.Normierung,'k0_11') || strcmp(modelprops.whichEV,'k0_11')
+ end 
+ if strcmp(modelprops.whichEV,'k11') || strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.Normierung,'k0_11') || strcmp(modelprops.whichEV,'k0_11')
   if strcmp(modelprops.whichEV,'k11')
    model.stiffnessMatrices = StiffMtxs(:,1);% very much diskspace
   else
@@ -925,7 +940,7 @@ if ~strcmp(modelprops.whichEV,'skip')
   end
   model.eigvec2023=eigvec2023;
  else
-  model.stiffnessMatrices = StiffMtxs(1,1);
+  %model.stiffnessMatrices = StiffMtxs(1,1);
  end
 end
 

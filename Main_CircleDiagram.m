@@ -23,10 +23,12 @@ modelprops.allowComplex=true;
 modelprops.forcerun=true;
 modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
 modelprops.elementtype = 'B32H';
-main.whichEV='k0_11'; % 'bungle' 'k0_11'
-main.Normierung='k0_11'; % 'R1' 'k0_11'
+main.whichEV='NoHyb'; % 'bungle' 'NoHyb' 'skip' 'k0_11'
+main.Normierung='rCT_K0_r'; % 'R1' 'rNCT_K0_r' 'rCT_K0_r' 'skip 'k0_11'
 main.savefigures=true;
 main.xBezug='n'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 main.check=false;
-[res,model] = Abaqus_single_run(modelprops,'none',[14,19,35,45],[],main);
+modelprops.alphaDRW=1;
+modelprops.alphaH=NaN;
+[res,model] = Abaqus_single_run(modelprops,'none',[3,42,973:976],[],main);
 

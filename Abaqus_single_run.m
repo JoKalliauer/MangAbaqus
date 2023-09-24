@@ -153,11 +153,11 @@ if strcmp(main.whichEV,'Hyb') && modelprops.numofeigs>0
  assert(strcmp(modelprops.elementtype(end),'H'),'modelprops.elementtype does not have hybrid dofs')
 end
 modelprops.whichEV=main.whichEV;
-if ismember(943,plotfig)
- if strcmp(modelprops.whichEV,'bungle_rKr') || strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle')
+if ismember(943,plotfig) ||  ismember(973,plotfig)
+ if strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.Normierung,'rCT_K0_r') || strcmp(modelprops.Normierung,'rNCT_K0_r')
   %
  else
-  assert(0,'plot943 is proposed to work with bungle_rKr')
+  assert(0,'plot943 is proposed to work with whichEV=bungle and Normierung=r_K0_r')
  end
 end
 if sum(strcmp(fieldnames(main), 'savefigures')) == 0

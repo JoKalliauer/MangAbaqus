@@ -45,19 +45,18 @@
   
   modelprops.numofelm = 20;
   
-  epsil = 0.1;  % finite difference step %epsil = 0.005;
+  epsil = 0.2;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [11,15,16]; %#ok<*NBRAK> #ok<NASGU>
   %plotfig=[15,16,44,943:945,947:954];
   %plotfig=[15,16,943,952,953,955:956];
   %plotfig=[15,16,37,33];
-  plotfig=[35,16,916,963,969,902,906,917,911];%Verschiebungen
-  %plotfig=[15,45,35,19,52];%EW
-  %plotfig=[14,15,16,45,35];%EW
+  %plotfig=[35,16,916,963,969,902,906,917,911];%Verschiebungen
+  plotfig=[3,42,973:976];
   %plotfig=[15,35,945,958,972];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   main.whichEV='NoHyb'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r'; 
-  main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'
+  main.Normierung='rCT_K0_r'; % 'R1'; 'rCT_K0_r'; 'A0R1'
   main.rho='R1'; % KtR1 R1; 'A0R1'
  
  
@@ -77,7 +76,7 @@
   modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   main.closall=0;
-  main.savefigures=1;
+  main.savefigures=0;
   %main.savefigures=false;
   %main.check=true;
   main.check=false;

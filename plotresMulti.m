@@ -110,6 +110,10 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
  %963 \phi_{max}
  %969 u(l/2)
  %972 model.rdotKtr / model.rKt0r
+ %973 r_dotKB1_r
+ %974 model.r_dotKB1_t=single(r_dotKB1_t);
+ %975 model.r_ddotKB1_r=single(r_ddotKB1_r);
+ %976 model.Energyratio
  
  %% Code
  
@@ -2221,7 +2225,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
  lineStyleJK=MyLines{mod(Nr,4)+1};
  cfig('LineStyle')=lineStyleJK;
 
- 
+ %fignr=900
  if ismember(900,plotfig)
   figure(900);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -3329,7 +3333,7 @@ fignr=947;% (43)
   end
  end
  
-  fignr=952;% ()
+ fignr=952;% ()
  if ismember(fignr,plotfig)
   figure(fignr);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -3937,7 +3941,7 @@ fignr=947;% (43)
   end
  end
  
-     fignr=972;% ()
+ fignr=972;% ()
  if ismember(fignr,plotfig)
   figure(fignr);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -3977,6 +3981,125 @@ fignr=947;% (43)
    print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
    print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
    print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+
+ fignr=973;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(xlabelload,'Interpreter','latex');
+  ylabelJK='${{r}_1 [\dot{K}_T-\dot{\chi}_1\,({K}_T)_0] {r}_1 }$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  %if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  %end
+  %bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  %xPlot=xValload;
+  Xlength=min(numel(xValload),numel(model.rddotKtr));
+  y4=model.r_dotKB1_r(1:Xlength);
+  y4(imag(y4)~=0)=NaN;
+  bbb.YLim = [min([y4;0]),max([y4;0])];
+  plot(xValload(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'r_dotKB1_r',num2str(fignr));
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+
+ fignr=974;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(xlabelload,'Interpreter','latex');
+  ylabelJK='${{r}_1 [\dot{K}_T-\dot{\chi}_1\,({K}_T)_0] \dot{r}_1 }$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  %if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  %end
+  %bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  %xPlot=xValload;
+  Xlength=min(numel(xValload),numel(model.rddotKtr));
+  y4=model.r_dotKB1_t(1:Xlength);
+  y4(imag(y4)~=0)=NaN;
+  bbb.YLim = [min([y4;0]),max([y4;0])];
+  plot(xValload(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'r_dotKB1_t',num2str(fignr));
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+
+ fignr=975;% ()
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  if k3==resEWs(1) && main.colorshift==0
+   grid on
+  end
+  xlabel(xlabelload,'Interpreter','latex');
+  ylabelJK='${{r}_1 [\ddot{K}_T-\ddot{\chi}_1\,({K}_T)_0] {r}_1 }$';
+  ylabel(ylabelJK,'Interpreter','latex');
+  bbb = gca();
+  %if main.closall==true
+   title(modelfilename,'Interpreter','none')
+  %end
+  %bbb.XAxisLocation = 'origin';
+  bbb.YAxisLocation = 'origin';
+  %xPlot=xValload;
+  Xlength=min(numel(xValload),numel(model.rddotKtr));
+  y4=model.r_ddotKB1_r(1:Xlength);
+  y4(imag(y4)~=0)=NaN;
+  bbb.YLim = [min([y4;0]),max([y4;0])];
+  plot(xValload(1:Xlength),y4,'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+  if model.savefigures==true
+   dianame=strcat(modelfilename,'r_ddotKB1_r',num2str(fignr));
+   print('-dsvg',strcat('Output/Figures/SVG/',dianame,'.svg'))
+   print('-dpng',strcat('Output/Figures/PNG/',dianame,'.png'))
+   print('-fillpage',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-dpdf')
+  end
+ end
+
+ fignr=976;
+ if ismember(fignr,plotfig)
+  figure(fignr);
+  %set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  bbb = gca();
+  y4=model.Energyratio;
+  bbb.YLim = [min([y4,0]),max([y4,1])];
+  bbb.YLim = [0.99,max([y4,1])];
+  lastvalue=min(numel(y4),numel(lambda));
+  plot(lambda,zeros(size(lambda)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  plot(lambda(1:lastvalue),y4(1:lastvalue),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('$\frac{nonmembrane}{membrane+nonmembrane}$','Interpreter','latex');%/\det(\mathbf K_T)_0
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+   grid on
+   grid minor
+  %end
+  if main.savefigures==true
+   dianame=strcat(modelfilename,'Energieverhaltnis',num2str(fignr));
+   print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
   end
  end
  

@@ -38,7 +38,7 @@ modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
 
 %modelprops.numofelm = 20; %replaced by numofelms
 sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-plotfig=[3,6,14,16,35,59];
+plotfig=[14,976];
 
 forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
@@ -47,19 +47,19 @@ modelprops.loadfactor = 1;
 
 modelprops.forceAbaqus=false; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
 modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
-modelprops.numofeigs=2;
+modelprops.numofeigs=1;
 modelprops.allowComplex=false;
 main.closall=false;
-main.savefigures=true; % false.. dont safe figures(faster), true safe figures (slow)
+main.savefigures=0; % false.. dont safe figures(faster), true safe figures (slow)
 main.check=0;
 modelprops.ask_delete=true;
 modelprops.MeterValue=1; %1000mm=1m=0.001km
-main.whichEV='bungle'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
-main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
+main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
+main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
 main.rho='R1'; % KtR1 R1; 'A0R1'
 main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert
 modelprops.alphaDRW=1;
-modelprops.alphaH=0;
+modelprops.alphaH=NaN;
 
 modelprops.followsigma=true;
 
