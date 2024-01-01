@@ -179,8 +179,8 @@ if sum(strcmp(fieldnames(model), 'check')) == 0
 end
 %model.filename
 eigvalTMP=model.eigenvalues;
-if strcmp(main.whichEV,'bungle') ||  strcmp(main.Normierung,'rNCT_K0_r')||  strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.whichEV,'sqrtK_r') || ...
-  strcmp(main.whichEV,'sqrtK0_r') || strcmp(main.whichEV,'NoHyb') || strcmp(main.whichEV,'k0_11')
+s2={'bungle','sqrtK_r','sqrtK0_r','NoHyb','k0_11','2023-12','2023_12Hyb','2023_12half'};
+if any(strcmp(main.whichEV,s2)) ||  strcmp(main.Normierung,'rNCT_K0_r') ||  strcmp(main.Normierung,'rCT_K0_r')
  eigvecTMP = model.eigenvectors; %defined in runEigenProblemSub
  realistic=false;
  evmiddle=5;
@@ -242,8 +242,8 @@ if model.numofeigs<=1.5 %Wenn man nur einen Eigenwert hat, dann schmeißt Matlab
 end
 if DimsEVtmp>3 %Wenn man den aufgespalteten Eigenvektor in Knoten *Freiheitsgrade nimmt
 %  eigvec=cell(size(eigvecTMP));
- for i=1:numel(eigvecTMP)
-  if ~isempty(eigvecTMP{i}) && exist('relDofs','var')
+ for ievTMP=1:numel(eigvecTMP)
+  if ~isempty(eigvecTMP{ievTMP}) && exist('relDofs','var')
    if exist('relNodes','var')
     if isempty(relNodes)
      warning('MyProgram:Input','no relevant data found')
@@ -255,16 +255,16 @@ if DimsEVtmp>3 %Wenn man den aufgespalteten Eigenvektor in Knoten *Freiheitsgrad
    else
     warning('MyPrgm:Input','relNodes undefined')
    end
-   eigvec{i}=eigvecTMP{i}(:,relDofs,relNodes,:);
+   eigvec{ievTMP}=eigvecTMP{ievTMP}(:,relDofs,relNodes,:);
   else
-   eigvec{i}=NaN*eigvecTMP{i};
+   eigvec{ievTMP}=NaN*eigvecTMP{ievTMP};
    %error('myprgm:outdate','this chose is no longer maintained')
   end
- end
+ end % i=1:numel(eigvecTMP)
 else %wenn man den Vektor als vektor lässt, was eigentlich bullshit ist.
 %  eigvec=eigvecTMP;
- for i=1:numel(eigvecTMP)
-  eigvec{i}(:,:,1,:)=eigvecTMP{i}(:,:,:);
+ for ievTMP=1:numel(eigvecTMP)
+  eigvec{ievTMP}(:,:,1,:)=eigvecTMP{ievTMP}(:,:,:);
  end
 end
 EVsize=size(eigvec{1});
@@ -477,6 +477,9 @@ if strcmp(main.rho,'KtR1') || strcmp(main.Normierung,'rCT_K0_r') || strcmp(main.
  end
 end
 
+if f<3
+ warning('MyPrgm:strange','less than 3 steps')
+end
 for i = 1:f %f = length(eigval)
 
  eigposition(i) = is0(1);
@@ -496,7 +499,7 @@ for i = 1:f %f = length(eigval)
   end
  end
  NrEw=is0(isi);
- if  strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11')
+ if  strcmp(main.whichEV,'k0_11') || strcmp(main.whichEV,'k11') || strcmp(main.whichEV,'2023-12') || strcmp(main.whichEV,'2023_12half')
   r02 = model.eigvec2023{i}(:,1,NrEw);% r~(lambda-2*dlambda)
   r01 = model.eigvec2023{i}(:,2,NrEw);% r~ of previous loadstep
   rm  = model.eigvec2023{i}(:,3,NrEw);% r~ of current loadstep % DoFs x dlambda x NumberEigenValues
@@ -516,6 +519,13 @@ for i = 1:f %f = length(eigval)
  if r02'*r01<0;  r01 = -r01;  end
  rm = reshape(rm,numel(rm),1);
  if strcmp(main.Normierung,'R1')
+  if any(isnan(rm))
+   warning('MyPrgm:rmNan:Sort','rm has NaNs')
+   warning('off','MyPrgm:rmNan:Sort')
+  end
+  if i==3
+   warning('on','MyPrgm:rmNan:Sort')
+  end
   rm = rm/norm(rm);
  end
  eigvalSort=eigvalTMP{i}(evmiddle,NrEw);
@@ -586,10 +596,10 @@ for i = 1:f %f = length(eigval)
   if strcmp(main.Normierung,'k11')
    assert(strcmp(main.whichEV,'k11'),'this feature is not implemented')
   elseif strcmp(main.Normierung,'k0_11')
-   assert(strcmp(main.whichEV,'k0_11'),'this feature is not implemented')
+   assert(strcmp(main.whichEV,'k0_11'),'whichEV=%s and Normierung=%s  is not implemented',main.whichEV,main.Normierung)
   else
    assert(~strcmp(main.whichEV,'k11'),'this feature is not implemented')
-   assert(~strcmp(main.whichEV,'k0_11'),'this feature is not implemented')
+   assert(~strcmp(main.whichEV,'k0_11'),'whichEV=%s and Normierung=%s is not implemented',main.whichEV,main.Normierung)
   end
   Nenner02=norm(r02);
   Nenner01=norm(r01);
@@ -641,6 +651,7 @@ for i = 1:f %f = length(eigval)
  else
   error('MyPrgm:NotTested','not tested/implemted')
  end
+ %disp(strcat('i=',num2str(i),': isnan(RS)=',num2str(all(isnan(RS(:))))))
  if ~all(isnan(RS(:)))
   dksi = arclengths{i};
   %            dksi = ones(size(dksi,1),size(dksi,2))*(lambda(2)-lambda(1));
@@ -652,7 +663,9 @@ for i = 1:f %f = length(eigval)
    elseif any(~isnan(r01)) && lambda0(i)~=0  && norm(dot(r01,rm))>rstabil
     r0atl0=r01;
    elseif any(~isnan(rm))  && norm(dot(rm,r11))>rstabil
-    warning('MyProgram:strange','r0 at lambda0 must be NaN')
+    if i<3%3 might be replaced by 2
+     warning('MyProgram:strange','r0 at lambda0 must be NaN')
+    end
     r0atl0=rm;
    elseif any(~isnan(r11))
     if norm(dot(r11,r12))>rstabil
@@ -665,7 +678,9 @@ for i = 1:f %f = length(eigval)
      %warning('MyProgram:precission','r at beginning is imprecise')
     end
    else
-    warning('MyProgram:strange','r11 at lambda0 schould not be NaN')
+    if i>2
+     warning('MyProgram:strange','r11 at lambda0 schould not be NaN')
+    end
    end
    %disp(r0atl0)
   end
@@ -717,6 +732,7 @@ for i = 1:f %f = length(eigval)
    warning('off','MyProgram:Complex')
   end
   RHO2(i) = rho2;
+  %i
   TAU(i) = tau;
   OC0(i) = abs((v'*v)+(rm'*a));
   OC1(i) = ortCond1;
@@ -762,34 +778,16 @@ for i = 1:f %f = length(eigval)
   %        r0try = indi*r0;
   %            end
  else
-  warning('MyPrgm:RSNan:sortEigenValuesAndGetQuantities','RS is NAN')
+  warning('MyPrgm:RSNan:sortEigenValuesAndGetQuantities','RS is NAN (warning only shown once)')
   warning('off','MyPrgm:RSNan:sortEigenValuesAndGetQuantities')
+  if i==13
+   warning('on','MyPrgm:RSNan:sortEigenValuesAndGetQuantities')
+  end
  end %all(isnan(RS))
  EWd2l(i)= ( eigval{i}(4,is0(isi)) - 2*eigval{i}(5,is0(isi)) +eigval{i}(6,is0(isi)) ) / (epsilon^2);
  LAM(i) = eigval{i}(5,is0(isi));
  %end %isi=1:1
 end %i=1:f schleife ueber alle lambda
-
-
-
-% r1=RHO2.'.*cos(lambda.');
-% r2=RHO2.'.*sin(lambda.');
-% r3=sqrt(1-RHO2.'.^2);
-% RS=[r1;r2;r3];
-% res.rhoDach  = NaN(f,1);
-% res.RXBDach =NaN(f,1);
-% res.TauDach =NaN(f,1);
-% res.SpeedDach=NaN(f,1);
-% for i=5:f-4
-%   %norm(RS(:,i))
-%   [v,a,speed,accel,at,an,rho,tau,ortCond1,rho2,drddr_,cosmu_,sinpsi_,ortCond2,ortCond3,ortCond4, ~, ~, B, ~,...
-%    ortCond5,ortCond6,ortCond7,Hypo,cosGamma,normd3rds3,singamma,x1,x2,x3,x4,RxB] ...
-%    = getQuantities3D(RS(:,i-4:i+4),[],epsilon); %#ok<ASGLU>
-%   res.rhoDach(i)=rho2;
-%   res.RXBDach(i)=RxB;
-%   res.TauDach(i) =tau;
-%   res.SpeedDach(i)=speed;
-% end
 
 if any(RHO>1) && strcmp(main.Normierung,'R1')
  warning('MyProgramm:lowPrecission:RhoOne','rho is larger than one: %f',max(RHO))

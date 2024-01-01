@@ -727,7 +727,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
   if all(isnan(res(k3).RHO2)) % from sortEigenValuesAndGetQuantities.m
-   warning('MyPrgm:Plot:Rho2:NaN','RHO2 is NaN')
+   warning('MyPrgm:Plot:Rho2:NaN','all RHO2 is NaN')
   else
    NrValues=min(numel(xPlot)-1,numel(res(k3).RHO2)-1);
    plot(xPlot(2:NrValues),res(k3).RHO2(2:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
@@ -4078,10 +4078,36 @@ fignr=947;% (43)
  end
 
  fignr=976;
- if ismember(fignr,plotfig)
+ if ismember(fignr,plotfig) && exist('model.Energyratio','var')
   figure(fignr);
   %set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  hold on
+  bbb = gca();
+  y4=model.Energyratio;
+  bbb.YLim = [min([y4,0]),max([y4,1])];
+  %bbb.YLim = [0.99,max([y4,1])];
+  lastvalue=min(numel(y4),numel(lambda));
+  plot(lambda,zeros(size(lambda)),'LineStyle','-','Marker','none','LineWidth',1,'Color','k')
+  plot(lambda(1:lastvalue),y4(1:lastvalue),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  xlabel('$\lambda$','Interpreter','latex');
+  ylabel('$\frac{nonmembrane}{membrane+nonmembrane}$','Interpreter','latex');%/\det(\mathbf K_T)_0
+  title(modelfilename,'Interpreter','none')
+  %if k3==resEWs(1) && main.colorshift==0
+   grid on
+   grid minor
+  %end
+  if main.savefigures==true
+   dianame=strcat(modelfilename,'Energieverhaltnis',num2str(fignr));
+   print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
+  end
+ end
+
+ fignr=976.1;
+ if ismember(fignr,plotfig) && exist('model.Energyratio','var')
+  figure(fignr*10);
+  %set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
+  set(gcf,'PaperUnits','points','PaperPositionMode','auto','Position',[FesterPosXNR(plotfig*10==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   bbb = gca();
   y4=model.Energyratio;
@@ -4098,7 +4124,7 @@ fignr=947;% (43)
    grid minor
   %end
   if main.savefigures==true
-   dianame=strcat(modelfilename,'Energieverhaltnis',num2str(fignr));
+   dianame=strcat(modelfilename,'EnergieverhaltnisDetail',num2str(fignr));
    print('-dpdf',strcat('Output/Figures/PDF/',dianame,'.pdf'),'-fillpage')
   end
  end

@@ -72,7 +72,7 @@
   %plotfig=[45,35,19];%EW
   %plotfig=[35,19,908,916,963,919,969,902,906,917];%Verschiebungen
   %plotfig=[15,35,945,958,972];
-  plotfig=[14,19,35,45];
+  plotfig=[14,19,35,45,976,976.1];
   forcedeig = 1; %1; % forced eigenvector number
   
   
@@ -90,7 +90,7 @@
   modelprops.profil.b=0.000161374306091976;% [m] widh of the rectangular sections
   modelprops.lambda = 0:epsil:1;
   modelprops.forceAbaqus=0; 
-  modelprops.forcerun=1; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
+  modelprops.forcerun=0; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
   %modelprops.forcerun=false;
   modelprops.numofeigs=14;
   modelprops.allowComplex=true;

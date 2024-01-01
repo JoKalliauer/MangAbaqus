@@ -257,9 +257,11 @@ if check1 && check2
    %warning('MyProgram:NaN','komplexer Anteil des Eigenwertes ist %s',relation)
    %check of first eigenvalue
    if relation>0.0466%0.00481
-    warning('MyProgram:NaN','komplexer Anteil des 1.Eigenwertes ist %s',relation);
+    warning('MyProgram:slightlycomplexEV','komplexer Anteil des 1.Eigenwertes ist %f',relation);
+    warning('off','MyProgram:slightlycomplexEV')
     if relation>0.686
-     warning('MyProgram:complex','komplex Part too large; des 1.Eigenwertes ist %s',relation);
+     warning('MyProgram:complexEV','komplex Part too large; des 1.Eigenwertes ist %s',relation);
+     warning('off','MyProgram:complexEV')
      %error('MyProgram:complex','komplex Part too large')
      %evec0 = NaN(DOFKt,numofeigs);
      %eval0=NaN(numofeigs,1);

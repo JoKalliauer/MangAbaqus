@@ -93,7 +93,7 @@ elmtype=eltype;
  resolution = W/double(numofelm(end));
  
 %% Finite Element Model
- elmPerLength = round(W/resolution);
+ elmPerLength = round(W/(2*resolution))*2;
 
  alcoords = linspace(-W*pi,W*pi,elmPerLength+1)';
  alcoords(abs(alcoords)<1e-12) = 0;
@@ -107,7 +107,7 @@ elmtype=eltype;
  
  rpLeft = Nodes(1,1);
  leftnodes = Nodes(1,1);
- TopNode=Nodes(elmPerLength/2+1,1);
+ TopNode=Nodes((elmPerLength/2)+1,1);
  rpRight = Nodes(end,1);
  rightnodes = Nodes(end,1);
  

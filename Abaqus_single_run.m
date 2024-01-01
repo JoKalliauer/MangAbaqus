@@ -151,6 +151,17 @@ elseif modelprops.numofeigs==0
 end
 if strcmp(main.whichEV,'Hyb') && modelprops.numofeigs>0
  assert(strcmp(modelprops.elementtype(end),'H'),'modelprops.elementtype does not have hybrid dofs')
+elseif strcmp(main.whichEV,'2023-12')
+ modelprops.alphaH=1;
+elseif strcmp(main.whichEV,'2023_12Hyb')
+ main.whichEV='2023-12';
+ modelprops.alphaDRW=0;
+ modelprops.alphaH=1;
+ %assert(modelprops.alphaH,'modelprops.alphaH should not be zero')
+elseif strcmp(main.whichEV,'2023_12noHyb')
+ main.whichEV='2023-12';
+ modelprops.alphaH=0;
+ %assert(modelprops.alphaDRW,'modelprops.alphaH should not be zero')
 end
 modelprops.whichEV=main.whichEV;
 if ismember(943,plotfig) ||  ismember(973,plotfig)
@@ -178,6 +189,9 @@ end
 if sum(strcmp(fieldnames(main), 'check')) == 0
  main.check=true;
 end
+if ~main.check
+ warning('off','MATLAB:eigs:SigmaNearExactEig')
+end
 if sum(strcmp(fieldnames(main), 'closall')) == 0
  main.closall=true;
 end
@@ -196,6 +210,8 @@ end
 if sum(strcmp(fieldnames(modelprops), 'alphaH')) == 0
  modelprops.alphaH=1;
 end
+
+
 
 
 %%% Setting default values
@@ -222,6 +238,7 @@ else
  [model] = runEigenProblem(modelprops);
 end
 %model.fullEV
+warning('on','MATLAB:eigs:SigmaNearExactEig')
 
 %% post process
 %  main.numofeigs=modelprops.numofeigs;

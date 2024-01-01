@@ -48,7 +48,7 @@ end
 
 %% inizializing
 dofs=model.dofs([1 2]);
-if strcmp(modelprops.whichEV,'k0_11') || strcmp(modelprops.whichEV,'k11')
+if strcmp(modelprops.whichEV,'k0_11') || strcmp(modelprops.whichEV,'k11') ||  strcmp(modelprops.whichEV,'2023-12')
  HybridNodes=model.inDOF(2)-model.inDOF(1)+1;
 end
 %Kg = EigRes;
@@ -146,6 +146,11 @@ newra = transpose(1:newsizeKt0);
 fullEV=NaN(numofeigs,size(model.fulllambda,1));
 RR0 = NaN(newsizeKt0,numofeigs);
 DHtmp=NaN(newsizeKt0,numofeigs);
+Dtmp=NaN(aktiveDOF,numofeigs);
+%t=NaN(newsizeKt0,numofeigs);
+tPunkt01=NaN(newsizeKt0,numofeigs);
+tPunkt=NaN(newsizeKt0,numofeigs);
+tPunkt11=NaN(newsizeKt0,numofeigs);
 %eigvecA0r = cell(lenLam0,numofeigs);
 NormeigvecA0r = NaN(lenLam0,numofeigs);
 NormR1= NaN(lenLam0,numofeigs);
@@ -220,8 +225,9 @@ end
 
 dotKB1{1}=NaN*Kt0_0;
 ddotKB1{1}=NaN*Kt0_0;
-for i = 1:f
- if usejava('jvm'); waitbar(i/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
+
+for ilambda = 1:f 
+ if usejava('jvm'); waitbar(ilambda/length(matches),wbrEP,'runEigenProblem EigvalueProblem');end
  %disp('Lambda:');
  %disp(lambda(matches(i)));
  %Lambda=fulllambda(matches(i)) %#ok<NASGU,NOPRT>
@@ -231,18 +237,18 @@ for i = 1:f
  %for i
  %if i>0
  % -4.
- Zeile=matches(i)-4;
+ Zeile=matches(ilambda)-4;
  if Zeile>0 && displacementsenable
   if Zeile>1
-   dksi04 = sqrt((Displ{Zeile}-Displ{matches(i)-5})'*(Displ{Zeile}-Displ{matches(i)-5}));
-   displacements_(:,1) = Displ{matches(i)-5};
+   dksi04 = sqrt((Displ{Zeile}-Displ{matches(ilambda)-5})'*(Displ{Zeile}-Displ{matches(ilambda)-5}));
+   displacements_(:,1) = Displ{matches(ilambda)-5};
   else
    dksi04 = NaN;
    displacements_(:,1) = NaN*Displ{1};
   end
   %Kt04 = Kts{Zeile,2};
-  dksi03 = sqrt((Displ{matches(i)-3}-Displ{matches(i)-4})'*(Displ{matches(i)-3}-Displ{matches(i)-4}));
-  displacements_(:,2) = Displ{matches(i)-4};
+  dksi03 = sqrt((Displ{matches(ilambda)-3}-Displ{matches(ilambda)-4})'*(Displ{matches(ilambda)-3}-Displ{matches(ilambda)-4}));
+  displacements_(:,2) = Displ{matches(ilambda)-4};
  else
   %Kt04 = 0*Kts{1,2};
   dksi04 = NaN;
@@ -255,9 +261,9 @@ for i = 1:f
  %Kt04(ru,:) = []; Kt04(:,ru) = [];
  % -3.
  if Zeile>-1 && displacementsenable
-  Kt03 = Kts{matches(i)-3,2};
-  dksi02 = sqrt((Displ{matches(i)-2}-Displ{matches(i)-3})'*(Displ{matches(i)-2}-Displ{matches(i)-3}));
-  displacements_(:,3) = Displ{matches(i)-3};
+  Kt03 = Kts{matches(ilambda)-3,2};
+  dksi02 = sqrt((Displ{matches(ilambda)-2}-Displ{matches(ilambda)-3})'*(Displ{matches(ilambda)-2}-Displ{matches(ilambda)-3}));
+  displacements_(:,3) = Displ{matches(ilambda)-3};
  else
   Kt03 = 0*Kts{1,2};
   dksi02 = NaN;
@@ -266,9 +272,9 @@ for i = 1:f
  Kt03(ru,:) = []; Kt03(:,ru) = [];
  % -2.
  if Zeile>-2 && displacementsenable
-  Kt02 = Kts{matches(i)-2,2};
-  dksi01 = sqrt((Displ{matches(i)-1}-Displ{matches(i)-2})'*(Displ{matches(i)-1}-Displ{matches(i)-2}));
-  displacements_(:,4) = Displ{matches(i)-2};
+  Kt02 = Kts{matches(ilambda)-2,2};
+  dksi01 = sqrt((Displ{matches(ilambda)-1}-Displ{matches(ilambda)-2})'*(Displ{matches(ilambda)-1}-Displ{matches(ilambda)-2}));
+  displacements_(:,4) = Displ{matches(ilambda)-2};
  else
   Kt02 = 0*Kts{1,2};
   dksi01 = NaN;
@@ -277,9 +283,9 @@ for i = 1:f
  Kt02(ru,:) = []; Kt02(:,ru) = [];
  % -1.
  if Zeile>-3 && displacementsenable
-  Kt01 = Kts{matches(i)-1,2};
-  dksi11 = sqrt((Displ{matches(i)}-Displ{matches(i)-1})'*(Displ{matches(i)}-Displ{matches(i)-1}));
-  displacements_(:,5) = Displ{matches(i)-1};
+  Kt01 = Kts{matches(ilambda)-1,2};
+  dksi11 = sqrt((Displ{matches(ilambda)}-Displ{matches(ilambda)-1})'*(Displ{matches(ilambda)}-Displ{matches(ilambda)-1}));
+  displacements_(:,5) = Displ{matches(ilambda)-1};
  else
   Kt01 = 0*Kts{1,2};
   dksi11 = NaN;
@@ -287,9 +293,9 @@ for i = 1:f
  end
  Kt01(ru,:) = []; Kt01(:,ru) = [];
  % 0.
- KT = Kts{matches(i),2}; KT(ru,:) = []; KT(:,ru) = [];
+ KT = Kts{matches(ilambda),2}; KT(ru,:) = []; KT(:,ru) = [];
  % 1.
- Kt11 = Kts{matches(i)+1,2};
+ Kt11 = Kts{matches(ilambda)+1,2};
  if numel(Kt11)>0
   Kt11(ru,:) = []; Kt11(:,ru) = [];
  else
@@ -297,7 +303,7 @@ for i = 1:f
  end
  % 2.
  if displacementsenable
-  dksi12 = sqrt((Displ{matches(i)+1}-Displ{matches(i)})'*(Displ{matches(i)+1}-Displ{matches(i)}));
+  dksi12 = sqrt((Displ{matches(ilambda)+1}-Displ{matches(ilambda)})'*(Displ{matches(ilambda)+1}-Displ{matches(ilambda)}));
  else
   dksi12 = NaN;
  end
@@ -307,12 +313,12 @@ for i = 1:f
 
  % 4.
  if displacementsenable
-  displacements_(:,6) = Displ{matches(i)-0};
-  displacements_(:,7) = Displ{matches(i)+1};
-  if size(Displ,1)<matches(i)+2
+  displacements_(:,6) = Displ{matches(ilambda)-0};
+  displacements_(:,7) = Displ{matches(ilambda)+1};
+  if size(Displ,1)<matches(ilambda)+2
    displacements_(:,8)=NaN*displacements_(:,7);
   else
-   displacements_(:,8) = Displ{matches(i)+2};
+   displacements_(:,8) = Displ{matches(ilambda)+2};
   end
   %displacements_(:,9) = Displ{matches(i)+3};
  end
@@ -329,10 +335,10 @@ for i = 1:f
 
 
 
- if size(Kts,1)<matches(i)+2
+ if size(Kts,1)<matches(ilambda)+2
   Ktprim11=0*Ktprim0;
  else
-  Kt12 = Kts{matches(i)+2,2};
+  Kt12 = Kts{matches(ilambda)+2,2};
   if numel(Kt12)>0
    Kt12(ru,:) = []; Kt12(:,ru) = [];
   else
@@ -341,10 +347,10 @@ for i = 1:f
   Ktprim11 = 1/(2*modelprops.epsilon)*(Kt12 - KT);
  end
 
- if size(Kts,1)<matches(i)+3
+ if size(Kts,1)<matches(ilambda)+3
   Ktprim12=0*Ktprim11;
  else
-  Kt13 = Kts{matches(i)+3,2};
+  Kt13 = Kts{matches(ilambda)+3,2};
   if numel(Kt13)>0
    Kt13(ru,:) = [];
    Kt13(:,ru) = [];
@@ -354,7 +360,7 @@ for i = 1:f
   end
  end
 
- if strcmp(modelprops.typeofanalysis,'KNL2') || mintest<matches(i)+4
+ if strcmp(modelprops.typeofanalysis,'KNL2') || mintest<matches(ilambda)+4
   %Kt14=0*Kt13;
   %Ktprim13=0*Ktprim12;
   %dksi14=NaN;
@@ -366,19 +372,19 @@ for i = 1:f
   %Ktprim13 = 1/(2*epsil)*(Kt14 - Kt12);
   %Ktprim14 = 1/epsil*(3/2*Kt14 - 2*Kt13 + 1/2*Kt12);
   %dksi14 = sqrt((Displ{matches(i)+3}-Displ{matches(i)+2})'*(Displ{matches(i)+3}-Displ{matches(i)+2}));
-  displacements_(:,9) = Displ{matches(i)+3};
+  displacements_(:,9) = Displ{matches(ilambda)+3};
  end
 
  dksi = [dksi04, dksi03, dksi02, dksi01, dksi11,dksi12];
- darclengths{i} = dksi;
+ darclengths{ilambda} = dksi;
 
  displacements_(abs(displacements_)<=1e-31)=0;%remove numeric issues close to zero
- displacements{i} = displacements_;
- arclengthJK{i}=mean(sqrt(displacements_(:,5).*displacements_(:,5)));
- arclengthHM{i}=sqrt(sum(displacements_(:,5).*displacements_(:,5)));
+ displacements{ilambda} = displacements_;
+ arclengthJK{ilambda}=mean(sqrt(displacements_(:,5).*displacements_(:,5)));
+ arclengthHM{ilambda}=sqrt(sum(displacements_(:,5).*displacements_(:,5)));
 
- if i>1
-  if matches(i)==matches(i-1)+1
+ if ilambda>1
+  if matches(ilambda)==matches(ilambda-1)+1
    foloworder=true;
   else
    foloworder=false;
@@ -389,7 +395,7 @@ for i = 1:f
 
  %dKtprim0 = 1/epsil*(Kt01 -2*Kt0 +Kt11);
  if strcmp(modelprops.typeofanalysis,'Kg')
-  [r0t ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops);
+  [r0t ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda),model,modelprops);
   R = NaN(7,size(r0t,1),size(r0t,2));
   R(taktuell,:,:) = r0t;
   EV = NaN(7,length(eigval0_));
@@ -407,26 +413,26 @@ for i = 1:f
    eigval11_=eigval12_;
   else
    %[r03_,eigval03_] = solveCLEforMinEigNew(Kt03,Ktprim03,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-3,NaN,modelprops);
-   [r02_,eigval02_] = solveCLEforMinEigNew(Kt02,Ktprim02,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-2,model,modelprops,Ktprim0_0);
-   [r01_,eigval01_] = solveCLEforMinEigNew(Kt01,Ktprim01,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)-1,model,modelprops,Ktprim0_0);
-   [r0_ ,eigval0_,~,KB1Klammer{i},imagValues(i)] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(i),model,modelprops,Ktprim0_0); % Kt=Kt0_0; iter=matches(i); typeofanal=modelprops.typeofanalysis;
-   [r11_,eigval11_,~,KB1Klammer{i+1},imagValues(i+1)] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+1,model,modelprops,Ktprim0_0);
+   [r02_,eigval02_] = solveCLEforMinEigNew(Kt02,Ktprim02,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda)-2,model,modelprops,Ktprim0_0);
+   [r01_,eigval01_] = solveCLEforMinEigNew(Kt01,Ktprim01,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda)-1,model,modelprops,Ktprim0_0);
+   [r0_ ,eigval0_,~,KB1Klammer{ilambda},imagValues(ilambda)] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda),model,modelprops,Ktprim0_0); % Kt=Kt0_0; iter=matches(i); typeofanal=modelprops.typeofanalysis;
+   [r11_,eigval11_,~,KB1Klammer{ilambda+1},imagValues(ilambda+1)] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda)+1,model,modelprops,Ktprim0_0);
   end
   if ~any(Ktprim12(:)) && strcmp(modelprops.typeofanalysis,'CLE')
    r12_=NaN*r11_;
    eigval12_=NaN*eigval11_;
   else
    if ~any(Kt12) % Check if there are still values to process
-    if i~=length(matches)
+    if ilambda~=length(matches)
      warning('MyPrgm:Zero','Kt12 is zero')
     end
     r12_=NaN*r11_;
     eigval12_=NaN*eigval11_;
    else %there are still values to process
-    [r12_,eigval12_,~,KB1Klammer{i+2},imagValues(i+2)] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(i)+2,model,modelprops,Ktprim0_0);
+    [r12_,eigval12_,~,KB1Klammer{ilambda+2},imagValues(ilambda+2)] = solveCLEforMinEigNew(Kt12,Ktprim12,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda)+2,model,modelprops,Ktprim0_0);
     %if any(Kt01(:)) && i>1
-     dotKB1{i+1}=1/(2*modelprops.epsilon)*(KB1Klammer{i+2}-KB1Klammer{i});
-     ddotKB1{i+1}=1/(modelprops.epsilon^2)*(KB1Klammer{i+2}-2*KB1Klammer{i+1}+KB1Klammer{i});
+     dotKB1{ilambda+1}=1/(2*modelprops.epsilon)*(KB1Klammer{ilambda+2}-KB1Klammer{ilambda});
+     ddotKB1{ilambda+1}=1/(modelprops.epsilon^2)*(KB1Klammer{ilambda+2}-2*KB1Klammer{ilambda+1}+KB1Klammer{ilambda});
     %end
    end
   end
@@ -522,74 +528,110 @@ for i = 1:f
  %end %if i>0
 
  if exist('eigval11_','var')
-  if matches(i)<4
+  if matches(ilambda)<4
    %first=max(matches(i)-3,1);
-   fullEV(:,matches(i):matches(i)+2)=[eigval0_,eigval11_,eigval12_];
+   fullEV(:,matches(ilambda):matches(ilambda)+2)=[eigval0_,eigval11_,eigval12_];
    %fullLAMDA(matches(i):matches(i)+3)=fulllambda(matches(i):matches(i)+3);
-   if matches(i)>=2
-    fullEV(:,matches(i)-1)=eigval01_;
+   if matches(ilambda)>=2
+    fullEV(:,matches(ilambda)-1)=eigval01_;
     %fullLAMDA(matches(i):matches(i)+3)
-    if matches(i)>=3
-     fullEV(:,matches(i)-2)=eigval02_;
+    if matches(ilambda)>=3
+     fullEV(:,matches(ilambda)-2)=eigval02_;
     end
    end
   else
-   fullEV(:,matches(i)-2:matches(i)+2)=[eigval02_,eigval01_,eigval0_,eigval11_,eigval12_];
+   fullEV(:,matches(ilambda)-2:matches(ilambda)+2)=[eigval02_,eigval01_,eigval0_,eigval11_,eigval12_];
    %fullLAMDA(matches(i)-3:matches(i)+3)=matches(i)-3:matches(i)+3;
   end % matches(i)<4
  else
-  fullEV(:,matches(i))=eigval0_(1);
+  fullEV(:,matches(ilambda))=eigval0_(1);
  end
 
 
- eigval{i} = EV;
+ eigval{ilambda} = EV;
  %imagValues(i)=imagValuesi;
- eigvecDRH{i}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
+ eigvecDRH{ilambda}=R_DRH;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
  %eigvecDRH2023{i}=R_DRH2023;% DRH...[Displacement,Rotation,Hybrid](splitted)  % increments x DoFpNode x Nodes x NrEigs
  eigvecDRi=R_DRH2023(:,1:R_DRsize(3),:,:);% DRH...[Displacement,Rotation,Hybrid](splitted)
- eigvecDR{i}=eigvecDRi;
+ eigvecDR{ilambda}=eigvecDRi;
  if ~strcmp(modelprops.elementtype,'B21H')
   eigvecHi=R_DRH2023(1:6,R_DRsize(3)+1:end,:,:);% DoFpNode x Nodes x increments x NrEigs
-  eigvecH{i}=eigvecHi;
+  eigvecH{ilambda}=eigvecHi;
   eigvecH2i=squeeze(sum(eigvecHi.^2,2:3)); % increments x NrEigs
-  eigvecH2{i}=eigvecH2i;
+  eigvecH2{ilambda}=eigvecH2i;
  end
- if strcmp(modelprops.whichEV,'k0_11')
+ if strcmp(modelprops.whichEV,'k0_11') || strcmp(modelprops.whichEV,'2023-12') || strcmp(modelprops.whichEV,'2023_12half')
   for incriment=3:7% 3... lambda-2*dlambda; 4 ... previous loadstep; 5 ... current loadstep; 6 next loadstep; 7 second next loadstep
    for EVNri=1:numofeigs
     DHtmp(:,EVNri)=sqrt(full(diag(Kt0_0))).'.*R(incriment,:,EVNri);% sqrt(k_ii)*r_i
-   end
-   eigvec2023{i}(1:aktiveDOF,incriment-2,:)=modelprops.alphaDRW*DHtmp(1:aktiveDOF,:);%save only the displacements and Rotations (no hybrid)
+    Dtmpi=DHtmp(1:aktiveDOF,EVNri);%only Displacement&Rotation no Hybrid
+    if all(isnan(Dtmpi(:)))
+     Dtmpi=NaN*Dtmpi;%useless line
+     if ilambda>2
+      warning('MyPrgm:NaNi','ilambda=%f, Dtmp is nan',ilambda)
+     end
+    elseif strcmp(modelprops.whichEV,'2023_12half')
+     Dtmpi=Dtmpi/norm(Dtmpi);
+    end
+    Dtmp(:,EVNri)=Dtmpi;
+    %t(:,EVNri)=R(incriment,:,EVNri);%
+    if all(isnan(R(4,:,EVNri)))
+     tPunkt(:,EVNri)=NaN*(R(6,:,EVNri)-R(4,:,EVNri))/(2*modelprops.epsilon);%to prevent strange behaviour with real nan but nonNan imaginary
+    else
+     tPunkt01(:,EVNri)=(R(5,:,EVNri)-R(3,:,EVNri))/(2*modelprops.epsilon);
+     tPunkt(:,EVNri)=(R(6,:,EVNri)-R(4,:,EVNri))/(2*modelprops.epsilon);
+     tPunkt11(:,EVNri)=(R(7,:,EVNri)-R(5,:,EVNri))/(2*modelprops.epsilon);
+     if strcmp(modelprops.whichEV,'2023_12half')
+      tPunkt01(:,EVNri)=tPunkt01(:,EVNri)/norm(tPunkt01(:,EVNri));
+      tPunkt(:,EVNri)  =  tPunkt(:,EVNri)/norm(  tPunkt(:,EVNri));
+      tPunkt11(:,EVNri)=tPunkt11(:,EVNri)/norm(tPunkt11(:,EVNri));
+     end %if strcmp(modelprops.whichEV,'2023_12half')
+    end %if all(isnan(R(4,:,EVNri)))
+   end %for EVNri=1:numofeigs
+   eigvec2023{ilambda}(1:aktiveDOF,incriment-2,:)=modelprops.alphaDRW*Dtmp;%save only the displacements and Rotations (no hybrid)
   end
   if strcmp(modelprops.elementtype,'B33') || strcmp(modelprops.elementtype,'B33H')
    error('MyPrgm:Missing','elementtype not implemented')
   else
-   if isnan(modelprops.alphaH) && numofeigs==1
-    modelprops.alphaH=norm(DHtmp(1:aktiveDOF,:))/norm(eigvecHi(:,:,4,1));% 
+   if  strcmp(modelprops.whichEV,'k0_11')
+    if all(isnan(modelprops.alphaH))
+     modelprops.alphaH=norm(DHtmp(1:aktiveDOF,1))/norm(reshape(eigvecHi(:,:,4,1),[HybridNodes*6 1 1]));
+    end
+    eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,:,:)=modelprops.alphaH*reshape(eigvecHi(:,:,:,:),[HybridNodes*6 5 numofeigs]);% add hybrid DOFs
+   elseif strcmp(modelprops.whichEV,'2023-12') || strcmp(modelprops.whichEV,'2023_12half')
+    eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,2,:)=modelprops.alphaH*tPunkt01(aktiveDOF+1:newsizeKt0,:);
+    eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,3,:)=modelprops.alphaH*tPunkt(aktiveDOF+1:newsizeKt0,:);
+    eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,4,:)=modelprops.alphaH*tPunkt11(aktiveDOF+1:newsizeKt0,:);
+    eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,1,:)=NaN*eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,2,:);
+    %eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,5,:)=NaN*eigvec2023{ilambda}(aktiveDOF+1:newsizeKt0,4,:);
+    if ilambda==3
+     disp('debugging point')
+    end 
+   else
+    error('MyPrgm:Missing','whichEV not implemented')
    end
-   eigvec2023{i}(aktiveDOF+1:newsizeKt0,:,:)=modelprops.alphaH*reshape(eigvecHi,[HybridNodes*6 5 numofeigs]);% add hybrid DOFs
   end
   if numofeigs>1
-   eigvec{i} = NaN*(R); % dl x DoF x NrEigs % vector not used for this normalization any more therfore saved with NaN
+   eigvec{ilambda} = NaN*(R); % dl x DoF x NrEigs % vector not used for this normalization any more therfore saved with NaN
   else
-   eigvec{i} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
+   eigvec{ilambda} = NaN*sqrt(diag(Kt0_0)).*R(5,:)+NaN;% vector not used for this normalization any more therfore saved with NaN
   end
  elseif  strcmp(modelprops.whichEV,'g_durch_k')%möglicher name, kannst auch was anderes nehmen
   %2023-08-07: @Antonia hier würde ich die neue Normierung mit gll und sqrt(kll) vom 2023-08-07 einfügen.
  else
-  eigvec{i} = R; % dl x DoF x NrEigs
+  eigvec{ilambda} = R; % dl x DoF x NrEigs
   if ~strcmp(modelprops.elementtype,'B21H')
-   eigvec{i}(:,1:aktiveDOF,:)=modelprops.alphaDRW*eigvec{i}(:,1:aktiveDOF,:);
-   eigvec{i}(:,aktiveDOF+1:newsizeKt0,:)=modelprops.alphaH*eigvec{i}(:,aktiveDOF+1:newsizeKt0,:);
+   eigvec{ilambda}(:,1:aktiveDOF,:)=modelprops.alphaDRW*eigvec{ilambda}(:,1:aktiveDOF,:);
+   eigvec{ilambda}(:,aktiveDOF+1:newsizeKt0,:)=modelprops.alphaH*eigvec{ilambda}(:,aktiveDOF+1:newsizeKt0,:);
   else
    warning('MyPrgm:Missing','not implemnted')
-   eigvec{i}=eigvec{i}*NaN;
+   eigvec{ilambda}=eigvec{ilambda}*NaN;
   end
  end
- StiffMtxs{i,1} = KT;
- StiffMtxs{i,2} = Ktprim0;
+ StiffMtxs{ilambda,1} = KT;
+ StiffMtxs{ilambda,2} = Ktprim0;
  if modelprops.numofelm<=20 % dont calculate DetKt for large, because it is slow
-  if i==1
+  if ilambda==1
    %    KTmult0=5*10^-11;
    KTmult0=1.1e-11;
    KTrel=KT*KTmult0;
@@ -605,20 +647,20 @@ for i = 1:f
   end %i=1
   if relative==true
    if numel(KT)<=1E5
-    DetKtx(i)=det(Kt0inv*KT); %#ok<MINV>
+    DetKtx(ilambda)=det(Kt0inv*KT); %#ok<MINV>
    else
-    DetKtx(i)=NaN;
+    DetKtx(ilambda)=NaN;
    end
   else
    KTrel=KT*KTmult;
    if isinf(res) || res==0
-    DetKtx(i)=res;
+    DetKtx(ilambda)=res;
    else
-    DetKtx(i)=det(KTrel);
+    DetKtx(ilambda)=det(KTrel);
    end
   end
  else
-  DetKtx(i)=NaN;
+  DetKtx(ilambda)=NaN;
  end % if modelprops.numofelm<=20
 
  %% Normierung
@@ -634,15 +676,16 @@ for i = 1:f
   end
  end % if strcmp(modelprops.whichEV,'NoHyb')
  
- 
- if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'bungle_K0r1') || strcmp(modelprops.whichEV,'NoHyb') || strcmp(modelprops.whichEV,'k0_11')
-  if ~isfield(modelprops,'forcedeig')
-   modelprops.forcedeig=1;
-  end
+ s_old={'bungle_rK0r','bungle','bungle_K0r1','NoHyb','k0_11'} ;
+ s_2023={'k0_11','2023-12','2023_12half'};
+ if any(strcmp(modelprops.whichEV,s_old)) 
+  % if ~isfield(modelprops,'forcedeig')
+  %  modelprops.forcedeig=1; % if it does not exit, create it
+  % end
   if isempty(modelprops.forcedeig)
    forcedeig=1;
   else
-   forcedeig=modelprops.forcedeig(1);
+   forcedeig=modelprops.forcedeig(1); %take a shorter abbrevation
   end
   rm=r0t(:,forcedeig);
   if strcmp(modelprops.whichEV,'bungle_rK0r') || strcmp(modelprops.whichEV,'bungle_K0r1') ||  strcmp(modelprops.whichEV,'bungle') || strcmp(modelprops.whichEV,'NoHyb') || strcmp(modelprops.whichEV,'k0_11')
@@ -699,25 +742,25 @@ for i = 1:f
 
    rKt2ri=transpose(rm)*Kt2prim0*rm;
    if isempty(rKt2ri)
-    rddotKtr(i)=NaN;
+    rddotKtr(ilambda)=NaN;
    else
-    rddotKtr(i)=rKt2ri;
+    rddotKtr(ilambda)=rKt2ri;
    end
    v = (r11 - r01)/(2*modelprops.epsilon);
-   ZweirKtt(i)=transpose(rm)*KT*v+transpose(v)*KT*rm;
+   ZweirKtt(ilambda)=transpose(rm)*KT*v+transpose(v)*KT*rm;
    %NormR1(i)=norm(rm);
    if ~isfield(modelprops,'Normierung'); warning('Myprgm:Strange','modelprops.Normierung unset assuming R1'); modelprops.Normierung='R1'; end
    if ~strcmp(modelprops.Normierung,'R1')
     assert(norm(rm)~=1,'Norm should not be one')
    end
-   rdotKtr(i)=transpose(rm)*Ktprim0*rm;
-   rdotKtt(i)=(transpose(rm)*Ktprim0*v+transpose(v)*Ktprim0*rm)/2;
-   t_KB1_t(i)=transpose(v)*KB1Klammer{i}*v;
-   RrA0Rr(i)=transpose(real(rm))*Kt0_0*real(rm);%2022-05-09
-   RrARr(i)=transpose(real(rm))*KT*real(rm);%2022-05-09
-   r_dotKB1_r(i)=transpose(rm)*dotKB1{i}*rm;%2023-09-09
-   r_dotKB1_t(i)=(transpose(rm)*dotKB1{i}*v+transpose(v)*dotKB1{i}*rm)/2;%2023-09-09
-   r_ddotKB1_r(i)=transpose(rm)*ddotKB1{i}*rm;%2023-09-09
+   rdotKtr(ilambda)=transpose(rm)*Ktprim0*rm;
+   rdotKtt(ilambda)=(transpose(rm)*Ktprim0*v+transpose(v)*Ktprim0*rm)/2;
+   t_KB1_t(ilambda)=transpose(v)*KB1Klammer{ilambda}*v;
+   RrA0Rr(ilambda)=transpose(real(rm))*Kt0_0*real(rm);%2022-05-09
+   RrARr(ilambda)=transpose(real(rm))*KT*real(rm);%2022-05-09
+   r_dotKB1_r(ilambda)=transpose(rm)*dotKB1{ilambda}*rm;%2023-09-09
+   r_dotKB1_t(ilambda)=(transpose(rm)*dotKB1{ilambda}*v+transpose(v)*dotKB1{ilambda}*rm)/2;%2023-09-09
+   r_ddotKB1_r(ilambda)=transpose(rm)*ddotKB1{ilambda}*rm;%2023-09-09
   elseif strcmp(modelprops.whichEV,'bungle')
    if ~isnan(rm)
     assert(abs(norm(rm)-1)<1e-7,'rm not 1')
@@ -725,13 +768,13 @@ for i = 1:f
   else
    error('Myprgm:missing','not implemented')
   end
-  rKtr(i)=transpose(rm)*KT*rm;
-  rKt0r(i)=single(transpose(rm)*Kt0_0*rm);
-  RerKt0Imr(i)=single(real(transpose(rm))*Kt0_0*imag(rm));
-  NormKt0r(i)=single(norm(Kt0_0*rm));
+  rKtr(ilambda)=transpose(rm)*KT*rm;
+  rKt0r(ilambda)=single(transpose(rm)*Kt0_0*rm);
+  RerKt0Imr(ilambda)=single(real(transpose(rm))*Kt0_0*imag(rm));
+  NormKt0r(ilambda)=single(norm(Kt0_0*rm));
  elseif strcmp(modelprops.whichEV,'sqrtK_r') || strcmp(modelprops.whichEV,'sqrtK0_r')
   %everythings fine
- elseif  strcmp(modelprops.whichEV,'k0_11')
+ elseif  any(strcmp(modelprops.whichEV,s_2023))
   r0t=NaN*r0t;
  else
   warning('MyPrgm:NotImplemented','modelprops.whichEV=%s unknown?',modelprops.whichEV)
@@ -780,43 +823,43 @@ for i = 1:f
 
     eigvecA0rij=Kt0_0*(rmj);
     NormeigvecA0rij=norm(eigvecA0rij);
-    NormeigvecA0r(i,j)=NormeigvecA0rij;
+    NormeigvecA0r(ilambda,j)=NormeigvecA0rij;
     NormR1ij=norm(rmj);
-    NormR1(i,j)=NormR1ij;
+    NormR1(ilambda,j)=NormR1ij;
 
     rNCTKt0rijIJ=transpose(rmj)*Kt0_0*rmj;%nonconjungate Skalar
     if real(rNCTKt0rijIJ)/abs(imag(rNCTKt0rijIJ))>7e9
-     rNCTKt0rij(i,j)=real(rNCTKt0rijIJ);%nonconjungate sklarprodukt
+     rNCTKt0rij(ilambda,j)=real(rNCTKt0rijIJ);%nonconjungate sklarprodukt
     elseif real(rNCTKt0rijIJ)<0
      warning('MyPrgm:negativ:rSKt0rijIJ','rSKt0rijIJ ist negativ')
      warning('off','MyPrgm:negativ:rSKt0rijIJ')
-     rNCTKt0rij(i,j)=rNCTKt0rijIJ;%nonconjungate sklarprodukt
+     rNCTKt0rij(ilambda,j)=rNCTKt0rijIJ;%nonconjungate sklarprodukt
     else
      warning('MyPrgm:Complex:rSKt0rijIJ','rSKt0rijIJ ist komplex')
      warning('off','MyPrgm:Complex:rSKt0rijIJ')
-     rNCTKt0rij(i,j)=NaN;%rSKt0rijIJ;%sklarprodukt
+     rNCTKt0rij(ilambda,j)=NaN;%rSKt0rijIJ;%sklarprodukt
     end
     RerNCTKt0RerijIJ=transpose(real(rmj))*Kt0_0*real(rmj);%nonconjungate Sklalar
-    RerNCTKt0Rerij(i,j)=RerNCTKt0RerijIJ;
+    RerNCTKt0Rerij(ilambda,j)=RerNCTKt0RerijIJ;
 
 
     rCTKt0rijIJ=ctranspose(rmj)*Kt0_0*rmj;%conjungate TRansponiert
     if real(rCTKt0rijIJ)/abs(imag(rCTKt0rijIJ))>3e10
-     rCTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
+     rCTKt0rij(ilambda,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
     elseif real(rCTKt0rijIJ)<0
      warning('MyPrgm:negativ:rTKt0rijIJ','rTKt0rijIJ ist negativ')
      warning('off','MyPrgm:negativ:rTKt0rijIJ')
-     rCTKt0rij(i,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
+     rCTKt0rij(ilambda,j)=real(rCTKt0rijIJ);%conjungate TRansponiert
     else
      warning('MyPrgm:Complex:rTKt0rijIJ','rTKt0rijIJ ist komplex')
      warning('off','MyPrgm:Complex:rTKt0rijIJ')
-     rCTKt0rij(i,j)=NaN;%rTKt0rijIJ;%conjungate TRansponiert
+     rCTKt0rij(ilambda,j)=NaN;%rTKt0rijIJ;%conjungate TRansponiert
     end
     RerCTKt0RerijIJ=ctranspose(real(rmj))*Kt0_0*real(rmj);%conjungate TRansponiert
-    RerCTKt0Rerij(i,j)=RerCTKt0RerijIJ;
+    RerCTKt0Rerij(ilambda,j)=RerCTKt0RerijIJ;
     
     
-    RerARerij(i,j)=transpose(real(rmj))*KT*real(rmj);
+    RerARerij(ilambda,j)=transpose(real(rmj))*KT*real(rmj);
 
 
 
@@ -834,13 +877,13 @@ for i = 1:f
      warning('MyPrgm:negativ:RealcosphirIJij','real(cosphirIJij) ist larger than 1')
     end
 
-    cosphirij(i,j)=cosphirIJij;
+    cosphirij(ilambda,j)=cosphirIJij;
 
 
    else %any(isnan(rmj))
-    rCTKt0rij(i,j)=NaN;
-    rNCTKt0rij(i,j)=NaN;
-    cosphirij(i,j)=NaN;
+    rCTKt0rij(ilambda,j)=NaN;
+    rNCTKt0rij(ilambda,j)=NaN;
+    cosphirij(ilambda,j)=NaN;
    end
   elseif strcmp(modelprops.whichEV,'sqrtK0_r')
    %everything is fine, no warning, it is just implemented in sortEigenValuesAndGetQuantities and not here.
@@ -851,16 +894,16 @@ for i = 1:f
  
  if ~strcmp(modelprops.whichEV,'skip') && numofeigs>0
   if ~exist('rmj','var')
-   if ~strcmp(modelprops.whichEV,'sqrtK0_r') && ~strcmp(modelprops.whichEV,'k0_11')
+   if ~strcmp(modelprops.whichEV,'sqrtK0_r') && ~any(strcmp(modelprops.whichEV,s_2023))
     warning('MyPrgm:Unknown','modelprops.whichEV=%s might be unkown',modelprops.whichEV)
    end
    rmj=NaN*r0t(:,j);
   end
-  eigvec1{i} = rmj;
+  eigvec1{ilambda} = rmj;
  end
 end%for i = 1:length(matches)
-for i=f+1:min(f+3,lenLam0)
-StiffMtxs{i}=StiffMtxs{i-1}*NaN;
+for ilambda=f+1:min(f+3,lenLam0)
+StiffMtxs{ilambda}=StiffMtxs{ilambda-1}*NaN;
 end
 
  EVsize=size(eigvec{1});
@@ -926,7 +969,8 @@ if ~strcmp(modelprops.whichEV,'skip')
  elseif splitDRH
   model.eigvecDRH=(eigvecDRH);% DRH...Displacement,Rotation,Hybrid(splitted) %much diskspace % increments x DoFpNode x Nodes x NrEigs
  end 
- if strcmp(modelprops.whichEV,'k11') || strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.Normierung,'k0_11') || strcmp(modelprops.whichEV,'k0_11')
+ s2={'k11','k0_11','2023-12','2023_12half'};
+ if any(strcmp(modelprops.whichEV,s2)) || strcmp(modelprops.Normierung,'k11') || strcmp(modelprops.Normierung,'k0_11')
   if strcmp(modelprops.whichEV,'k11')
    model.stiffnessMatrices = StiffMtxs(:,1);% very much diskspace
   else

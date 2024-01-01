@@ -259,8 +259,8 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
 %  end
 %  %unactiveDofs = sort(unique(unactiveDofs));
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem getHistoryOutputFromDatFile');end
- [ELres, Nres, Kg] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
- if ~isempty(ELres)
+ [~, Nres, Kg] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
+ if exist('ELres','var')
   [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
   model.Energyratio=(nonmembrane)./(membrane+nonmembrane);
  end
