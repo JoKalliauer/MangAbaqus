@@ -1,7 +1,7 @@
 function model = selectModel(modelprops,AbaqusRunsFolder)
 %% calls a function based on modelprops.typeofanalysis which creates the inp-files for Abaqus
 %university:TU Wien
-%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2023)
+%author:Michał Malendowski (©2019-2020), Johannes Kalliauer(©2020-2024)
 
 %% Input
 % modelprops ... input-parameters from the script
@@ -65,6 +65,15 @@ end
      model.xlabelloadname='line load $p$ [N/m]';
     case 'Kreis_arch3D'
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.Kreis_arch3D([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
+    case 'Kreis_2024'
+     if strcmp(modelprops.RefLast,'EA')
+      RefLast=modelprops.profil.h*modelprops.profil.b*modelprops.profil.E;%4000 MN
+     elseif strcmp(modelprops.RefLast,'Wende')
+      RefLast=150000;%untested 0.15MN
+     else
+      RefLast=1000000;%first try 1MN
+     end
+     [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.Kreis_2024(numofelm,lambda,RefLast,eltype,AbaqusRunsFolder,modelprops);
     case 'TL_arch3DKg'
      [filename,~,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.TL_arch3DKg([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
     case 'TL_arch3D_sin'

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #find . -path ./.git -prune -false -o -name '*' -size +1M
-find . -type d \( -path ./.git -o -path ./Output \) -prune -false -o -name '*' -size +150k #https://stackoverflow.com/a/4210072/6747994
+find . -type d \( -path ./.git -o -path ./Output \) -prune -false -o -name '*' -size +200k #https://stackoverflow.com/a/4210072/6747994
 
 if [ -f *.owncloud ]; then
     echo "Please download all files from owncloud before using git"

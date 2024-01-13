@@ -130,7 +130,10 @@ Kt11= Kts{matches(1)+1,2};
 Kt11(ru,:) = []; Kt11(:,ru) = [];
 Ktprim0_0 = 1/(modelprops.epsilon)*(Kt11 - Kt0_0);
 [r0t0 ,~ ,numofeigs0 ] = solveCLEforMinEigNew(Kt11,Ktprim0_0,Kg,Kt0_0,modelprops.typeofanalysis,matches(1)+1,model,modelprops,Ktprim0_0);
-numofeigs=min([modelprops.numofeigs,newsizeKt0,numofeigs0]);
+numofeigs=min([modelprops.numofeigs,newsizeKt0]);
+if numofeigs<numofeigs0
+ warning('MyPrgm:unexpexted','numofeigs<numofeigs0')
+end
 if numofeigs<modelprops.numofeigs
  warning('MyPrgm:NumEigs','less eigs available')
  if modelprops.forcerun==0

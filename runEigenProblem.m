@@ -86,7 +86,8 @@ function [model] = runEigenProblem(modelprops)
  %end
  
  lambda   = reshape(lambda,1,length(lambda));
- lambda0   = sort(unique(round([0,lambda]   *100000))/100000);
+ RundenGenauigkeit=1e8;
+ lambda0   = sort(unique(round([0,lambda]   *RundenGenauigkeit))/RundenGenauigkeit);
  
  diff=min(lambda0(2:end)-lambda0(1:end-1));
  if diff+1/100000<modelprops.epsilon
@@ -108,7 +109,7 @@ function [model] = runEigenProblem(modelprops)
  %lambda24 = []; %max(lambda - 4*epsil,0);
  %lambda25 = []; %lambda - 5*epsil;
  fulllambda= [lambda0,lambda11,lambda21,lambda12,lambda22,lambda13,lambda23]';
- fulllambda= sort(unique(round(fulllambda*100000))/100000);
+ fulllambda= sort(unique(round(fulllambda*RundenGenauigkeit))/RundenGenauigkeit);
  
  
 

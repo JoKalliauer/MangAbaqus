@@ -176,6 +176,8 @@ if sum(strcmp(fieldnames(main), 'savefigures')) == 0
 end
 if sum(strcmp(fieldnames(main), 'xBezug')) == 0
  main.xBezug='n';
+else
+ modelprops.xBezug=main.xBezug;
 end
 if sum(strcmp(fieldnames(main), 'flipAxis')) == 0
  main.flipAxis=false;

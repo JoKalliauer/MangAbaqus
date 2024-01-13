@@ -362,6 +362,11 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   xPlot0=model.lambdainput(1:end)/main.xBezugNr; %xValfullload0
   xPlot=xPlot0(2:end);%model.fulllambda(1:end); %xValfullload0
   myxlabelload='$\lambda gem Abaqusinput$';
+ elseif strcmp(xBezug,'EA')
+  xPlot0=xValload0(1:end);%x=lambda(3:end)
+  xPlot=xValload0(2:end);%x=lambda(3:end)
+  myxlabelload=xlabelload;
+  FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
  else
   error('MyPrgm:Unknown','xBezug not defined')
  end
@@ -726,11 +731,15 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   end
   bbb.XAxisLocation = 'origin';
   bbb.YAxisLocation = 'origin';
-  if all(isnan(res(k3).RHO2)) % from sortEigenValuesAndGetQuantities.m
+  y4=res(k3).RHO2;
+  if all(isnan(y4)) % from sortEigenValuesAndGetQuantities.m
    warning('MyPrgm:Plot:Rho2:NaN','all RHO2 is NaN')
   else
-   NrValues=min(numel(xPlot)-1,numel(res(k3).RHO2)-1);
-   plot(xPlot(2:NrValues),res(k3).RHO2(2:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
+   NrValues=min(numel(xPlot)-1,numel(y4)-1);
+   if all(y4(2:NrValues)<=0)
+    y4=-y4;
+   end
+   plot(xPlot(2:NrValues),y4(2:NrValues),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   end
   if savefigures==true
    print('-dsvg',strcat('Output/Figures/SVG/',modelfilename,'_rho14.svg'))
@@ -752,7 +761,7 @@ FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   hold on
   y4=real(model.fullEV(k3,:));
-  stepNRtmp=min(stepNR,numel(y4));
+  stepNRtmp=min([stepNR,numel(y4),numel(FullxPlot0)]);
   plot(FullxPlot0(1:stepNRtmp),y4(1:stepNRtmp),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);
   title(modelfilename)
   if k3==resEWs(1) && main.colorshift==0

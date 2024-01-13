@@ -53,8 +53,9 @@ elseif strcmp(name,'PavlicekPage93')
  modelpropsprofil.b=A/modelpropsprofil.h;
  sectiondata=modelpropsprofil;
 elseif strcmp(name,'MalendowskiTLArch')
- modelpropsprofil.h=0.2;%[m]
- modelpropsprofil.b=0.1;%[m]
+ modelpropsprofil.h=0.2*MV;%[m]
+ modelpropsprofil.b=0.1*MV;%[m]
+ modelpropsprofil.E=2e+11/MV;% [N/m^2]
  sectiondata=modelpropsprofil;
 else
  error('MyPrgm:notImplemented','not implemented')
