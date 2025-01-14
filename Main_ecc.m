@@ -33,7 +33,7 @@
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
-  modelprops.loadfactor = 1;
+  modelprops.loadfactor = 0;
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=false; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
