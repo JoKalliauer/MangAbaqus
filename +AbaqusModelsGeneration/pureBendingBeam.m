@@ -18,7 +18,8 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,h]  = pureBendingBeam(
   lambda(1) = [];
  end
  if sum(strcmp(fieldnames(modelprops), 'orientate')) == 0
-  modelprops.orientate=5;
+  %modelprops.orientate=5;
+  error('not tested')
  end
  assert(ismember(modelprops.orientate,[5 6]),'modelprops.orientate must be 5=y or 6=z')
  
@@ -41,7 +42,8 @@ function [filename,lambda,BC,Nodes,Elements,Last,dofpNode,h]  = pureBendingBeam(
  
  %Iy = 2*(tf^3*b/12 + tf*b*(h/2)^2) + (h)^3*tw/12;
  
- Emodul=2.1e+11/MV;
+ %Emodul=2.1e+11/MV;
+ Emodul=modelprops.profil.E;
  
  %% Load
  M = loadFactor*0.5e6*MV*MV; %[N*m ?]

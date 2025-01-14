@@ -279,28 +279,34 @@ else
  model.savefigures=false;
 end
 %  model.savefigures=false;
-if numel(model.eigenvalues)>=1
+if strcmp(main.whichEV,'skip')
+ NrEWs=0;
+elseif numel(model.eigenvalues)>=1
  NrEWs=min([modelprops.numofeigs,size(model.eigenvalues{1},2)]);
 else
  NrEWs=modelprops.numofeigs;
 end
-if isempty(forcedeig)
- resEWs=1:NrEWs;
- if NrEWs>7
-  if NrEWs>19
-   warning('Myprogram:color','Be aware plotting more than 19 graphs will definitly lead to the repeating colours, you are using %d',NrEWs)
-  else
-   %warning('Myprogram:color','Be aware plotting more than 7 graphs might lead to the same/repeating colour')
+% if strcmp(main.whichEV,'skip')
+%  resEWs=NaN; %[];
+% else
+ if isempty(forcedeig)
+  resEWs=1:NrEWs;
+  if NrEWs>7
+   if NrEWs>19
+    warning('Myprogram:color','Be aware plotting more than 19 graphs will definitly lead to the repeating colours, you are using %d',NrEWs)
+   else
+    %warning('Myprogram:color','Be aware plotting more than 7 graphs might lead to the same/repeating colour')
+   end
   end
- end
-else
- if any(forcedeig>NrEWs)
-  warning('MyProgram:Input','not enough NrEWs for some forcedeig')
-  resEWs=forcedeig(forcedeig<NrEWs);
  else
-  resEWs=forcedeig;
- end
-end %if (strcmpi(sortType,'none'))&&isempty(forcedeig)
+  if any(forcedeig>NrEWs)
+   warning('MyProgram:Input','not enough NrEWs for some forcedeig')
+   resEWs=forcedeig(forcedeig<NrEWs);
+  else
+   resEWs=forcedeig;
+  end
+ end %if (strcmpi(sortType,'none'))&&isempty(forcedeig)
+% end
 
 
 

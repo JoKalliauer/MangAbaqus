@@ -59,8 +59,13 @@ elmtype=eltype;
 %% Span Vorgaben:
  R=modelprops.length*MV;% [m] 19.074
  W=215/360;% [-] Umdrehungen
- Emodul=2e+11/MV; % [N/m^2]
- nu=.25;
+ if sum(strcmp(fieldnames(modelprops.profil), 'E')) || sum(strcmp(fieldnames(modelprops.profil), 'nu'))
+  Emodul=modelprops.profil.E;
+ else
+  warning('MyPrgm:Outdated','assuming E=2e+11N/m²');
+  Emodul=2e+11/MV; % [N/m^2]
+  nu=.25;
+ end
  if sum(strcmp(fieldnames(modelprops.profil), 'h')) || sum(strcmp(fieldnames(modelprops.profil), 'b'))
   h=modelprops.profil.h;
   b=modelprops.profil.b;

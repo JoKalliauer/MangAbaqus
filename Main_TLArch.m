@@ -34,7 +34,8 @@
   
   epsil = 0.005;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-  plotfig=[2,3,6,14,16,35,36,45,59];
+  %plotfig=[2,3,6,14,16,35,36,45,59];
+  plotfig=[2,14,35,36,45];
   forcedeig = []; %1; % forced eigenvector number
   
   
@@ -48,24 +49,25 @@
   modelprops.lambda = 0:epsil:.335;%
   modelprops.forceAbaqus=0; 
   modelprops.forcerun=true; % false... do not force it; 0.5 force if it too less lambda, 1 ... always force it.
-  modelprops.numofeigs=2;
+  modelprops.numofeigs=1;
   modelprops.allowComplex=true;
   main.closall=false;
-  main.savefigures=false; % false... no figures, true... figures, 2 for TeX
+  main.savefigures=1; % false... no figures, true... figures, 2 for TeX
   main.check=0;
   main.colorshift=0;
   modelprops.ask_delete=false;
   main.rstabil=NaN;
   modelprops.MeterValue=1;%1000mm=1m=0.001km
-  main.whichEV='k0_11'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; 'Hyb'; 'bungle_rKr'; 'skip';  'sqrtK_r' 'k11' 'k0_11'
-  main.Normierung='k0_11'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
+  main.whichEV='2023_12Hyb'; % main.whichEV='bungle' 'Disp' 'Rot' 'wrap' 'Hyb' 'bungle_rKr' 'skip' 'sqrtK_r' 'k11' 'k0_11' '2023-12' '2023_12Hyb' '2023_12noHyb' '2023_12half'
+  main.Normierung='R1'; % 'skip' 'R1' 'rCT_K0_r' 'k11' 'k0_11'
   main.rho='R1'; % KtR1 R1 'skip'
+  modelprops.RefLast='Eh'; % 'Malendowski' 'Eh'
   
   modelprops.followsigma=false;
   modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
-  main.xBezug='n'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
+  main.xBezug='1'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
 
-eltypes={'B31','B32','B32H'};
+eltypes={'B32H'};
 for i=1:numel(eltypes)
  modelprops.elementtype = char(eltypes(i));
  main.colorshift=3*i-3;

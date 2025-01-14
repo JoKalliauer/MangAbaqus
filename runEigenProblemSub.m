@@ -398,12 +398,9 @@ for ilambda = 1:f
 
  %dKtprim0 = 1/epsil*(Kt01 -2*Kt0 +Kt11);
  if strcmp(modelprops.typeofanalysis,'Kg')
-  [r0t ,eigval0_ ] = solveCLEforMinEigNew(KT ,Ktprim0 ,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda),model,modelprops);
-  R = NaN(7,size(r0t,1),size(r0t,2));
-  R(taktuell,:,:) = r0t;
-  EV = NaN(7,length(eigval0_));
-  EV(taktuell,:) = eigval0_;
- else
+  error('MyPrgm:removed','this function got removed, use older version')
+ end
+
   if foloworder==true
    %r03=r02_
    r02_=r01_;
@@ -422,9 +419,8 @@ for ilambda = 1:f
    [r11_,eigval11_,~,KB1Klammer{ilambda+1},imagValues(ilambda+1)] = solveCLEforMinEigNew(Kt11,Ktprim11,Kg,Kt0_0,modelprops.typeofanalysis,matches(ilambda)+1,model,modelprops,Ktprim0_0);
   end
   if ~any(Ktprim12(:)) && strcmp(modelprops.typeofanalysis,'CLE')
-   r12_=NaN*r11_;
-   eigval12_=NaN*eigval11_;
-  else
+   error('MyPrgm:removed','this function got removed, use older version')
+  end
    if ~any(Kt12) % Check if there are still values to process
     if ilambda~=length(matches)
      warning('MyPrgm:Zero','Kt12 is zero')
@@ -438,7 +434,7 @@ for ilambda = 1:f
      ddotKB1{ilambda+1}=1/(modelprops.epsilon^2)*(KB1Klammer{ilambda+2}-2*KB1Klammer{ilambda+1}+KB1Klammer{ilambda});
     %end
    end
-  end
+  
   
 
 
@@ -514,7 +510,10 @@ for ilambda = 1:f
   %EV(8,:) = eigval13_;
   %EV(9,:) = eigval14_;
   %EV
+ if ilambda==12
+  disp(r0t)
  end
+
  if strcmp(modelprops.typeofanalysis,'KNL2') && modelprops.followsigma==true
   modelprops.sigma=min(modelprops.sigma,min(real(EV(:))));
  end

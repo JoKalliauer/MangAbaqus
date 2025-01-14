@@ -20,14 +20,15 @@ modelprops.lambda = 0:modelprops.epsilon:.335;%.335;
 modelprops.length=19.074;% [m] 
 modelprops.sectiondata_material_E = 210e9; %[N/m^2]
 [~,modelprops.profil] =Profil('MalendowskiTLArch');
+[~,modelprops.profil] =Profil('PavlicekPage93');
 modelprops.numofeigs=3;
 modelprops.allowComplex=0;
 modelprops.forcerun=1;
 modelprops.forceAbaqus=0;
 modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
 modelprops.elementtype = 'B32H';
-main.whichEV='2023-12'; % 'bungle' 'NoHyb' 'skip' 'k0_11' '2023-12' '2023_12Hyb' '2023_12noHyb' '2023_12half'
-main.Normierung='R1'; % 'R1' 'rNCT_K0_r' 'rCT_K0_r' 'skip 'k0_11'
+main.whichEV='skip'; % 'bungle' 'NoHyb' 'skip' 'k0_11' '2023-12' '2023_12Hyb' '2023_12noHyb' '2023_12half'
+main.Normierung='skip'; % 'R1' 'rNCT_K0_r' 'rCT_K0_r' 'skip 'k0_11'
 main.savefigures=true;
 modelprops.RefLast='old'; %'old' ; 'Wende'; 'EA'
 main.xBezug='1'; %n..normalisiert; d..differenz zu Refwert; 1...Abaqus-Lambda; s...Stepnumber; i..individual
@@ -41,5 +42,5 @@ end
 main.check=0;
 modelprops.alphaDRW=1;
 %modelprops.alphaH=NaN;
-[res,model] = Abaqus_single_run(modelprops,'none',[2,14,15,976],[1],main);
+[res,model] = Abaqus_single_run(modelprops,'none',[2,14,15,976,976.1],1,main);
 

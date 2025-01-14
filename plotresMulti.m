@@ -31,224 +31,224 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 %2023-04-13 JK: if modelprops.loadfactor=0, than the last and the first Eigenvector have the same colour
 
 %% plotfig
- % 1...LAM=chi-lambda (old, used by Malendowski)
- % 2...rho
- % 3..._velocity
- % 4_tanacceleration
- % 5_noracceleration
- % 6_totacceleration
- % 7_torque
- % 8_SinCos
- % 8.1 Sin/Cos
- % 11_ Eigenwert ylim([0,1]) alt LAM=chi-lambda
- % % 11.1 ylim detail
- % 12_real(Eigenwert) kein ylim:-
- % 13_abs(eigenwert)
- % 14_rho2
- % 15_real EW..fulllambda
- % 16 d^2 EW / (dlambda)^2
- %  16.1 only negativ values
- % 17 OC6
- % 18 OC7
- % 19 imag(EW)
- % 20 rhorho3D,rhoDach
- % 21 singamma
- % 211 debugging
- % 22 OC5
- % 23 Hypo
- % 24 =>7
- % 25 CosGamma
- % 26 r*b
- % 27 r*b (3D)
- %28 Rconst
- %29 EBENE
- %30 rho  -- p
- %31 1-rho -- p
- %32 r*b -- p
- %33 arccos(r-r(l))
- %34 DrhopDs
- %35 chi -- p
- %36 eigenwert detail
- %37 Eigenwert only nonlinearPart EW- (ls-l)/ls
- %38 cosPhiMang
- %39 ZaelerB
- %40 NennerB1
- %41 NennerB2
- %42 NormR
- %43 EVal LAM=chi-lambda
- %44 EWd1l
- %45 abs(model.fullEV)
- %59 res.drddr = dot(v,a)/(norm(a)*norm(v))
- 
- 
- 
- 
- %900 detKt
- %901 sqrt[N]{detKt}
- %902 \xiJK u_{ave}
- %905 model.dxidl
- %906 dl/dxi
- %908 v [m]
- %909 d\lambda/dw
- %911 w_{max}
- %913 det/det0
- %914 det/max(det)
- %916 u_{max}
- %917 d\lambda / dv
- %918 model.displacementsJK{step}(1,:)
- 
- %943 model.rddotKtr
- %944 ZweirKtt
- %945 rdotKtr
- %947 res(k3).EWd2l(1:end)./model.rddotKtr(1:Xlength);
- %948 model.ZweirKtt(1:Xlength)./model.rddotKtr(1:Xlength)
- %949 model.Zwei_t_KB1_t(1:Xlength)./model.rddotKtr(1:Xlength);
- %951 rdotKtt
- %952 t_KB1_t
- %953 -2*model.t_KB1_t
- %958 model.rKt0r
- %963 \phi_{max}
- %969 u(l/2)
- %972 model.rdotKtr / model.rKt0r
- %973 r_dotKB1_r
- %974 model.r_dotKB1_t=single(r_dotKB1_t);
- %975 model.r_ddotKB1_r=single(r_ddotKB1_r);
- %976 model.Energyratio
- 
- %% Code
- 
- xBezug=main.xBezug;
+% 1...LAM=chi-lambda (old, used by Malendowski)
+% 2...rho
+% 3..._velocity
+% 4_tanacceleration
+% 5_noracceleration
+% 6_totacceleration
+% 7_torque
+% 8_SinCos
+% 8.1 Sin/Cos
+% 11_ Eigenwert ylim([0,1]) alt LAM=chi-lambda
+% % 11.1 ylim detail
+% 12_real(Eigenwert) kein ylim:-
+% 13_abs(eigenwert)
+% 14_rho2
+% 15_real EW..fulllambda
+% 16 d^2 EW / (dlambda)^2
+%  16.1 only negativ values
+% 17 OC6
+% 18 OC7
+% 19 imag(EW)
+% 20 rhorho3D,rhoDach
+% 21 singamma
+% 211 debugging
+% 22 OC5
+% 23 Hypo
+% 24 =>7
+% 25 CosGamma
+% 26 r*b
+% 27 r*b (3D)
+%28 Rconst
+%29 EBENE
+%30 rho  -- p
+%31 1-rho -- p
+%32 r*b -- p
+%33 arccos(r-r(l))
+%34 DrhopDs
+%35 chi -- p
+%36 eigenwert detail
+%37 Eigenwert only nonlinearPart EW- (ls-l)/ls
+%38 cosPhiMang
+%39 ZaelerB
+%40 NennerB1
+%41 NennerB2
+%42 NormR
+%43 EVal LAM=chi-lambda
+%44 EWd1l
+%45 abs(model.fullEV)
+%59 res.drddr = dot(v,a)/(norm(a)*norm(v))
+
+
+
+
+%900 detKt
+%901 sqrt[N]{detKt}
+%902 \xiJK u_{ave}
+%905 model.dxidl
+%906 dl/dxi
+%908 v [m]
+%909 d\lambda/dw
+%911 w_{max}
+%913 det/det0
+%914 det/max(det)
+%916 u_{max}
+%917 d\lambda / dv
+%918 model.displacementsJK{step}(1,:)
+
+%943 model.rddotKtr
+%944 ZweirKtt
+%945 rdotKtr
+%947 res(k3).EWd2l(1:end)./model.rddotKtr(1:Xlength);
+%948 model.ZweirKtt(1:Xlength)./model.rddotKtr(1:Xlength)
+%949 model.Zwei_t_KB1_t(1:Xlength)./model.rddotKtr(1:Xlength);
+%951 rdotKtt
+%952 t_KB1_t
+%953 -2*model.t_KB1_t
+%958 model.rKt0r
+%963 \phi_{max}
+%969 u(l/2)
+%972 model.rdotKtr / model.rKt0r
+%973 r_dotKB1_r
+%974 model.r_dotKB1_t=single(r_dotKB1_t);
+%975 model.r_ddotKB1_r=single(r_ddotKB1_r);
+%976 model.Energyratio
+
+%% Code
+
+xBezug=main.xBezug;
 %n..normiert auf Reflast
 % 1...ohne xValfulllambda0Mult;
-% s...Stepnumber; 
-% d..differenz: normiert, aber 0 bei Reflast; 
+% s...Stepnumber;
+% d..differenz: normiert, aber 0 bei Reflast;
 % alles andere... last
- 
+
 %  if numel(resEWs)>0 && ~strcmp(main.whichEV,'skip')
 %   lambda = res(min(resEWs)).lambda;
 %  else
-  lambda=model.lambda;
+lambda=model.lambda;
 %  end
- lengthlam=length(lambda);
- %lamlast=find(~isnan(lambda),1,'last');
+lengthlam=length(lambda);
+%lamlast=find(~isnan(lambda),1,'last');
 
- export=true;
- MyLines={'-','--','-.',':'};
-   cfig = containers.Map;
-   cfig('ylog')=false;
-   cfig('yMin')=0;
-   cfig('xMin')=0;
-   cfig('line')='-';
-   cfig('wofuer')='TeX';
-   cfig('lineColor')=[0, 0.4470, 0.7410];
-   cfig('MyMarker')='none';
-   cfig('LineWidth')=3;
-   cfig('FontSize')=17.5;
-   cfig('order')=NaN;
-   cfig('closing')=NaN;
-   cfig('LineStyle')=MyLines{mod(main.colorshift,4)+1};
-   %    cfig('lineColor')=colJK;
-   xValfulllambda0Mult=1;
-   xlabelload='load';
-   xValload=model.load(1:lengthlam-1);
-   xValload0=model.load0;
-   lamMin=NaN;
-   %lamMax=NaN;
- if export && isfield(model,'load')
-  lengthlam=min(lengthlam,numel(model.load)+1);
-  if strcmp(model.filename(1),'p')%pureBendingBeam_Malendowski
-   xlabelload='bending moment $M$'; % [kN\,m]
-   xValload=model.load(1:lengthlam-1);%/1000;
-   xValload0=model.load0;%/1000;
-   warning('MyPrgm:Outdated','pure Bending should be BB, only used to gain old results by Malendwoski')
-  elseif strcmp(model.filename(1),'T')%Stuetlinienbogen
-   xlabelload='line load $p$ [kN/cm]';
-   xValload=model.load(1:lengthlam-1);%/100000;
-   xValload0=model.load0;%/100000;
-   %cfig('Cxticks')=0:10:70;
-   xValfulllambda0Mult=1/.333302;
-  elseif strcmp(model.filename(2),'ec')%exzentrischer Druck alte Reflast
-   xlabelload='normal force $N$ [N]';
-   xValload=model.load(1:lengthlam-1);%/1000;
-   xValload0=model.load0;%/1000;
-   %cfig('Cxticks')=0:200:1600;
-   xValfulllambda0Mult=1/2.2;%(500e3*(5)^2)/(pi^2*2.1*10^11*1.3198*10^-5);%1/2.2;
-   lamMin=0;
-   %lamMax=2;
-  elseif strcmp(model.filename(2),'ex')%exzentrischer Druck neue Reflast
-   xlabelload='normal force $N$ [N]';
-   xValload=model.load(1:lengthlam-1);%/1000;
-   xValload0=model.load0;%/1000;
-   %cfig('Cxticks')=0:200:1600;
-   xValfulllambda0Mult=1;%(1100e3*(5)^2)/(pi^2*2.1*10^11*1.3198*10^-5);
-   lamMin=0;
-   %lamMax=2;
-  elseif strcmp(model.filename(1),'d')%IPE 400 bar subjected to a centric axial force at its midpoint
-   if strcmp(model.filename(1:6),'detKtN')
-    xValfulllambda0Mult=1;%https://www.wolframalpha.com/input/?i=2*%28pi%5E2*2.1*10%5E11*1.3198*10%5E-5%29%2F%285*.699156%29%5E2
-   else
-    xValfulllambda0Mult=1/66.545;%https://www.wolframalpha.com/input/?i=2*%28pi%5E2*2.1*10%5E11*2.18765*10%5E-4%29%2F%285*.699156%29%5E2
-   end
-   xlabelload='Force';
-   xValload=model.load(1:lengthlam-1);
-   xValload0=model.load0;
-   lamMin=-1.5;
-   %lamMax=1.5;
-  elseif strcmp(model.filename(1),'B')%Bending
-   xValfulllambda0Mult=1/0.57280;%/0.57280;
-   if ~strcmp(model.filename(1:6),'BB5-B3')
-    warning('MyPrgm:Check','please check if xValfulllambda0Mult is correct')
-   end
-  elseif strcmp(model.filename(1),'c')%canti
-   xlabelload='point load [N]';
-  elseif strcmp(model.filename(1),'K')%Kreis_arch3D
-   xValfulllambda0Mult=1/0.15;% rought estimate where the first complex eigenvalue gets negative
-  else %everything unknown
-   xlabelload='load';
-   xValload=model.load(1:lengthlam-1);
-   xValload0=model.load0;
-   lamMin=NaN;
+export=true;
+MyLines={'-','--','-.',':'};
+cfig = containers.Map;
+cfig('ylog')=false;
+cfig('yMin')=0;
+cfig('xMin')=0;
+cfig('line')='-';
+cfig('wofuer')='TeX';
+cfig('lineColor')=[0, 0.4470, 0.7410];
+cfig('MyMarker')='none';
+cfig('LineWidth')=3;
+cfig('FontSize')=17.5;
+cfig('order')=NaN;
+cfig('closing')=NaN;
+cfig('LineStyle')=MyLines{mod(main.colorshift,4)+1};
+%    cfig('lineColor')=colJK;
+xValfulllambda0Mult=1;
+xlabelload='load';
+xValload=model.load(1:lengthlam-1);
+xValload0=model.load0;
+lamMin=NaN;
+%lamMax=NaN;
+if export && isfield(model,'load')
+ lengthlam=min(lengthlam,numel(model.load)+1);
+ if strcmp(model.filename(1),'p')%pureBendingBeam_Malendowski
+  xlabelload='bending moment $M$'; % [kN\,m]
+  xValload=model.load(1:lengthlam-1);%/1000;
+  xValload0=model.load0;%/1000;
+  warning('MyPrgm:Outdated','pure Bending should be BB, only used to gain old results by Malendwoski')
+ elseif strcmp(model.filename(1),'T')%Stuetlinienbogen
+  xlabelload='line load $p$ [kN/cm]';
+  xValload=model.load(1:lengthlam-1);%/100000;
+  xValload0=model.load0;%/100000;
+  %cfig('Cxticks')=0:10:70;
+  xValfulllambda0Mult=1/.333302;
+ elseif strcmp(model.filename(2),'ec')%exzentrischer Druck alte Reflast
+  xlabelload='normal force $N$ [N]';
+  xValload=model.load(1:lengthlam-1);%/1000;
+  xValload0=model.load0;%/1000;
+  %cfig('Cxticks')=0:200:1600;
+  xValfulllambda0Mult=1/2.2;%(500e3*(5)^2)/(pi^2*2.1*10^11*1.3198*10^-5);%1/2.2;
+  lamMin=0;
+  %lamMax=2;
+ elseif strcmp(model.filename(2),'ex')%exzentrischer Druck neue Reflast
+  xlabelload='normal force $N$ [N]';
+  xValload=model.load(1:lengthlam-1);%/1000;
+  xValload0=model.load0;%/1000;
+  %cfig('Cxticks')=0:200:1600;
+  xValfulllambda0Mult=1;%(1100e3*(5)^2)/(pi^2*2.1*10^11*1.3198*10^-5);
+  lamMin=0;
+  %lamMax=2;
+ elseif strcmp(model.filename(1),'d')%IPE 400 bar subjected to a centric axial force at its midpoint
+  if strcmp(model.filename(1:6),'detKtN')
+   xValfulllambda0Mult=1;%https://www.wolframalpha.com/input/?i=2*%28pi%5E2*2.1*10%5E11*1.3198*10%5E-5%29%2F%285*.699156%29%5E2
+  else
+   xValfulllambda0Mult=1/66.545;%https://www.wolframalpha.com/input/?i=2*%28pi%5E2*2.1*10%5E11*2.18765*10%5E-4%29%2F%285*.699156%29%5E2
   end
-%   xValload0=[0;xValload(1:end)];
-  NrLoad0=numel(xValload0);
-  xValfullload0=model.fullload0;
+  xlabelload='Force';
+  xValload=model.load(1:lengthlam-1);
+  xValload0=model.load0;
+  lamMin=-1.5;
+  %lamMax=1.5;
+ elseif strcmp(model.filename(1),'B')%Bending
+  xValfulllambda0Mult=1/0.57280;%/0.57280;
+  if ~strcmp(model.filename(1:6),'BB5-B3')
+   warning('MyPrgm:Check','please check if xValfulllambda0Mult is correct')
+  end
+ elseif strcmp(model.filename(1),'c')%canti
+  xlabelload='point load [N]';
+ elseif strcmp(model.filename(1),'K')%Kreis_arch3D
+  xValfulllambda0Mult=1/0.15;% rought estimate where the first complex eigenvalue gets negative
+ else %everything unknown
+  xlabelload='load';
+  xValload=model.load(1:lengthlam-1);
+  xValload0=model.load0;
+  lamMin=NaN;
  end
- if sum(strcmp(fieldnames(model), 'xlabelloadname')) ~= 0
-   xlabelload=model.xlabelloadname;
- end
- if ~exist('xlabelload','var')
-  xlabelload='xlabelload';
- end
- if ~exist('xValload','var') || numel(xValload)==0
-  warning('MyPrgm:Input','xValload not defined')
-  xValload=model.fulllambda(2:end);
- end
- if ~exist('xValload0','var') || numel(xValload0)==0
-  warning('MyPrgm:Input','xValload0 not defined')
-  xValload0=[0;xValload];
- end
+ %   xValload0=[0;xValload(1:end)];
+ NrLoad0=numel(xValload0);
+ xValfullload0=model.fullload0;
+end
+if sum(strcmp(fieldnames(model), 'xlabelloadname')) ~= 0
+ xlabelload=model.xlabelloadname;
+end
+if ~exist('xlabelload','var')
+ xlabelload='xlabelload';
+end
+if ~exist('xValload','var') || numel(xValload)==0
+ warning('MyPrgm:Input','xValload not defined')
+ xValload=model.fulllambda(2:end);
+end
+if ~exist('xValload0','var') || numel(xValload0)==0
+ warning('MyPrgm:Input','xValload0 not defined')
+ xValload0=[0;xValload];
+end
 
- 
- if isempty(model.fulllambda)
-  model.fulllambda=model.lambda0;
- end
- %LamdaObj=model.fulllambda(1:end)*xValfulllambda0Mult;
- lambdaLabel='$\lambda$';%lambdaLabel='load parameter $\lambda$';
- 
- 
-  %% Figuredef
-  FontSize0=(get(0,'defaultaxesfontsize')+get(0,'defaulttextfontsize'))/2;
-  tmp=get(0,'ScreenSize');
-  GetSceenX=tmp(3);
-  %GetSceenY=tmp(4);
-  %screenX= 1920;
-  screenX=max(min(GetSceenX,3840),1024);
-  %screenY=1080;
- tmp=get(0,'defaultfigureposition');
- %FesterPosX =uint16(tmp(1));
- FesterPosY =uint16(tmp(2));
- XBreite0=tmp(3);
- YHohe0=tmp(4);
+
+if isempty(model.fulllambda)
+ model.fulllambda=model.lambda0;
+end
+%LamdaObj=model.fulllambda(1:end)*xValfulllambda0Mult;
+lambdaLabel='$\lambda$';%lambdaLabel='load parameter $\lambda$';
+
+
+%% Figuredef
+FontSize0=(get(0,'defaultaxesfontsize')+get(0,'defaulttextfontsize'))/2;
+tmp=get(0,'ScreenSize');
+GetSceenX=tmp(3);
+%GetSceenY=tmp(4);
+%screenX= 1920;
+screenX=max(min(GetSceenX,3840),1024);
+%screenY=1080;
+tmp=get(0,'defaultfigureposition');
+%FesterPosX =uint16(tmp(1));
+FesterPosY =uint16(tmp(2));
+XBreite0=tmp(3);
+YHohe0=tmp(4);
 
 FontName = 'times';
 Faktor=1;
@@ -256,134 +256,136 @@ XBreite=(XBreite0)*Faktor; %416
 YHohe=(YHohe0)*Faktor; %312
 FontSize=FontSize0*Faktor;
 
-%gcfPostition=[FesterPosX   FesterPosY   XBreite   YHohe]; 
+%gcfPostition=[FesterPosX   FesterPosY   XBreite   YHohe];
 if isempty(resEWs)
  plotfig=plotfig(~((plotfig<=34).*(plotfig>0)));
 end
 FesterPosXNR=uint16(linspace(0,screenX-XBreite,numel(plotfig)));
 
-%% 
+%%
 
- 
- if ~exist('model','class')
-  if isfield(model,'filename')
-   modelfilename=model.filename;
-  else
-   modelfilename=model.TestCase;
-  end
+
+if ~exist('model','class')
+ if isfield(model,'filename')
+  modelfilename=model.filename;
  else
-  modelfilename='unknown';
+  modelfilename=model.TestCase;
  end
- if ~exist('plotfig','var')
-  plotfig=[1,2];
- end
- 
- 
- if ismember(0,plotfig)
-  figure(2147483646);
-  set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==0)   FesterPosY   XBreite   YHohe]);
-  hold on
-  if main.colorshift==0
-   grid on
-  end
-  xlabel(xlabelload,'Interpreter','latex');
-  ylabelJK='lambda';
-  ylabel(ylabelJK,'Interpreter','latex');
-  title(modelfilename,'Interpreter','none')
-  Points=numel(xValload);
-  plot(xValload,lambda(1:Points),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',MyColours{1});
- end
+else
+ modelfilename='unknown';
+end
+if ~exist('plotfig','var')
+ plotfig=[1,2];
+end
 
- 
 
- if ~exist('main','var')
-  main.savefigures=false;
-  main.colorshift=0;
+if ismember(0,plotfig)
+ figure(2147483646);
+ set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==0)   FesterPosY   XBreite   YHohe]);
+ hold on
+ if main.colorshift==0
+  grid on
  end
- if ~isfield(main,'savefigures'); main.savefigures=false; warning('MyPrgm:undefined','assuming not saving figures'); end
- if main.savefigures==true
-  if ~exist('Output/Figures/', 'dir')
-   if isunix
-    mkdir('Output/Figures/SVG');
-    mkdir('Output/Figures/PNG');
-    mkdir('Output/Figures/PDF');
-   elseif ispc
-    warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
-    return
-   elseif ismac
-    warning('MyProgram:OS','Mac not tested try unix')
-   end
+ xlabel(xlabelload,'Interpreter','latex');
+ ylabelJK='lambda';
+ ylabel(ylabelJK,'Interpreter','latex');
+ title(modelfilename,'Interpreter','none')
+ Points=numel(xValload);
+ plot(xValload,lambda(1:Points),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',MyColours{1});
+end
+
+
+
+if ~exist('main','var')
+ main.savefigures=false;
+ main.colorshift=0;
+end
+if ~isfield(main,'savefigures'); main.savefigures=false; warning('MyPrgm:undefined','assuming not saving figures'); end
+if main.savefigures==true
+ if ~exist('Output/Figures/', 'dir')
+  if isunix
+   mkdir('Output/Figures/SVG');
+   mkdir('Output/Figures/PNG');
+   mkdir('Output/Figures/PDF');
+  elseif ispc
+   warning('MyProgram:OS','You are using Windows and AbaqusRunsFolder does not exist, therfore skipping')
+   return
+  elseif ismac
+   warning('MyProgram:OS','Mac not tested try unix')
   end
  end
- %model.savefigures=false;%might get overwritten for k3==resEWs(end)
- %set(0, 'DefaultFigureWindowState', 'minimized');
- cfig('Faktor')=1;
- if lambda(1) == 0
-  lambda0=zeros(numel(lambda),1);
-  lambda0(1:end)=lambda;
+end
+%model.savefigures=false;%might get overwritten for k3==resEWs(end)
+%set(0, 'DefaultFigureWindowState', 'minimized');
+cfig('Faktor')=1;
+if lambda(1) == 0
+ lambda0=zeros(numel(lambda),1);
+ lambda0(1:end)=lambda;
+else
+ if isnan(lambda(1))
+  lambda0=NaN(numel(lambda)+1,1);
  else
-  if isnan(lambda(1))
-   lambda0=NaN(numel(lambda)+1,1);
-  else
-   lambda0=zeros(numel(lambda)+1,1);
-  end
-  lambda0(2:end)=lambda;
+  lambda0=zeros(numel(lambda)+1,1);
  end
- NrFulllambda0=numel(model.fulllambda);
+ lambda0(2:end)=lambda;
+end
+NrFulllambda0=numel(model.fulllambda);
 
- if strcmp(xBezug,'n')%lambda nachtraeglich normalisiert
-  xPlot0=lambda0(1:end)*xValfulllambda0Mult; %xValfullload0
-  xPlot=model.fulllambda(2:end-3)*xValfulllambda0Mult; %xValfullload0
-  FullxPlot0=model.fulllambda(1:end-3)*xValfulllambda0Mult;%different from xPlot0 if lambda(1)>>epsil
-  myxlabelload='$\lambda$ gem Referenzlast';
-  %xlim([.94 1.03])
- elseif strcmp(xBezug,'1') %Abaqus-Lambda
-  xPlot0=model.lambdainput(1:end); %xValfullload0
-  xPlot=xPlot0(2:end);%model.fulllambda(1:end); %xValfullload0
-  FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
-  myxlabelload='$\lambda gem Abaqusinput$';
- elseif strcmp(xBezug,'s') %Lastscrhittnumber
-  xPlot=1:NrFulllambda0; 
-  xPlot0=[0 xPlot];%adding a zero in front of the vector
-  myxlabelload='$Stepnumber$';
-  FullxPlot0=0:numel(model.fulllambda(1:end-3));
- elseif strcmp(xBezug,'d')%lambda differenz
-  xPlot0=(lambda0(1:end)*xValfulllambda0Mult)-1; %xValfullload0
-  xPlot=(model.fulllambda(1:end)*xValfulllambda0Mult)-1; %xValfullload0
-  myxlabelload='$\frac{P-\bar{P}}{\bar{P}}$';
-  %xlimJK=[-.1 .1];
-  %xlimJK=[-1 1];
- elseif strcmp(xBezug,'P')
-  xPlot0=xValload0(1:end);%x=lambda(3:end)
-  xPlot=xValload0(2:end);%x=lambda(3:end)
-  myxlabelload=xlabelload;
-  FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
- elseif strcmp(xBezug,'i') %Abaqus-Lambda
-  xPlot0=model.lambdainput(1:end)/main.xBezugNr; %xValfullload0
-  xPlot=xPlot0(2:end);%model.fulllambda(1:end); %xValfullload0
-  myxlabelload='$\lambda gem Abaqusinput$';
- elseif strcmp(xBezug,'EA')
-  xPlot0=xValload0(1:end);%x=lambda(3:end)
-  xPlot=xValload0(2:end);%x=lambda(3:end)
-  myxlabelload=xlabelload;
-  FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
- else
-  error('MyPrgm:Unknown','xBezug not defined')
- end
- steps0=numel(xPlot0);
- if steps0-1<numel(xPlot)
-  warning('MyPrgm:MissingValues','Not all requested lambdas have values try reruning modelprops.forceAbaqus=1')
-  xPlot=xPlot(1:steps0-1);
- end
- xPlotLength=numel(xPlot);
- xPlot0Length=numel(xPlot0);
- tmpLast=min(xPlotLength,xPlot0Length-1);
-  xPlotHalf=(xPlot0(1:tmpLast)+xPlot)/2;
+if strcmp(xBezug,'n')%lambda nachtraeglich normalisiert
+ xPlot0=lambda0(1:end)*xValfulllambda0Mult; %xValfullload0
+ xPlot=model.fulllambda(2:end-3)*xValfulllambda0Mult; %xValfullload0
+ FullxPlot0=model.fulllambda(1:end-3)*xValfulllambda0Mult;%different from xPlot0 if lambda(1)>>epsil
+ myxlabelload='$\lambda$ gem Referenzlast';
+ %xlim([.94 1.03])
+elseif strcmp(xBezug,'1') %Abaqus-Lambda
+ xPlot0=model.lambdainput(1:end); %xValfullload0
+ xPlot=xPlot0(2:end);%model.fulllambda(1:end); %xValfullload0
+ FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
+ myxlabelload='$\lambda gem Abaqusinput$';
+elseif strcmp(xBezug,'s') %Lastscrhittnumber
+ xPlot=1:NrFulllambda0;
+ xPlot0=[0 xPlot];%adding a zero in front of the vector
+ myxlabelload='$Stepnumber$';
+ FullxPlot0=0:numel(model.fulllambda(1:end-3));
+elseif strcmp(xBezug,'d')%lambda differenz
+ xPlot0=(lambda0(1:end)*xValfulllambda0Mult)-1; %xValfullload0
+ xPlot=(model.fulllambda(1:end)*xValfulllambda0Mult)-1; %xValfullload0
+ myxlabelload='$\frac{P-\bar{P}}{\bar{P}}$';
+ %xlimJK=[-.1 .1];
+ %xlimJK=[-1 1];
+elseif strcmp(xBezug,'P')
+ xPlot0=xValload0(1:end);%x=lambda(3:end)
+ xPlot=xValload0(2:end);%x=lambda(3:end)
+ myxlabelload=xlabelload;
+ FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
+elseif strcmp(xBezug,'i') %Abaqus-Lambda
+ xPlot0=model.lambdainput(1:end)/main.xBezugNr; %xValfullload0
+ xPlot=xPlot0(2:end);%model.fulllambda(1:end); %xValfullload0
+ myxlabelload='$\lambda gem Abaqusinput$';
+elseif strcmp(xBezug,'EA')
+ xPlot0=xValload0(1:end);%x=lambda(3:end)
+ xPlot=xValload0(2:end);%x=lambda(3:end)
+ myxlabelload=xlabelload;
+ FullxPlot0=model.fulllambda(1:end-3);%different from xPlot0 if lambda(1)>>epsil
+else
+ error('MyPrgm:Unknown','xBezug not defined')
+end
+steps0=numel(xPlot0);
+if steps0-1<numel(xPlot)
+ warning('MyPrgm:MissingValues','Not all requested lambdas have values try reruning modelprops.forceAbaqus=1')
+ xPlot=xPlot(1:steps0-1);
+end
+xPlotLength=numel(xPlot);
+xPlot0Length=numel(xPlot0);
+tmpLast=min(xPlotLength,xPlot0Length-1);
+xPlotHalf=(xPlot0(1:tmpLast)+xPlot)/2;
 
 
- stepNR=numel(xPlot0);
- lambda = reshape(lambda,numel(lambda),1);
+stepNR=numel(xPlot0);
+lambda = reshape(lambda,numel(lambda),1);
+if ~isempty(resEWs)
  lastEW=resEWs(end);
+end
  for k3=resEWs
   %k3 %#ok<NOPRT>
   if k3==lastEW
@@ -4087,7 +4089,7 @@ fignr=947;% (43)
  end
 
  fignr=976;
- if ismember(fignr,plotfig) && exist('model.Energyratio','var')
+ if ismember(fignr,plotfig) && sum(strcmp(fieldnames(model), 'Energyratio')) % exist('model.Energyratio','var')
   figure(fignr);
   %set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
@@ -4113,7 +4115,7 @@ fignr=947;% (43)
  end
 
  fignr=976.1;
- if ismember(fignr,plotfig) && exist('model.Energyratio','var')
+ if ismember(fignr,plotfig) && sum(strcmp(fieldnames(model), 'Energyratio'))
   figure(fignr*10);
   %set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','Position',[FesterPosXNR(plotfig*10==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);

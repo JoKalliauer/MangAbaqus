@@ -29,8 +29,7 @@
   modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0;
  
   sortType = 'none';  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards','forwardJK'
-  plotfig=[3,14,15,42,976];
-  %plotfig=14;
+  plotfig=[976];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
@@ -38,7 +37,7 @@
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=false; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
-  modelprops.forcerun=1; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
+  modelprops.forcerun=0; %0..use existing one, 0.5.. force run if last lambda smaller than requested, always fore a new calc.
   modelprops.allowComplex=1;%0..no complex, 1 also complex, 2 only complex
   main.closall=true;
   main.savefigures=1;
@@ -47,8 +46,8 @@
   modelprops.ask_delete=true;
   main.rsame=NaN;%0.8;
   main.rstabil=NaN;%0.99999;
-  main.whichEV='2023_12half'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'skip' ; 'k11' 'k0_11' '2023-12' '2023_12Hyb' '2023_12noHyb' '2023_12half'
-  main.Normierung='R1'; % 'R1';  'rNCT_K0_r' ; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
+  main.whichEV='k0_11'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'skip' ; 'k11' 'k0_11' '2023-12' '2023_12Hyb' '2023_12noHyb' '2023_12half'
+  main.Normierung='k0_11'; % 'R1';  'rNCT_K0_r' ; 'rCT_K0_r' 'sqrtK_r' 'skip' 'k0_11'
   main.rho='R1'; % KtR1 R1 'A0R1' 
   
   %modelprops.MeterValue=1; %1000mm=1m=0.001km ;
@@ -64,7 +63,7 @@ numofelms={2};
 
 Exz={modelprops.ecc};modelprops.numofeigs=2;%min 7 EV
 
-epsils={0.02}%
+epsils={0.01}%
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));

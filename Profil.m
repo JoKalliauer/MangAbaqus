@@ -44,6 +44,18 @@ if strcmp(name,'default')
  assert(Izz>0,'Izz negativ')
  
 elseif strcmp(name,'PavlicekPage93')
+ modelpropsprofil.E=2.06e+11/MV; % [N/m^2] % 20600kN/cm²
+ modelpropsprofil.h=0.2*MV;
+ modelpropsprofil.b=0.1*MV;
+ %EA=5*10^7*MV; %[N]
+ %EI=10^7*MV^3; %[N * m^2]
+ %itragheit=sqrt(EI/EA); % [m]
+ %modelpropsprofil.h=itragheit*sqrt(12);
+ %A=EA/Emodul;
+ %modelpropsprofil.b=A/modelpropsprofil.h;
+ modelpropsprofil.nu=0.3;
+ sectiondata=modelpropsprofil;
+elseif strcmp(name,'PavlicekPage103')
  Emodul=2e+11/MV; % [N/m^2]
  EA=5*10^7*MV; %[N]
  EI=10^7*MV^3; %[N * m^2]

@@ -38,7 +38,7 @@ modelprops.typeofanalysis = 'KNL2'; modelprops.sigma=0; %[ Kt - EW * Kt0 ]
 
 %modelprops.numofelm = 20; %replaced by numofelms
 sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
-plotfig=[14,976,976.1];
+plotfig=[14,15];
 
 forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
@@ -47,16 +47,17 @@ modelprops.loadfactor = 1;
 
 modelprops.forceAbaqus=false; %-1 ... don't allow reruning, false... dont force rerun, 0.5 rerun if too less lambda, 1 force rerun
 modelprops.forcerun=1; %0 dont force, 0.5 force run if last lambda smaller than requested; 1 force run
-modelprops.numofeigs=3;
+modelprops.numofeigs=1;
 modelprops.allowComplex=true;
 main.closall=false;
-main.savefigures=0; % false.. dont safe figures(faster), true safe figures (slow)
+main.savefigures=1; % false.. dont safe figures(faster), true safe figures (slow)
 main.check=0;
 modelprops.ask_delete=true;
 modelprops.MeterValue=1; %1000mm=1m=0.001km
-main.whichEV='2023_12half'; % main.whichEV='bungle'; 'Disp'; 'Rot'; 'wrap'; 'Hyb'; 'rNCT_K0_r';'rCT_K0_r'; 'split'; 'corrected' ; 'k11';  'sqrtK_r'; 'sqrtK0_r'; 'NoHyb' 'k0_11'
-main.Normierung='R1'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
+main.whichEV='2023_12Hyb'; % bungle Disp Rot wrap Hyb rNCT_K0_r rCT_K0_r split corrected k11 sqrtK_r sqrtK0_r NoHyb 'k0_11' '2023-12' '2023_12Hyb' '2023_12noHyb' '2023_12half'
+main.Normierung='k0_11'; % 'R1'; 'rCT_K0_r'; 'A0R1'; 'sqrtK_r' 'k0_11'
 main.rho='R1'; % KtR1 R1; 'A0R1'
+modelprops.RefLast='Malendowski'; %'Malendowski' 'ES'
 main.xBezug='1'; %n..normalisiert; d..differenz zut Refwert
 modelprops.alphaDRW=1;
 %modelprops.alphaH=NaN;

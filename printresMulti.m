@@ -27,6 +27,7 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
  %m15=m14;%actually it is fulllenght and not lengthlam
  m20=m14;
  m34=m14;
+ 
 
  loadlen=min(lengthlam-1,numel(model.load));
  m30=NaN(loadlen+1,1+numel(resEWs));
@@ -38,11 +39,13 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
  end
  m30(:,1)=[0;model.load(1:loadlen)];
  m32=m30;
+ 
 
    xPlot15=model.fulllambda(1:end);
    m15=NaN(numel(xPlot15),1+numel(resEWs));
    m15(:,1)=xPlot15;
    m19=m15;
+   m976=m15;%just try this length
  for k3=resEWs
   i=find(resEWs==k3);
   if ismember(7,plotfig)
@@ -96,6 +99,11 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
    m34(:,1+i)=res(k3).DrhopDs;
    filename=strcat('Output/Figures/CSV/',model.filename,'_tRxB34.csv');
    writematrix(m34,filename,'Delimiter',';')
+  end
+  if ismember(976,plotfig)
+   m976(:,1+i)=[0;model.Energyratio.'];
+   filename=strcat('Output/Figures/CSV/',model.filename,'_E976.csv');
+   writematrix(m976,filename,'Delimiter',';')
   end
  end
 

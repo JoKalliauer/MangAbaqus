@@ -23,7 +23,7 @@ function [model] = runEigenProblem(modelprops)
 %2023-02-16 JK: datetime("today") instead of date and added warning-idenfifyer, deleted solcheck by Malendowski
 %2023-04-13 JK: changed name from model.lambda0 to model.lambdainput
 
-%% Code
+%% Inputcheck
 
  %modelname,lambda,epsil,numofelm,typeofanal,additionalParameters
  if nargin<1
@@ -45,9 +45,51 @@ function [model] = runEigenProblem(modelprops)
   %len = [];
  end
  
- 
  if usejava('jvm'); wbrEP=waitbar(0,'runEigenProblem start','name','runEigenProblem'); else; wbrEP=[]; end %,'WindowState','minimized'
  lambda =   modelprops.lambda;
+ %loadFactor = modelprops.loadfactor;
+ switch modelprops.testcase
+  case 'TL_arch3D'
+   RefLastMalendowski=83.3*10^3*10^2;
+   if strcmp(modelprops.RefLast,'Eh')
+    h = modelprops.profil.h; %20e-2;
+    E=modelprops.profil.E; % 2e+11;
+    RefLast=E*h;%
+   else
+    RefLast=modelprops.loadfactor*RefLastMalendowski;%Malendowski's Load
+   end
+   modelprops.loadfactor=RefLast/RefLastMalendowski;
+   lambda=lambda/modelprops.loadfactor;
+  case 'pureBendingBeamJK'
+   if modelprops.numofelm==1
+    if strcmp(modelprops.elementtype,'B31OSH')
+     warning('MyPrgm:Input','B31OSH need at least 2 elements to calculate a stiffnessmatrix')
+    end
+   end
+   MV=modelprops.MeterValue;
+   RefLastMalendowski=0.5e6*MV*MV; % [Nm]
+   modelprops.profil.E=2.1e+11/MV;
+   if sum(strcmp(fieldnames(modelprops), 'orientate')) == 0
+    modelprops.orientate=5;
+    %error('not tested')
+   end
+   if strcmp(modelprops.RefLast,'ES')
+    if modelprops.orientate==5
+     Sy=653.6*10^-6*MV*MV*MV;
+     %Sz=55.07*10^-6*MV*MV*MV;
+     RefLast=modelprops.profil.E*Sy;
+    end
+   else
+    RefLast=modelprops.loadfactor*0.5e6*MV*MV; %[Nm]
+   end
+   modelprops.loadfactor=RefLast/RefLastMalendowski;
+   lambda=lambda/modelprops.loadfactor;
+ end
+
+
+ %% Code
+ 
+ 
  if sum(strcmp(fieldnames(modelprops), 'forcerun')) == 0
   modelprops.forcerun=true;
  end
@@ -260,7 +302,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
 %  end
 %  %unactiveDofs = sort(unique(unactiveDofs));
  if usejava('jvm'); waitbar(0,wbrEP,'runEigenProblem getHistoryOutputFromDatFile');end
- [~, Nres, Kg] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
+ [ELres, Nres, Kg] = AbaqusModelsGeneration.getHistoryOutputFromDatFile([model.AbaqusRunsFolder,model.filename,'.dat']);
  if exist('ELres','var')
   [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
   model.Energyratio=(nonmembrane)./(membrane+nonmembrane);

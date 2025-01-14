@@ -17,7 +17,7 @@ if nargin<1
     testcase = 'TL_arch';
     numofelm = 20;
     eltype = 'B21';
-    lambda = [.025,.075,.125,.175,.225,.2750,.325,.375,.425,.475,.525,.575,.625,.675,.725];
+    %lambda = [.025,.075,.125,.175,.225,.2750,.325,.375,.425,.475,.525,.575,.625,.675,.725];
     %epsil = 0.005;
     %typeofanal = 'K0';
     loadFactor = 1.0;
@@ -54,13 +54,33 @@ if strcmp(testcase,'detKt') && strcmp(eltype(1:2),'B2')
 end
 
    switch testcase
-    case 'TL_arch'
-     assert(mod(numofelm,2)==0,'number of Elements must be euqal')
-     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
+    case 'TL_arch2D'
+     assert(mod(numofelm,2)==0,'number of Elements must be even')
+     RefLastMalendowski=83.3*10^3*10^2; % [N/m]
+     if strcmp(modelprops.RefLast,'Eh')
+      h = 20e-2;
+      E=2e+11;
+      RefLast=E*h;%
+     else
+      RefLast=loadFactor*RefLastMalendowski;%Malendowski's Load
+     end
+     loadFactor=RefLast/RefLastMalendowski;
+     lambda=lambda/loadFactor;
+     [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch([],numofelm,lambda,RefLast,eltype,AbaqusRunsFolder,modelprops);
     case 'TL_arch_old'
      [filename,lambda,BC,Nodes,Elements] = AbaqusModelsGeneration.TL_arch_old([],numofelm,lambda,loadFactor,eltype);
      AbaqusRunsFolder='AbaqusRuns/';
     case 'TL_arch3D'
+     % RefLastMalendowski=83.3*10^3*10^2;
+     % if strcmp(modelprops.RefLast,'Eh')
+     %  h = modelprops.profil.h; %20e-2;
+     %  E=modelprops.profil.E; % 2e+11;
+     %  RefLast=E*h;%
+     % else
+     %  RefLast=loadFactor*RefLastMalendowski;%Malendowski's Load
+     % end
+     % loadFactor=RefLast/RefLastMalendowski;
+     % lambda=lambda/loadFactor;
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode] = AbaqusModelsGeneration.TL_arch3D([],numofelm,lambda,loadFactor,eltype,AbaqusRunsFolder,modelprops);
      model.xlabelloadname='line load $p$ [N/m]';
     case 'Kreis_arch3D'
@@ -90,6 +110,24 @@ end
        warning('MyPrgm:Input','B31OSH need at least 2 elements to calculate a stiffnessmatrix')
       end
      end
+     % MV=modelprops.MeterValue;
+     % RefLastMalendowski=0.5e6*MV*MV; % [Nm]
+     % modelprops.profil.E=2.1e+11/MV;
+     % if sum(strcmp(fieldnames(modelprops), 'orientate')) == 0
+     %  modelprops.orientate=5;
+     %  %error('not tested')
+     % end
+     % if strcmp(modelprops.RefLast,'ES')
+     %  if modelprops.orientate==5
+     %   Sy=653.6*10^-6*MV*MV*MV;
+     %   %Sz=55.07*10^-6*MV*MV*MV;
+     %   RefLast=modelprops.profil.E*Sy;
+     %  end
+     % else
+     %   RefLast=loadFactor*0.5e6*MV*MV; %[Nm]
+     % end
+     %loadFactor=RefLast/RefLastMalendowski;
+     %lambda=lambda/loadFactor;
      [filename,lambda,BC,Nodes,Elements,model.fullload,model.dofpNode,model.sectiondata.houtside] = AbaqusModelsGeneration.pureBendingBeam(L,numofelm,lambda,loadFactor,eltype,modelprops,AbaqusRunsFolder);
      model.xlabelloadname='bending moment $M$ [N\,m]';
 %      model.xValload=model.load;
@@ -144,6 +182,7 @@ end
    model.filename = filename;% model.filename = replace(filename, ' ', '_');
    model.fulllambda = lambda;
    model.lambda = lambda(1:end-3);
+   %modelprops.lambda=lambda;
    model.BCMatlab = BC;
    model.Nodes = Nodes;
    model.Elements = Elements;

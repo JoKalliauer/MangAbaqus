@@ -1,4 +1,4 @@
-function [filename,lambda,BC,Nodes,Elements]  = TL_arch(~,numofelm,lambda,loadFactor,elType,AbaqusRunsFolder,modelprops)
+function [filename,lambda,BC,Nodes,Elements]  = TL_arch(~,numofelm,lambda,RefLast,elType,AbaqusRunsFolder,modelprops)
 % if nargin<1
 %     dummy = [];
 % end
@@ -8,9 +8,7 @@ end
 if nargin<3
     lambda = 0:0.1:1;
 end
-if nargin<4
-    loadFactor = 1.0;
-end
+
 if nargin<5
     elType = 'B22H';
 end
@@ -19,8 +17,8 @@ if lambda(1) == 0
 end
 
 %% RECT
- h = 20e-2;
- b = 10e-2;
+ h = 20e-2; %[m]
+ b = 10e-2; %[m]
   
 %% Span
  L = 600e-2; % m
@@ -28,10 +26,10 @@ end
 
 
 % pure SI units: Newtons, meters, Pascals, etc.
-filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-loadfac-',num2str(loadFactor),'-eps',num2str(modelprops.epsilon)];
+filename = ['TL_arch-',elType,'-',num2str(numofelm(end)),'-RefLast-',num2str(RefLast),'-eps',num2str(modelprops.epsilon)];
 
 %% Load
- p = -83.3*10^3*10^2*loadFactor;
+ p = -RefLast; %[N/m]
  
  %% Finite Elements Size
  resolution = L/double(numofelm(end));
