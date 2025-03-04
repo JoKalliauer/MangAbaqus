@@ -306,6 +306,8 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  if exist('ELres','var')
   [membrane, nonmembrane] = AbaqusModelsGeneration.GetEnergies(ELres,model.Nodes,model.Elements);
   model.Energyratio=(nonmembrane)./(membrane+nonmembrane);
+  model.EnergyBending=nonmembrane;
+  model.EnergyMembrane=membrane;
  end
  
  Displ = NodalResults2Displ(Nres);
@@ -407,7 +409,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  assert(model.N0==model.N,'size of Kt0 changes or is not symmetric')
  %model.fullEV=fullEV;
  %model.numofeigs=numofeigs;
- 
+ model.fulllambda1=fulllambda(2:end);
  
  clear tmp ml mpl
  disp(['ready to save: ','AnalysisResults/',model.filename,'-',modelprops.typeofanalysis,'-',num2str(model.numofeigs),'.mat']);
@@ -430,6 +432,6 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
 %   model.fulllambda(all(isnan(real(model.fullEV)), 1)) = [];
 %   model.fullEV(:,all(isnan(real(model.fullEV)), 1)) = [];
 %  end
- 
+
 
 end %fucntion

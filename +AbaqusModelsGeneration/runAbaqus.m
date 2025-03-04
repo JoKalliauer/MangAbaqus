@@ -80,7 +80,7 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
      end% if strcmp('n',cmdout(1))
     elseif reply==127
      %disp(strcat('cd ',AbaqusRunsFolder))
-     disp(strcat('exec imwsrun abaqus:2020 cpus=1 interactive job=',filename))
+     disp(strcat('exec imwsrun abaqus:2022 cpus=1 interactive job=',filename))
      warning('MyProgram:Abaqus','Abaqus command not found)')
     elseif reply==0
      if ~(exist([filename,'.dat'], 'file') == 2)

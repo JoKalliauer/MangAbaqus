@@ -45,14 +45,14 @@
   
   modelprops.numofelm = 20;
   
-  epsil = 0.2;  % finite difference step %epsil = 0.005;
+  epsil = 0.1;  % finite difference step %epsil = 0.005;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [11,15,16]; %#ok<*NBRAK> #ok<NASGU>
   %plotfig=[15,16,44,943:945,947:954];
   %plotfig=[15,16,943,952,953,955:956];
   %plotfig=[15,16,37,33];
   %plotfig=[35,16,916,963,969,902,906,917,911];%Verschiebungen
-  plotfig=[3,42,973:976];
+  plotfig=[3,15,35,42,45,973:976];
   %plotfig=[15,35,945,958,972];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
   main.whichEV='NoHyb'; % main.whichEV='bungle'; main.whichEV='Disp'; main.whichEV='Rot'; main.whichEV='wrap'; main.whichEV='Hyb'; main.whichEV='bungle_rKr'; main.whichEV='bungle_rK0r'; 
@@ -83,7 +83,7 @@
   main.colorshift=0;
   
   modelprops.sigma=0;
-  modelprops.followsigma=true;
+  modelprops.followsigma=false;
   modelprops.sortJKeigval=-1; %1..closest to zero, -1 ..most negative one
   modelprops.MeterValue=1; %1000mm=1m=0.001km
   main.xBezug='n'; %n..normalisiert; d..differenz zut Refwert
@@ -91,7 +91,7 @@
   
 %[res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main);
 
-eltypes={'B32OSH'}%
+eltypes={'B32OS','B32OSH'}%
 %plotfig=[];
 for i=1:numel(eltypes)
  elementtype = char(eltypes(i))

@@ -123,10 +123,11 @@ if sum(strcmp(fieldnames(main), 'rstabil')) == 0
  main.rstabil=0.9999;
 end
 if modelprops.numofelm>1024
-%assert(modelprops.numofelm<=1024,'more than 1000 Elements need more than 24GB RAM')
+assert(modelprops.numofelm<=1024,'more than 1000 Elements need more than 24GB RAM')
 %assert(sum(modelprops.numofelm)<=2000,'more than 1000 Elements need more than 24GB RAM')
 %assert(sum(modelprops.numofelm)<=2048,'more than 1000 Elements need more than 24GB RAM')
-assert(sum(modelprops.numofelm)<=2*2048,'more than 1000 Elements need more than 24GB RAM')
+%assert(sum(modelprops.numofelm)<=2*2048,'more than 1000 Elements need more than 24GB RAM')
+assert(numel(modelprops.lambda)<=1001,'maybe not enought disk-space')
  if strcmp(modelprops.elementtype(end),'H')
   assert(sum(modelprops.numofelm)<2000,'MATLAB-Problem with eigs: Maximum number of attempts to perform numeric factorization of symmetric indefinite matrix exceeded.')%BB5-B31OSH2000-l5-f1-eps0.001-u1
  end
@@ -352,7 +353,7 @@ if any(toolarge)
  model.DetKtx(toolarge)=NaN;
  model.load0(toolarge)=NaN;
 end
-toolarge=model.lambda>max(modelprops.lambda);
+toolarge=abs(model.lambda)>max(abs(modelprops.lambda));
 if any(toolarge)
  warning('MyProgram:Input','more lamdas available than requested try using modelprops.forcerun=true')
  model.lambda(toolarge)=NaN;
@@ -385,9 +386,9 @@ end
 if any(toostart)
  model.fulllambda(toostart)=NaN;
 end
-toostart=model.lambda<min(modelprops.lambda);
-if any(toostart)
- model.lambda(toostart)=NaN;
+toostart=abs(model.lambda)<min(modelprops.lambda);
+if any(toostart) 
+  model.lambda(toostart)=NaN;
 end
 
 

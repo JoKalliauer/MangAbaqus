@@ -22,6 +22,7 @@ model.DetKtx=[modelP1.DetKtx;NaN;modelM1.DetKtx];
 model.arclengthuJK=[modelP1.arclengthuJK;NaN;modelM1.arclengthuJK];
 model.dxidl=[modelP1.dxidl;NaN;modelM1.dxidl];
 model.lambdainput=[modelP1.lambdainput;NaN;-modelM1.lambdainput];
+%model.RHO2=[modelP1.RHO2;NaN;-modelM1.RHO2];
 model.load=[modelP1.load;NaN;-modelM1.load];
 model.load0=[modelP1.load0;NaN;-modelM1.load0];
 model.fullload0=[modelP1.fullload0;NaN;-modelM1.fullload0];
@@ -42,5 +43,9 @@ model.arclengths=[modelP1.arclengths;NaN*modelP1.arclengths{1};modelM1.arclength
 model.arclengthurHM=[modelP1.arclengthurHM;NaN*modelP1.arclengthurHM{1};modelM1.arclengthurHM];
 model.arclengthuHM=[modelP1.arclengthuHM;NaN*modelP1.arclengthuHM{1};modelM1.arclengthuHM];
 model.uMaxJK=[modelP1.uMaxJK;NaN*modelP1.uMaxJK{1};modelM1.uMaxJK];
+model.Energyratio=[modelP1.Energyratio,NaN,modelM1.Energyratio];
+model.fulllambda1=[modelP1.fulllambda1;NaN;-modelM1.fulllambda1];
+   model.EnergyBending=[modelP1.EnergyBending,NaN,-modelM1.EnergyBending];
+   model.EnergyMembrane=[modelP1.EnergyMembrane,NaN,-modelM1.EnergyMembrane];
 end
 

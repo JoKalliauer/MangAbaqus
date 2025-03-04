@@ -45,7 +45,10 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
    m15=NaN(numel(xPlot15),1+numel(resEWs));
    m15(:,1)=xPlot15;
    m19=m15;
-   m976=m15;%just try this length
+
+   xPlot976=model.fulllambda1(1:end);
+   m976=NaN(numel(xPlot976),3);
+   m976(:,1)=xPlot976;
  for k3=resEWs
   i=find(resEWs==k3);
   if ismember(7,plotfig)
@@ -100,11 +103,17 @@ function printresMulti(res,model,plotfig,~,~,resEWs,mainwhichEV)
    filename=strcat('Output/Figures/CSV/',model.filename,'_tRxB34.csv');
    writematrix(m34,filename,'Delimiter',';')
   end
+ end
   if ismember(976,plotfig)
-   m976(:,1+i)=[0;model.Energyratio.'];
+   m976(:,2)=model.Energyratio.';
    filename=strcat('Output/Figures/CSV/',model.filename,'_E976.csv');
    writematrix(m976,filename,'Delimiter',';')
   end
- end
+  if ismember(977,plotfig)
+   m976(:,2)=model.EnergyBending.';
+   m976(:,3)=model.EnergyMembrane.';
+   filename=strcat('Output/Figures/CSV/',model.filename,'_E977.csv');
+   writematrix(m976,filename,'Delimiter',';')
+  end
 
 end
