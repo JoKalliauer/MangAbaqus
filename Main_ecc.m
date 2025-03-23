@@ -29,7 +29,7 @@
  
   sortType = 'none';  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards','forwardJK'
   %plotfig=[2,14,15,19,35,45,976,977];
-  plotfig=[15,19,52];
+  plotfig=[1:15,19,52];
   forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
