@@ -28,11 +28,12 @@
   modelprops.typeofanalysis = 'KNL2'; %modelprops.sigma=0;
  
   sortType = 'none';  %sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards','forwardJK'
-  plotfig=[2,14,15,19,35,45,976,977];
-  forcedeig = [1,2]; %1; % forced eigenvector number 'none' sorting
+  %plotfig=[2,14,15,19,35,45,976,977];
+  plotfig=[15,19];
+  forcedeig = []; %1; % forced eigenvector number 'none' sorting
 
   
-  modelprops.loadfactor = 0;
+  modelprops.loadfactor = 1;
   
   modelprops.profil.tw= 8.6e-3;
   modelprops.forceAbaqus=0; %-1..returns error if not exist, 0..use old if exist, 1.. force new calc
@@ -54,19 +55,19 @@
   main.flipAxis=false;
   
   modelprops.sigma=0;
-  modelprops.followsigma=0;
-  modelprops.sortJKeigval=1; %1..closest to zero, -1 ..most negative one
+  modelprops.followsigma=1;
+  modelprops.sortJKeigval=-1; %1..closest to zero, -1 ..most negative one
   
 numofelms={2};
 
 
 Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
 
-epsils={0.0005}% nicht kleiner als 0.0005
+epsils={0.02}% nicht kleiner als 0.0005
 
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max([.5,20*modelprops.epsilon])
+ modelprops.lambda = 0:modelprops.epsilon:max([2,20*modelprops.epsilon])
  for k=1:numel(Exz)
   for j=1:numel(numofelms)
    modelprops.numofelm = cell2mat(numofelms(j));
