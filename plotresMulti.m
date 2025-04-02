@@ -79,7 +79,7 @@ function plotresMulti(res,model,plotfig,MyColours,MyMarker,resEWs,main)
 %44 EWd1l
 %45 abs(model.fullEV)
 %59 res.drddr = dot(v,a)/(norm(a)*norm(v))
-%60 f_lamdba -- lambda
+
 
 
 
