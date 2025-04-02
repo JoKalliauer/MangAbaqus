@@ -91,7 +91,7 @@ end
 if ~exist('forcedeig','var')
  forcedeig=[];
 end
-assert(max([forcedeig 0])<=min(modelprops.numofeigs),'forceeig must be smaler or equal that number of calculated ones')
+assert(max([forcedeig 0])<=min(modelprops.numofeigs),'forcedeig must be smaler or equal that number of calculated ones')
 modelprops.forcedeig=forcedeig;
 [sl1, sl2]=size(modelprops.lambda);
 if sl1>1 && sl2==1; modelprops.lambda=transpose(modelprops.lambda); end
@@ -392,6 +392,7 @@ if any(toostart)
 end
 
 
+
 if usejava('desktop')
  if main.closall==true
   if main.colorshift~=0
@@ -436,5 +437,5 @@ disp(['finish: ','AnalysisResults/',model.filename,'-',num2str(model.numofeigs),
   beep
   %load handel y
   %sound(y,8192) %remove this line if Device Error: Illegal combination of I/O devices
-
+ 
 end

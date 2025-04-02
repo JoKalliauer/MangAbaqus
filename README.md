@@ -94,4 +94,3 @@ Those Main_*.m files call Abaqus_single_run.m which calls the following function
 *	README.md … This explantation
 *	gitpush.sh … A code for git-pushing from Linux
 *	gitpush.bat … A code for git-pushing from Windows
-test

@@ -16,7 +16,7 @@
   
  
   %[~,modelprops.ecc]=eccfromU(0.5)
-  modelprops.ecc=0.0403316;
+  %modelprops.ecc=0.0403316;
   modelprops.testcase = 'ec2CompressionBeam'; 
 
   
@@ -61,10 +61,20 @@
 numofelms={2};
 
 
-Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
+modelprops.numofeigs=7;%min 7 EV
 
-epsils={0.02}% nicht kleiner als 0.0005
+epsils={0.05,0.02,0.01,0.005,0.002,0.001,0.0005}% nicht kleiner als 0.0005
 
+num_values=numel(0:0.1:1);
+U_values=0:0.1:1;
+ecc = zeros(num_values, 1); % 假设 eccfromU 返回标量数值
+for k = 1:numel(U_values)
+    [~,ecc(k)] = eccfromU(U_values(k)); % 直接存入数值数组
+end
+
+for num =1:numel(ecc)
+    modelprops.ecc=ecc(num)
+    Exz={modelprops.ecc};
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
  modelprops.lambda = 0:modelprops.epsilon:max([2,20*modelprops.epsilon])
@@ -80,6 +90,6 @@ for l=1:numel(epsils)
   end
  end
 end
-
+end
 allFigures = findall(0,'Type','figure'); % find all figures
 set(allFigures,'WindowState','normal'); % set the WindowState of all figures to normal

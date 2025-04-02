@@ -10,10 +10,20 @@ function [ fig ] = ...
  if ~exist('GFolder','var')
   GFolder=pwd;
  end
- if ~strcmp(GFolder(end),'/')
-  GFolder=strcat(GFolder,'/');
+ if isunix
+     if ~strcmp(GFolder(end),'/')
+      GFolder=strcat(GFolder,'/');
+     end
+ elseif ispc
+     if ~strcmp(GFolder(end),'\')
+      GFolder=strcat(GFolder,'\');
+     end
  end
+ if isunix
  FigFolder=strcat(GFolder,"Figures/");
+ elseif ispc
+ FigFolder=strcat(GFolder,"Figures\");
+ end
  Ort=pwd;
  cd(GFolder) %#ok<*MCCD>
  if isunix

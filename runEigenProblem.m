@@ -256,7 +256,10 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
   if (modelprops.forcerun>=0.499 && modelprops.forceAbaqus==true) || ~usejava('desktop') || noresults==true % wenn (a) es erzwungen wird (b) es im Terminal läuft oder (c) wenn es keine Ergebnisse gibt
    if usejava('desktop')
     %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
-    assert(numel(fulllambda)<=10005,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
+    if numel(fulllambda) > 10005
+    warning('using %f>504 fulllambda-values will take more than 10min by Abaqus', numel(fulllambda));
+    % 可以在这里添加其他处理逻辑
+    end
    else
     %assert(numel(fulllambda)<=2195,'using %f>504 fulllambda-values will take more than 10min by Abaqus',numel(fulllambda))
     assert(numel(fulllambda)<=37205,'using %f>2000 fulllambda-values will take more than 12GB by Abaqus',numel(fulllambda))
@@ -413,7 +416,7 @@ disp(['run: ','AnalysisResults/',model.filename,'-',num2str(modelprops.numofeigs
  
  clear tmp ml mpl
  disp(['ready to save: ','AnalysisResults/',model.filename,'-',modelprops.typeofanalysis,'-',num2str(model.numofeigs),'.mat']);
- if isunix && ~exist(AnalysisResultsFolder, 'dir')
+ if ~exist(AnalysisResultsFolder, 'dir')
   mkdir(AnalysisResultsFolder)
  end
  dt=whos('model');

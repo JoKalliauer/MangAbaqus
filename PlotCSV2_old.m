@@ -11,7 +11,11 @@
 %filename='/home/jkalliau/ownCloud/Post/MangAbaqus/Output/Figures/CSV/ecc-B32OS-2-len-5-ecc-0.16467-loadfac-1-eps0.02-KNL2_rho3D_20.csv';
 %filename='/home/jkalliau/ownCloud/Post/MangAbaqus/Output/Figures/CSV/TL_arch3D-B32-20-loadfac-1-eps0.005-KNL2_rho30.csv';
 cfig = containers.Map;
+if isunix
 GFolder='/home/jkalliau/ownCloud/Post/MangAbaqus/Output/Figures/CSV/'; ylabelJK='radius of the first Frenet-curvature $\rho_1$'; Faktor=1.54; %#ok<*NASGU> 
+elseif ispc
+GFolder='C:Data/Abaqus/MangAbaqus/Output/Figures/CSV/'; ylabelJK='radius of the first Frenet-curvature $\rho_1$'; Faktor=1.54; %#ok<*NASGU> 
+end
 %diagramname='TL_arch3D-B32-20-f1-eps0.005-u1-KNL2_rho30.csv';xlabelJK='line load $p$ [$\textrm{N}/\textrm{m}$]'; name='Fig2a'
  %buck=2.77E6; cfig('yLim')=[0 1]; cfig('xLim')=[0 3E6]; %cfig('Cxticks')=[0:1E6:2E6 buck 3E6:1E6:6E6]; cfig('xticklabels')={0 '1E6' '2E6' '$p_S$~~' '~~3E6' '4E6' '5E6' '6E6'};
 %diagramname='TL_arch3D-B32-20-f1-eps0.005-u1-I_rho30.csv'; ylabelJK='radius of the first Frenet-curvature $\rho_1$'; xlabelJK='line load $p$ [$\textrm{N}/\textrm{m}$]'; name='Fig2b';
@@ -37,7 +41,41 @@ diagramname='ecc-B32OS-20-l5-e0.040447-f1-eps0.01-u1-KNL2_rho30.csv'; buck=Inf;n
  opts = delimitedTextImportOptions(...
 'VariableNames',{'lambda' 'rho1st' 'rho2nd' 'rho3nd'},'DataLine',[1 Inf],...
 'NumVariables',4,'Delimiter',{';','\t'}); %'VariableWidths',[6 12 12 12 12]
-system(['exec sed -i "s/,/\./g" ',filename])
+ if ~exist(filename, 'file')
+    error('cant find the file：%s', filename);
+ end
+ 
+    if isunix
+        command = ['exec sed -i "s/\./,/g" ', filename];
+        status = system(command);
+        if status == 0
+            disp(['Unix: The dots in file ', filename, ' have been replaced with commas.']);
+        else
+            error('Unix: Replacement failed. Please check the file path or permissions.');
+        end
+    elseif ispc
+        % 读取文件内容
+        fid = fopen(filename, 'r');
+        fileContent = fread(fid, '*char'); % 读取文件内容为字符数组
+        fclose(fid);
+        
+        % 替换点字符为逗号
+        fileContent = strrep(fileContent, '.', ',');
+        
+        % 将替换后的内容写回文件
+        fid = fopen(filename, 'w');
+        fwrite(fid, fileContent, 'char');
+        fclose(fid);
+        
+        disp('替换成功！');        
+        if status == 0
+            disp(['Windows: The dots in file ', filename, ' have been replaced with commas.']);
+        else
+            error('Windows: Replacement failed. Please check the file path or PowerShell permissions.');
+        end
+    else
+        error('Unsupported operating system. Only Unix and Windows are supported.');
+    end  
  T0 = readtable(filename,opts);
  %PT0=str2double(table2array(T0));
  PT0=Commastr2doubleJK(table2array(T0));
@@ -115,8 +153,11 @@ lenJK=size(PT0,1);
     plot(0,PT0(5,2),'o','Color',[0 0 0],'MarkerSize',12,'LineWidth',3,'MarkerFaceColor',[1 1 1])
     text(0,PT0(5,2)-.03,'\,$ (\rho_1)_0$','interpreter','latex','FontSize',25)
    end
+   if isunix
    print ('-depsc',strcat(GFolder,'Figures/',name,'.eps'))
-   
+   elseif ispc
+   print ('-depsc',strcat(GFolder,'Figures\',name,'.eps'))
+   end
    diagramname %#ok<NOPTS>
    
 
