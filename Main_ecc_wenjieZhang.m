@@ -15,7 +15,7 @@
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
   
  
-  [~,modelprops.ecc]=eccfromU(0.95)
+  %[~,modelprops.ecc]=eccfromU(0.5)
   %modelprops.ecc=0.0403316;
   modelprops.testcase = 'ec2CompressionBeam'; 
 
@@ -61,13 +61,27 @@
 numofelms={2};
 
 
-Exz={modelprops.ecc};modelprops.numofeigs=7;%min 7 EV
+%Exz={modelprops.ecc};
+modelprops.numofeigs=7;%min 7 EV
 
-epsils={0.001}% nicht kleiner als 0.0005
+%epsils={0.005}% nicht kleiner als 0.0005
 
+%U_values = 0:0.05:0.9999;%到0.95
+U_values =0.9:0.05:0.95;
+modelprops.ecc = zeros(1, numel(U_values));
+epsils_list={0.0005}
+for k = 1:numel(U_values)
+    [~,tmp] = eccfromU(U_values(k));  
+    modelprops.ecc(k) = tmp; 
+end
+
+for n=1:numel(epsils_list)
+    epsils=epsils_list(n);
+for num=1:numel(U_values)
+    Exz={modelprops.ecc(num)};
 for l=1:numel(epsils)
  modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max([2.5,20*modelprops.epsilon])
+ modelprops.lambda = 0:modelprops.epsilon:max([3.0,20*modelprops.epsilon])
  for k=1:numel(Exz)
   for j=1:numel(numofelms)
    modelprops.numofelm = cell2mat(numofelms(j));
@@ -80,6 +94,8 @@ for l=1:numel(epsils)
   end
  end
 end
-
+end
+end
 allFigures = findall(0,'Type','figure'); % find all figures
 set(allFigures,'WindowState','normal'); % set the WindowState of all figures to normal
+

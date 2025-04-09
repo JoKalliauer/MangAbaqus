@@ -2307,6 +2307,8 @@ elseif ispc
    plot(lambda(1:end),lambda(1:end),'Color',[0 0 0],'LineStyle','--');
    plot(lambda(1:end),0*lambda(1:end),'Color',[0 0 0]);
   end
+  disp(numel(lambda));
+  disp(numel(LAM));
   plot(lambda(2:end), lambda(2:end)+real(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
   xlabel('Lambda');
   ylabel('EW');
