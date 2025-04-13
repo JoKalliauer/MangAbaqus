@@ -104,79 +104,80 @@ function runAbaqus(filename,AbaqusRunsFolder,modelprops)
 
 elseif ispc
     %% --- Windows 分支增强 ---
-    % 清理旧文件（类似Linux的 rm -f）
+    % 清理旧文件
     if modelprops.forceAbaqus == true && modelprops.ask_delete == false
         system(['del /Q /F "', filename, '.sta" "', filename, '_STIF*.mtx" "', filename, '.lck"']);
     end
 
-    %% 检查 Abaqus 命令是否存在（类似Linux的 abq/abaqus 回退）
-    % 尝试默认命令路径
-    [status_abaqus, ~] = system('abaqus');
-    if status_abaqus == 127
-        % 若默认命令未找到，尝试从常见安装路径调用
+    %% 检查 Abaqus 命令
+    [status_abaqus, ~] = system('where abaqus');
+    if status_abaqus ~= 0
+        % 尝试从常见安装路径调用
         abq_install_paths = {
-            'C:\SIMULIA\Commands\abaqus.bat',   % 默认安装路径
-            'C:\Program Files\SIMULIA\Commands\abaqus.bat', 
-            'D:\SIMULIA\Commands\abaqus.bat'    % 自定义安装路径
+            'C:\SIMULIA\Commands\abaqus.bat',
+            'C:\Program Files\SIMULIA\Commands\abaqus.bat',
+            'D:\SIMULIA\Commands\abaqus.bat'
         };
         found = false;
         for i = 1:length(abq_install_paths)
             if exist(abq_install_paths{i}, 'file')
-                abq_cmd = ['""', abq_install_paths{i}, '"']; % 处理路径空格
+                abq_cmd = ['""', abq_install_paths{i}, '""']; % 双重引号处理路径空格
                 found = true;
                 break;
             end
         end
         if ~found
-            error('Abaqus command not found. Check installation or PATH environment.');
+            error('Abaqus command not found. Please check installation or PATH environment.');
         end
     else
-        abq_cmd = 'abaqus'; % 使用环境变量中的命令
+        abq_cmd = 'abaqus';
     end
 
-    %% 构建基础命令
-    base_cmd = [abq_cmd, ' job="', filename, '" cpus=1 interactive '];
+    %% 检查输入文件
+    if ~exist([filename, '.inp'], 'file')
+        error('Input file %s.inp not found in %s', filename, pwd);
+    end
+
+    %% 构建命令
+    base_cmd = [abq_cmd, ' job="', filename, '" cpus=1 interactive double=both'];
     if modelprops.ask_delete == false || ~usejava('desktop')
-        base_cmd = [base_cmd, 'ask_delete=OFF ']; % 禁止交互弹窗
+        base_cmd = [base_cmd, ' ask_delete=OFF'];
     end
 
-    %% 执行命令并处理错误
+    %% 执行命令
+    disp(['Running Abaqus command: ', base_cmd]);
     reply = system(base_cmd);
     
-    %% 错误处理（扩展）
+    %% 错误处理
     if reply ~= 0
-        % 检查许可证状态
-        [lic_status, lic_output] = system([abq_cmd, ' licensing -stat']);
-        if contains(lic_output, 'No such feature exists')
-            warning('MyProgram:NoLicense', 'License check failed. Checking VPN...');
-            % 检测VPN连接（示例：ping许可证服务器）
-            vpn_server = 'license.yourcompany.com';
-            [vpn_status, ~] = system(['ping -n 1 ', vpn_server]);
-            if vpn_status ~= 0
-                % 尝试连接VPN（需替换为实际VPN脚本路径）
-                system('"C:\VPN\connect.bat"'); 
-                pause(10); % 等待VPN连接
-                % 重试Abaqus命令
-                reply = system(base_cmd);
+        % 检查日志文件
+        if exist([filename, '.dat'], 'file')
+            fid = fopen([filename, '.dat'], 'r');
+            if fid ~= -1
+                dat_content = fread(fid, '*char')';
+                fclose(fid);
+                if contains(dat_content, 'FATAL ERROR')
+                    error('Fatal error found in .dat file. Please check the analysis log.');
+                end
             end
         end
-        
-        % 检查残留.lck文件
+
+        % 检查锁定文件
         if exist([filename, '.lck'], 'file')
-            system(['del /F "', filename, '.lck"']);
-            warning('MyProgram:FileLock', 'Deleted .lck file, retrying...');
-            reply = system(base_cmd); % 自动重试
+            delete([filename, '.lck']);
+            warning('Deleted lock file, retrying...');
+            reply = system(base_cmd);
         end
-        
-        % 最终错误诊断
+
         if reply ~= 0
-            error('Abaqus failed with code %d. Check .log, .dat, or permissions.', reply);
+            error('Abaqus analysis failed. Check .dat and .msg files for details.');
         end
     end
 
-    %% 强制检查输出文件（类似Linux的_STIF*.mtx验证）
-    if ~exist(fullfile(AbaqusRunsFolder, [filename, '_STIF9.mtx']), 'file')
-        error('MyProgramm:Missing', '_STIF*.mtx missing. Check .inp matrix commands.');
+    %% 验证矩阵文件
+    stif_files = dir([filename, '_STIF*.mtx']);
+    if isempty(stif_files)
+        error('Stiffness matrix files (_STIF*.mtx) not generated. Check .inp matrix commands.');
     end
   elseif ismac
    warning('MyProgram:Untested','Mac not tested, maybe try linuxcommand')

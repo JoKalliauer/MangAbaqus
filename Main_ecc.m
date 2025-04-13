@@ -15,7 +15,7 @@
  delete(findall(0,'type','figure','tag','TMWWaitbar'))
   
  
-  [~,modelprops.ecc]=eccfromU(0.95)
+  [~,modelprops.ecc]=eccfromU(0.90)
   %modelprops.ecc=0.0403316;
   modelprops.testcase = 'ec2CompressionBeam'; 
 

@@ -6,7 +6,7 @@
 
   % there are following predefined test cases:
   %modelprops.testcase = 'TL_arch';
-  modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
+  %modelprops.testcase = 'TL_arch3D'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch3DKg'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch3D_sin'; %fails at ~lamdba=0.8
   %modelprops.testcase = 'TL_arch_Hinge';
@@ -49,7 +49,7 @@
   modelprops.numofelm = 10;
   
   
-  epsil = 0.00005*100;%  0.01;
+  epsil = 0.01;%  0.01;
   sortType = 'none'; % eigenvectors sorting type: 'none', 'forwards', 'backwards'
   %plotfig= [14,28,33];
   %plotfig=[1:14,21,24,26,30,211];
@@ -59,13 +59,12 @@
   %plotfig=[15,943:945,948:949];main.savefigures=1
   %plotfig=[15,947,949,952,955:956,16,943,953,943,16];
   %plotfig=[15,45,35,19,52];%EW
-  
   plotfig=[14,45,35];%EW
   forcedeig = []; %1; % forced eigenvector number
   
   
   %modelprops.lambda = 0:epsil:.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
-  modelprops.lambda = 0.3:epsil:.335; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
+  modelprops.lambda = 0:epsil:0.5; %(0.78-4*epsil); % do not go over snap-through point 5*epsil:10*epsil:(0.78-4*epsil)
   modelprops.length=19.074;% [m] 
   
   modelprops.epsilon = epsil;

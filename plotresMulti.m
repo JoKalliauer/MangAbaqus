@@ -441,7 +441,9 @@ if isunix
    plot(lambda(1:end),lambda(1:end),'Color',[0 0 0],'LineStyle','--');
    plot(lambda(1:end),0*lambda(1:end),'Color',[0 0 0]);
   end
-  plot(lambda(2:end), lambda(2:end)+real(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
+  % 确保lambda和LAM的维度匹配
+  len = min(length(lambda)-1, length(LAM)-1);
+  plot(lambda(2:len+1), lambda(2:len+1)+real(LAM(2:len+1)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
   xlabel('Lambda');
   ylabel('EW');
   if k3==resEWs(1) && main.colorshift==0
@@ -2255,7 +2257,7 @@ if isunix
             print('-dpng', strcat('Output/Figures/PNG/', modelfilename, '_rho_fracrho.png'));
             print('-fillpage', strcat('Output/Figures/PDF/', modelfilename, '_rho_fracrho.pdf'), '-dpdf');
     end
-    end
+ end
     
 elseif ispc
  for k3=resEWs
@@ -2307,9 +2309,8 @@ elseif ispc
    plot(lambda(1:end),lambda(1:end),'Color',[0 0 0],'LineStyle','--');
    plot(lambda(1:end),0*lambda(1:end),'Color',[0 0 0]);
   end
-  disp(numel(lambda));
-  disp(numel(LAM));
-  plot(lambda(2:end), lambda(2:end)+real(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
+ xend=min(numel(lambda),numel(LAM));
+  plot(lambda(2:xend), lambda(2:xend)+real(LAM(2:xend)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);% ,'Color',col %,'Color',colo);
   xlabel('Lambda');
   ylabel('EW');
   if k3==resEWs(1) && main.colorshift==0
@@ -2405,7 +2406,8 @@ elseif ispc
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]); 
   hold on
   At = real(At);
-  plot(lambda(2:end),At(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
+  xend=min(numel(lambda),numel(At));
+  plot(lambda(2:xend),At(2:xend),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
   xlabel('lambda');
   ylabel('tangential acceleration');
   title('tangential acceleration');
@@ -2420,7 +2422,8 @@ elseif ispc
  if ismember(5,plotfig)
   figure(5)
   hold on
-  plot(lambda(2:end),An(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
+  xend=min(numel(An),numel(lambda));
+  plot(lambda(2:xend),An(2:xend),'LineStyle','-','Marker',markJK,'LineWidth',1.5);%,'Color',col,'Color',colo);
   xlabel('lambda');
   ylabel('normal acceleration');
   title('normal acceleration');
@@ -2487,8 +2490,9 @@ elseif ispc
  if ismember(8,plotfig)
   figure(8)
   hold on
-  plot(lambda(2:end),(sinpsi(2:end)),'LineStyle','-','Marker','x','LineWidth',1.5); %,'Color',col
-  plot(lambda(2:end),(cosmu(2:end)),'LineStyle','-','Marker','o','LineWidth',1.5); %,'Color',col
+  xend = min([numel(lambda), numel(sinpsi), numel(cosmu)]);
+  plot(lambda(2:xend),(sinpsi(2:xend)),'LineStyle','-','Marker','x','LineWidth',1.5); %,'Color',col
+  plot(lambda(2:xend),(cosmu(2:xend)),'LineStyle','-','Marker','o','LineWidth',1.5); %,'Color',col
   xlabel('lambda');
   ylabel('absolute values of: sin(psi) and cos(mu)');
   title('absolute values of: sin(psi) and cos(mu)');
@@ -2520,7 +2524,8 @@ elseif ispc
   set(gcf,'PaperUnits','points','PaperPositionMode','auto','PaperOrientation','landscape','Position',[FesterPosXNR(plotfig==get(gcf,'Number'))   FesterPosY   XBreite   YHohe]);
 
   hold on
-  plot(lambda(2:end), LAM(2:end),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  xend=min(numel(lambda),numel(LAM));
+  plot(lambda(2:xend), LAM(2:xend),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   ylabel('LAM=chi-lambda');
   grid on
@@ -2556,7 +2561,8 @@ elseif ispc
 
   hold on
   aaa = gca();
-  plot(lambda(2:end),real(LAM(2:end)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  xend=min(numel(lambda),numel(LAM));
+  plot(lambda(2:xend),real(LAM(2:xend)),'LineStyle','-','Marker',markJK,'LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   ylabel('real(EW)=real(chi-lambda)');
   title(modelfilename)
@@ -2575,7 +2581,8 @@ elseif ispc
  if ismember(13,plotfig)
   figure(13);
   hold on
-  plot(lambda(2:end),abs(LAM(2:end)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);%,'Color',colo);
+  xend=min(numel(lambda),numel(LAM));
+  plot(lambda(2:xend),abs(LAM(2:xend)),'LineStyle','-','Marker','none','LineWidth',1.5,'Color',colJK);%,'Color',colo);
   xlabel('Lambda');
   ylabel('abs(EW)=abs(chi-lambda)');
   title(modelfilename)

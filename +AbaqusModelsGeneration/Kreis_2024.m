@@ -273,6 +273,8 @@ end
 fprintf(u3,['*Include, input=',filename,'.inpData\n']);
 fprintf(u3,'** ----------------------------------------------------------------\n');
 fprintf(u3,'*STEP, name=Lambda-1\n');
+fprintf(u3,'*STATIC\n');
+fprintf(u3,'1.0, 1.0\n');
 fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
 fprintf(u3,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
 fprintf(u3,'*END STEP\n');
@@ -370,8 +372,12 @@ for k = 1:length(lambda)
     stepnum = stepnum + 1;
     fprintf(u3,'** ----------------------------------------------------------------\n');
     fprintf(u3,['*STEP, name=Lambda-',num2str(stepnum),'\n']);
+    fprintf(u3,'*STATIC\n');
+    fprintf(u3,'1.0, 1.0\n');
     fprintf(u3,'*MATRIX GENERATE, STIFFNESS\n');
     fprintf(u3,'*MATRIX OUTPUT, STIFFNESS, FORMAT=MATRIX INPUT\n');
+    fprintf(u3,'*NODE FILE\n');
+    fprintf(u3,'U\n');
     fprintf(u3,'*END STEP\n');
 
 end

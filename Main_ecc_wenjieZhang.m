@@ -67,35 +67,79 @@ modelprops.numofeigs=7;%min 7 EV
 %epsils={0.005}% nicht kleiner als 0.0005
 
 %U_values = 0:0.05:0.9999;%到0.95
-U_values =0.9:0.05:0.95;
+U_values =0.96:0.01:0.99;
 modelprops.ecc = zeros(1, numel(U_values));
-epsils_list={0.0005}
+epsils_list={0.001}
 for k = 1:numel(U_values)
     [~,tmp] = eccfromU(U_values(k));  
     modelprops.ecc(k) = tmp; 
 end
 
-for n=1:numel(epsils_list)
-    epsils=epsils_list(n);
-for num=1:numel(U_values)
-    Exz={modelprops.ecc(num)};
-for l=1:numel(epsils)
- modelprops.epsilon = cell2mat(epsils(l));
- modelprops.lambda = 0:modelprops.epsilon:max([3.0,20*modelprops.epsilon])
- for k=1:numel(Exz)
-  for j=1:numel(numofelms)
-   modelprops.numofelm = cell2mat(numofelms(j));
-   for i=1:numel(eltypes)
-    elementtype = char(eltypes(i))
-    main.colorshift=(i-1)+(j-1)*numel(eltypes)+(l-1)*numel(eltypes)*numel(numofelms);
-    [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,cell2mat(Exz(k)),elementtype);
-    
-   end
-  end
- end
+% 初始化并行计算环境
+if ~exist('gcp','file')
+    % 如果Parallel Computing Toolbox不可用，使用普通for循环
+    useParallel = false;
+else
+    % 尝试启动并行池
+    try
+        parpool('local');
+        useParallel = true;
+    catch
+        useParallel = false;
+        warning('无法启动并行池，将使用普通for循环');
+    end
 end
+
+if useParallel
+    % 使用parfor并行计算
+    parfor n=1:numel(epsils_list)
+        % 创建局部变量以避免并行计算中的冲突
+        local_modelprops = modelprops;
+        local_main = main;
+        local_epsils = epsils_list(n);
+        
+        for num=1:numel(U_values)
+            local_Exz = {local_modelprops.ecc(num)};
+            for l=1:numel(local_epsils)
+                local_modelprops.epsilon = cell2mat(local_epsils(l));
+                local_modelprops.lambda = 0:local_modelprops.epsilon:max([2.5,20*local_modelprops.epsilon]);
+                for k=1:numel(local_Exz)
+                    for j=1:numel(numofelms)
+                        local_modelprops.numofelm = cell2mat(numofelms(j));
+                        for i=1:numel(eltypes)
+                            local_elementtype = char(eltypes(i));
+                            local_main.colorshift=(i-1)+(j-1)*numel(eltypes)+(l-1)*numel(eltypes)*numel(numofelms);
+                            [~,~] = Abaqus_single_run(local_modelprops,sortType,plotfig,forcedeig,local_main,local_modelprops.numofelm,cell2mat(local_Exz(k)),local_elementtype);
+                        end
+                    end
+                end
+            end
+        end
+    end
+else
+    % 使用普通for循环
+    for n=1:numel(epsils_list)
+        epsils=epsils_list(n);
+        for num=1:numel(U_values)
+            Exz={modelprops.ecc(num)};
+            for l=1:numel(epsils)
+                modelprops.epsilon = cell2mat(epsils(l));
+                modelprops.lambda = 0:modelprops.epsilon:max([2.5,20*modelprops.epsilon]);
+                for k=1:numel(Exz)
+                    for j=1:numel(numofelms)
+                        modelprops.numofelm = cell2mat(numofelms(j));
+                        for i=1:numel(eltypes)
+                            elementtype = char(eltypes(i));
+                            main.colorshift=(i-1)+(j-1)*numel(eltypes)+(l-1)*numel(eltypes)*numel(numofelms);
+                            [res,model] = Abaqus_single_run(modelprops,sortType,plotfig,forcedeig,main,modelprops.numofelm,cell2mat(Exz(k)),elementtype);
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
-end
+
 allFigures = findall(0,'Type','figure'); % find all figures
 set(allFigures,'WindowState','normal'); % set the WindowState of all figures to normal
 
